@@ -1,0 +1,97 @@
+<h2>Pontos de Coleta</h2>
+
+<!-- Cadastrar Ponto -->
+<div class="section">
+    <h3>Cadastrar Ponto</h3>
+    <input id="nomePonto" placeholder="Nome do Ponto" />
+    <input id="logradouroPonto" placeholder="Logradouro" />
+    <input id="numeroPonto" placeholder="Número" />
+    <input id="bairroPonto" placeholder="Bairro" />
+    <input id="cidadePonto" placeholder="Cidade" />
+    <input id="cepPonto" placeholder="CEP" />
+    <select id="estadoPonto">
+        <option value="AC">AC</option><option value="AL">AL</option><option value="AP">AP</option>
+        <option value="AM">AM</option><option value="BA">BA</option><option value="CE">CE</option>
+        <option value="DF">DF</option><option value="ES">ES</option><option value="GO">GO</option>
+        <option value="MA">MA</option><option value="MT">MT</option><option value="MS">MS</option>
+        <option value="MG">MG</option><option value="PA">PA</option><option value="PB">PB</option>
+        <option value="PR">PR</option><option value="PE">PE</option><option value="PI">PI</option>
+        <option value="RJ">RJ</option><option value="RN">RN</option><option value="RS">RS</option>
+        <option value="RO">RO</option><option value="RR">RR</option><option value="SC">SC</option>
+        <option value="SP">SP</option><option value="SE">SE</option><option value="TO">TO</option>
+    </select>
+    <input id="latitudePonto" placeholder="Latitude" />
+    <input id="longitudePonto" placeholder="Longitude" />
+    <button onclick="cadastrarPonto()">Cadastrar</button>
+    <pre id="resCadastrarPonto"></pre>
+</div>
+
+<!-- Cadastrar Vários Pontos -->
+<div class="section">
+    <h3>Cadastrar Lote de Pontos (JSON Array)</h3>
+    <textarea id="jsonLotePontos" placeholder='[{"nome":"Ponto A","logradouro":"Rua X","numero":"10","bairro":"Centro","cidade":"Salvador","cep":"40000-000","estado":"BA","coordenadas":{"latitude":-12.0,"longitude":-38.0}}]'></textarea>
+    <button onclick="cadastrarLotePontos()">Cadastrar Lote</button>
+    <pre id="resCadastrarLote"></pre>
+</div>
+
+<!-- Listar Pontos -->
+<div class="section">
+    <h3>Listar Pontos</h3>
+    <select id="filtroEstado">
+        <option value="">Todos</option>
+        <option value="AC">AC</option><option value="AL">AL</option><option value="AP">AP</option>
+        <option value="AM">AM</option><option value="BA">BA</option><option value="CE">CE</option>
+        <option value="DF">DF</option><option value="ES">ES</option><option value="GO">GO</option>
+        <option value="MA">MA</option><option value="MT">MT</option><option value="MS">MS</option>
+        <option value="MG">MG</option><option value="PA">PA</option><option value="PB">PB</option>
+        <option value="PR">PR</option><option value="PE">PE</option><option value="PI">PI</option>
+        <option value="RJ">RJ</option><option value="RN">RN</option><option value="RS">RS</option>
+        <option value="RO">RO</option><option value="RR">RR</option><option value="SC">SC</option>
+        <option value="SP">SP</option><option value="SE">SE</option><option value="TO">TO</option>
+    </select>
+    <button onclick="listarPontos()">Listar</button>
+    <pre id="resListarPontos"></pre>
+</div>
+
+<!-- Buscar ponto por ID -->
+<div class="section">
+    <h3>Buscar Ponto por ID</h3>
+    <input id="idBuscarPonto" placeholder="ID" />
+    <button onclick="buscarPontoPorId()">Buscar</button>
+    <pre id="resBuscarPonto"></pre>
+</div>
+
+<!-- Editar ponto -->
+<div class="section">
+    <h3>Editar Ponto</h3>
+    <input id="idEditarPonto" placeholder="ID" />
+    <input id="nomeEditar" placeholder="Nome" />
+    <input id="logradouroEditar" placeholder="Logradouro" />
+    <input id="numeroEditar" placeholder="Número" />
+    <input id="bairroEditar" placeholder="Bairro" />
+    <input id="cidadeEditar" placeholder="Cidade" />
+    <input id="cepEditar" placeholder="CEP" />
+    <select id="estadoEditar">
+        <option value="AC">AC</option><option value="AL">AL</option><option value="AP">AP</option>
+        <option value="AM">AM</option><option value="BA">BA</option><option value="CE">CE</option>
+        <option value="DF">DF</option><option value="ES">ES</option><option value="GO">GO</option>
+        <option value="MA">MA</option><option value="MT">MT</option><option value="MS">MS</option>
+        <option value="MG">MG</option><option value="PA">PA</option><option value="PB">PB</option>
+        <option value="PR">PR</option><option value="PE">PE</option><option value="PI">PI</option>
+        <option value="RJ">RJ</option><option value="RN">RN</option><option value="RS">RS</option>
+        <option value="RO">RO</option><option value="RR">RR</option><option value="SC">SC</option>
+        <option value="SP">SP</option><option value="SE">SE</option><option value="TO">TO</option>
+    </select>
+    <input id="latitudeEditar" placeholder="Latitude" />
+    <input id="longitudeEditar" placeholder="Longitude" />
+    <button onclick="editarPonto()">Editar</button>
+    <pre id="resEditarPonto"></pre>
+</div>
+
+<!-- Excluir ponto -->
+<div class="section">
+    <h3>Excluir Ponto</h3>
+    <input id="idExcluirPonto" placeholder="ID" />
+    <button onclick="excluirPonto()">Excluir</button>
+    <pre id="resExcluirPonto"></pre>
+</div>

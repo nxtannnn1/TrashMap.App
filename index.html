@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>TrashMap SPA</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <h2>TrashMap</h2>
+            <ul>
+                <li><a href="#" onclick="loadController('caminhoes')">Caminhões</a></li>
+                <li><a href="#" onclick="loadController('pontos')">Pontos de Coleta</a></li>
+                <li><a href="#" onclick="loadController('enderecos')">Endereços</a></li>
+                 <li><a href="#" onclick="loadController('usuarios')">Usuários</a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="content" id="main-content">
+            <h2>Bem-vindo ao TrashMap</h2>
+            <p>Selecione uma opção no menu lateral.</p>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

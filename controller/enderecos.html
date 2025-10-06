@@ -1,0 +1,106 @@
+<h2>Endereços</h2>
+
+<!-- Cadastrar Endereço -->
+<div class="section">
+    <h3>Cadastrar Endereço</h3>
+    <input id="logradouroEndereco" placeholder="Logradouro" />
+    <input id="numeroEndereco" placeholder="Número" />
+    <input id="bairroEndereco" placeholder="Bairro" />
+    <input id="cidadeEndereco" placeholder="Cidade" />
+    <input id="cepEndereco" placeholder="CEP" />
+    <select id="estadoEndereco">
+        <option value="AC">AC</option><option value="AL">AL</option><option value="AP">AP</option>
+        <option value="AM">AM</option><option value="BA">BA</option><option value="CE">CE</option>
+        <option value="DF">DF</option><option value="ES">ES</option><option value="GO">GO</option>
+        <option value="MA">MA</option><option value="MT">MT</option><option value="MS">MS</option>
+        <option value="MG">MG</option><option value="PA">PA</option><option value="PB">PB</option>
+        <option value="PR">PR</option><option value="PE">PE</option><option value="PI">PI</option>
+        <option value="RJ">RJ</option><option value="RN">RN</option><option value="RS">RS</option>
+        <option value="RO">RO</option><option value="RR">RR</option><option value="SC">SC</option>
+        <option value="SP">SP</option><option value="SE">SE</option><option value="TO">TO</option>
+    </select>
+    <input id="latitudeEndereco" placeholder="Latitude" />
+    <input id="longitudeEndereco" placeholder="Longitude" />
+    <button onclick="cadastrarEndereco()">Cadastrar</button>
+    <pre id="resCadastrarEndereco"></pre>
+</div>
+
+<!-- Cadastrar Lote de Endereços -->
+<div class="section">
+    <h3>Cadastrar Lote (JSON Array)</h3>
+    <textarea id="jsonLoteEnderecos" placeholder='[{"logradouro":"Rua X","numero":"10","bairro":"Centro","cidade":"Salvador","cep":"40000-000","estado":"BA","coordenadas":{"latitude":-12.0,"longitude":-38.0}}]'></textarea>
+    <button onclick="cadastrarLoteEnderecos()">Cadastrar Lote</button>
+    <pre id="resCadastrarLoteEndereco"></pre>
+</div>
+
+<!-- Listar Endereços -->
+<div class="section">
+    <h3>Listar Endereços</h3>
+    <button onclick="listarEnderecos()">Listar Todos</button>
+    <pre id="resListarEnderecos"></pre>
+</div>
+
+<!-- Buscar por ID -->
+<div class="section">
+    <h3>Buscar Endereço por ID</h3>
+    <input id="idBuscarEndereco" placeholder="ID" />
+    <button onclick="buscarEnderecoPorId()">Buscar</button>
+    <pre id="resBuscarEndereco"></pre>
+</div>
+
+<!-- Editar Endereço -->
+<div class="section">
+    <h3>Editar Endereço</h3>
+    <input id="idEditarEndereco" placeholder="ID" />
+    <input id="logradouroEditar" placeholder="Logradouro" />
+    <input id="numeroEditar" placeholder="Número" />
+    <input id="bairroEditar" placeholder="Bairro" />
+    <input id="cidadeEditar" placeholder="Cidade" />
+    <input id="cepEditar" placeholder="CEP" />
+    <select id="estadoEditarEndereco">
+        <option value="AC">AC</option><option value="AL">AL</option><option value="AP">AP</option>
+        <option value="AM">AM</option><option value="BA">BA</option><option value="CE">CE</option>
+        <option value="DF">DF</option><option value="ES">ES</option><option value="GO">GO</option>
+        <option value="MA">MA</option><option value="MT">MT</option><option value="MS">MS</option>
+        <option value="MG">MG</option><option value="PA">PA</option><option value="PB">PB</option>
+        <option value="PR">PR</option><option value="PE">PE</option><option value="PI">PI</option>
+        <option value="RJ">RJ</option><option value="RN">RN</option><option value="RS">RS</option>
+        <option value="RO">RO</option><option value="RR">RR</option><option value="SC">SC</option>
+        <option value="SP">SP</option><option value="SE">SE</option><option value="TO">TO</option>
+    </select>
+    <input id="latitudeEditarEndereco" placeholder="Latitude" />
+    <input id="longitudeEditarEndereco" placeholder="Longitude" />
+    <button onclick="editarEndereco()">Editar</button>
+    <pre id="resEditarEndereco"></pre>
+</div>
+
+<!-- Excluir Endereço -->
+<div class="section">
+    <h3>Excluir Endereço</h3>
+    <input id="idExcluirEndereco" placeholder="ID" />
+    <button onclick="excluirEndereco()">Excluir</button>
+    <pre id="resExcluirEndereco"></pre>
+</div>
+
+<!-- Listar Próximos Endereços -->
+<div class="section">
+    <h3>Endereços Próximos</h3>
+    <input id="latitudeProx" placeholder="Latitude" />
+    <input id="longitudeProx" placeholder="Longitude" />
+    <input id="raioProx" placeholder="Raio km (opcional)" />
+    <input id="cidadeProx" placeholder="Cidade (opcional)" />
+    <select id="estadoProx">
+        <option value="">Todos</option>
+        <option value="AC">AC</option><option value="AL">AL</option><option value="AP">AP</option>
+        <option value="AM">AM</option><option value="BA">BA</option><option value="CE">CE</option>
+        <option value="DF">DF</option><option value="ES">ES</option><option value="GO">GO</option>
+        <option value="MA">MA</option><option value="MT">MT</option><option value="MS">MS</option>
+        <option value="MG">MG</option><option value="PA">PA</option><option value="PB">PB</option>
+        <option value="PR">PR</option><option value="PE">PE</option><option value="PI">PI</option>
+        <option value="RJ">RJ</option><option value="RN">RN</option><option value="RS">RS</option>
+        <option value="RO">RO</option><option value="RR">RR</option><option value="SC">SC</option>
+        <option value="SP">SP</option><option value="SE">SE</option><option value="TO">TO</option>
+    </select>
+    <button onclick="listarProximosEnderecos()">Listar Próximos</button>
+    <pre id="resProximosEnderecos"></pre>
+</div>

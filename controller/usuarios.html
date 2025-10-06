@@ -1,0 +1,46 @@
+<div class="section">
+    <h2>Cadastrar Usuário</h2>
+    <input id="nomeUsuario" placeholder="Nome" />
+    <input id="emailUsuario" placeholder="E-mail" />
+    <input id="senhaUsuario" type="password" placeholder="Senha" />
+    <select id="tipoUsuario">
+        <option value="ADMIN">ADMIN</option>
+        <option value="COMUM">COMUM</option>
+    </select>
+    <button onclick="cadastrarUsuario()">Cadastrar</button>
+    <pre id="resCadastrarUsuario"></pre>
+</div>
+
+<div class="section">
+    <h2>Listar Usuários</h2>
+    <button onclick="listarUsuarios()">Listar Todos</button>
+    <pre id="resListarUsuarios"></pre>
+</div>
+
+<div class="section">
+    <h2>Buscar Usuário por ID</h2>
+    <input id="idBuscarUsuario" placeholder="ID" />
+    <button onclick="buscarUsuarioPorId()">Buscar</button>
+    <pre id="resBuscarUsuario"></pre>
+</div>
+
+<div class="section">
+    <h2>Editar Usuário</h2>
+    <input id="idEditarUsuario" placeholder="ID" />
+    <input id="nomeEditarUsuario" placeholder="Nome" />
+    <input id="emailEditarUsuario" placeholder="E-mail" />
+    <input id="senhaEditarUsuario" type="password" placeholder="Senha" />
+    <select id="tipoEditarUsuario">
+        <option value="ADMIN">ADMIN</option>
+        <option value="COMUM">COMUM</option>
+    </select>
+    <button onclick="editarUsuario()">Editar</button>
+    <pre id="resEditarUsuario"></pre>
+</div>
+
+<div class="section">
+    <h2>Excluir Usuário</h2>
+    <input id="idExcluirUsuario" placeholder="ID" />
+    <button onclick="excluirUsuario()">Excluir</button>
+    <pre id="resExcluirUsuario"></pre>
+</div>
