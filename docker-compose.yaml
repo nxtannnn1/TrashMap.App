@@ -1,0 +1,51 @@
+services:
+  db:
+    image: postgres:15
+    restart: always
+    container_name: postgres-container
+    environment:
+      POSTGRES_DB: trashmap
+      POSTGRES_USER: natan
+      POSTGRES_PASSWORD: natan
+    ports:
+      - "5432:5432"
+    networks:
+      private_network:
+
+  backend:
+    build:
+      context: "./backend"
+      dockerfile: Dockerfile
+    container_name: teste
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/trashmap
+      SPRING_DATASOURCE_USERNAME: natan
+      SPRING_DATASOURCE_PASSWORD: natan
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      private_network:
+      public_network:
+
+  frontend:
+    build:
+      context: "./frontend"
+      dockerfile: Dockerfile
+    container_name: trashmap-frontend
+    restart: always
+    ports:
+      - "80:80"
+    networks:
+      public_network:
+
+
+networks:
+  private_network:
+    driver: bridge
+  public_network:
+    driver: bridge
