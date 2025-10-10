@@ -1,0 +1,37 @@
+######################
+# AMBIENTE & PACOTES #
+######################
+.idea/             # Arquivos de configuração do IntelliJ/Android Studio
+.DS_Store          # Arquivos de metadados do macOS
+*.iml              # Arquivos de módulo do IntelliJ/IDEA
+*.iws
+*.ipr
+.project
+.classpath
+
+######################
+# DADOS SENSÍVEIS    #
+######################
+# Seu arquivo .env na raiz que contém as credenciais
+.env
+
+######################
+# BUILD DO BACKEND (Kotlin/Spring Boot) #
+######################
+/backend/build/    # Diretório de build principal do Gradle/Kotlin
+/backend/.gradle/  # Cache do Gradle
+/backend/out/      # Diretórios de saída (output)
+*.jar              # Arquivos JAR compilados
+
+######################
+# DOCKER & LOGS      #
+######################
+# Logs e arquivos temporários
+*.log
+log/
+temp/
+
+# Arquivos gerados pelo Docker Compose (se você usar volumes persistentes)
+# Você pode querer adicionar pastas de dados do PostgreSQL, se existirem na raiz
+# Exemplo:
+# /postgres-data/
