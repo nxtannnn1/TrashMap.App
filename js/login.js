@@ -1,6 +1,4 @@
-// login.js
-
-document.getElementById('loginForm').addEventListener('submit', function(event) {
+document.getElementById('loginForm').addEventListener('submit', async function(event) {
     event.preventDefault();
 
     const nome = document.getElementById('nome').value;
@@ -10,36 +8,38 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
     const mensagemErro = document.getElementById('mensagem-erro');
     
     mensagemErro.textContent = '';
-    
-    // --- LÓGICA DE AUTENTICAÇÃO SIMULADA ---
-    
-    let isAutenticado = false;
-    
-    // Credenciais de ADMIN (simuladas)
-    if (email === 'admin@app.com' && senha === '12345' && perfil === 'ADMIN') {
-        isAutenticado = true;
-        // 1. Armazena as informações de login no navegador (usando LocalStorage)
-        localStorage.setItem('userLoggedIn', 'true');
-        localStorage.setItem('userProfile', 'ADMIN');
-        localStorage.setItem('userName', nome);
 
-    } 
-    // Credenciais de MODERADOR (simuladas)
-    else if (email === 'mod@app.com' && senha === '12345' && perfil === 'MOD') {
-        isAutenticado = true;
-        // 1. Armazena as informações de login no navegador
+    try {
+        // Envia POST para o backend
+        const response = await fetch('http://localhost:8080/usuarios/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                nome: nome,
+                email: email,
+                senha: senha,
+                tipoUsuario: perfil  // deve bater com o enum do backend: ADMIN ou MODERADOR
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error('Credenciais ou perfil incorretos');
+        }
+
+        // Recebe o DTO retornado pelo backend
+        const data = await response.json();
+
+        // Armazena informações no LocalStorage
         localStorage.setItem('userLoggedIn', 'true');
-        localStorage.setItem('userProfile', 'MOD');
-        localStorage.setItem('userName', nome);
-    }
-    
-    // 2. Ação após a verificação
-    if (isAutenticado) {
-        alert(`Bem-vindo(a) ${nome}! Acesso concedido.`);
-        
-        // 3. Redireciona para o Painel SPA (index.html)
+        localStorage.setItem('userProfile', data.tipoUsuario);
+        localStorage.setItem('userName', data.nome);
+
+        alert(`Bem-vindo(a) ${data.nome}! Acesso concedido.`);
         window.location.href = 'index.html'; 
-    } else {
-        mensagemErro.textContent = 'Erro: Credenciais ou perfil incorretos. Tente novamente.';
+
+    } catch (error) {
+        mensagemErro.textContent = `Erro: ${error.message}`;
     }
 });
