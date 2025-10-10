@@ -1,19 +1,14 @@
-// ================================
-// 1️⃣ Verificação de login
-// ================================
 (function checkAuth() {
     const isLoggedIn = localStorage.getItem('userLoggedIn');
-
-    // Redireciona para login caso não esteja logado
+    
+    // Se não estiver logado, redireciona de volta para a tela de login
     if (isLoggedIn !== 'true') {
         alert('Você precisa fazer login para acessar o painel.');
-        window.location.href = 'login.html';
+        // Substitua 'login.html' pelo nome do seu arquivo de login
+        window.location.href = 'login.html'; 
     }
 })();
 
-// ================================
-// 2️⃣ Função para carregar controllers
-// ================================
 function loadController(name) {
     fetch(`controller/${name}.html`)
         .then(res => {
@@ -24,7 +19,7 @@ function loadController(name) {
             const main = document.getElementById('main-content');
             main.innerHTML = html;
 
-            // Remove script antigo, se houver
+            // Remove scripts anteriores
             const oldScript = document.getElementById('controller-script');
             if (oldScript) oldScript.remove();
 
@@ -35,7 +30,6 @@ function loadController(name) {
             document.body.appendChild(script);
         })
         .catch(err => {
-            const main = document.getElementById('main-content');
-            main.innerHTML = `<p>Erro ao carregar: ${err.message}</p>`;
+            document.getElementById('main-content').innerHTML = `<p>Erro ao carregar: ${err.message}</p>`;
         });
 }

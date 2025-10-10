@@ -4,27 +4,6 @@
     <meta charset="UTF-8">
     <title>TrashMap SPA</title>
     <link rel="stylesheet" href="css/style.css">
-    <script>
-        // =========================
-        // 1️⃣ Proteção do painel
-        // =========================
-        const isLoggedIn = localStorage.getItem('userLoggedIn');
-        const userProfile = localStorage.getItem('userProfile');
-
-        // Redireciona para login se não estiver logado ou perfil inválido
-        if (isLoggedIn !== 'true' || (userProfile !== 'ADMIN' && userProfile !== 'MODERADOR')) {
-            alert('Você precisa fazer login com um perfil válido para acessar o painel.');
-            window.location.href = 'login.html';
-        }
-
-        // =========================
-        // 2️⃣ Logout
-        // =========================
-        function logout() {
-            localStorage.clear(); // limpa dados ao sair
-            window.location.href = 'login.html';
-        }
-    </script>
 </head>
 <body>
     <div class="container">
@@ -35,8 +14,7 @@
                 <li><a href="#" onclick="loadController('caminhoes')">Caminhões</a></li>
                 <li><a href="#" onclick="loadController('pontos')">Pontos de Coleta</a></li>
                 <li><a href="#" onclick="loadController('enderecos')">Endereços</a></li>
-                <li><a href="#" onclick="loadController('usuarios')">Usuários</a></li>
-                <li><a href="#" onclick="logout()">Sair</a></li>
+                 <li><a href="#" onclick="loadController('usuarios')">Usuários</a></li>
             </ul>
         </nav>
 
