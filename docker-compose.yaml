@@ -1,51 +1,55 @@
-services:
-  db:
-    image: postgres:15
-    restart: always
-    container_name: trashmap-database
-    environment:
-      POSTGRES_DB: trashmap
-      POSTGRES_USER: natan
-      POSTGRES_PASSWORD: natan
+services: # Services dizem respeito aos conteineres que serão inicializados
+  db: # Serviço do banco de dados
+    image: postgres:15 # Utilizo como base a versão 15 do PostgreSQL
+    restart: always # Sempre que a aplicação cair, ela reinicia
+    container_name: trashmap-database # Nome do container
+    environment: # Definição das variáveis de ambiente
+      POSTGRES_DB: ${POSTGRES_DB} # Nome do banco de dados, definido no .env
+      POSTGRES_USER: ${POSTGRES_USER} # Proprietário do banco de dados, definido no .env
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD} # Senha de acesso ao banco de dados, definido no .env
     ports:
-      - "5432:5432"
-    networks:
-      private_network:
+      - "5432:5432" # Mapeio a porta 5432 do conteiner ao host/hospedeiro
+    networks: # Configuração de rede
+      private_network: # Rede privada para que haja apenas comunicação entre este e o backend, evitando exposição desnecessárias de dados
+    healthcheck: # Verificação de integridade do serviço
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER}" ]
+      interval: 10s
+      retries: 5
 
-  backend:
-    build:
-      context: "./backend"
-      dockerfile: Dockerfile
-    container_name: trashmap-backend
-    restart: always
+  backend: # Serviço do backend, API e regras de negócio
+    build: # Instruções de build do container
+      context: "./backend" # Pasta onde se encontra o Dockerfile
+    container_name: trashmap-backend # Nome do container
+    restart: always # Sempre que a aplicação cair, ela reinicia
     ports:
-      - "8080:8080"
+      - "8080:8080" # Mapeio a porta 8080 do conteiner ao host/hospedeiro
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/trashmap
-      SPRING_DATASOURCE_USERNAME: natan
-      SPRING_DATASOURCE_PASSWORD: natan
-      SPRING_JPA_HIBERNATE_DDL_AUTO: update
-    depends_on:
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL} # URL do banco de dados, definido no .env
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME} # Usuário do banco
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD} # Senha do banco
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update # Estratégia de atualização do schema
+    depends_on: # Define dependência do backend em relação ao banco de dados
       db:
-        condition: service_healthy
+        condition: service_healthy # Backend só inicia após o banco estar saudável
     networks:
-      private_network:
-      public_network:
+      private_network: # Comunicação interna com o banco
+      public_network: # Comunicação com o frontend
 
-  frontend:
-    build:
-      context: "./frontend"
-      dockerfile: Dockerfile
-    container_name: trashmap-frontend
-    restart: always
+  frontend: # Serviço responsável pela interface do usuário
+    build: # Instruções de build do container
+      context: "./frontend" # Pasta onde se encontra o Dockerfile
+    container_name: trashmap-frontend # Nome do container
+    restart: always # Sempre que a aplicação cair, ela reinicia
     ports:
-      - "80:80"
+      - "80:80" # Mapeio a porta 80 do conteiner ao host/hospedeiro
     networks:
-      public_network:
+      public_network: # Rede pública para acesso via navegador
 
 
-networks:
-  private_network:
+networks: # Definição das redes de comunicação entre os serviços
+  private_network: # Rede privada para backend e banco de dados
     driver: bridge
-  public_network:
+  public_network: # Rede pública para backend e frontend
     driver: bridge
+
+
