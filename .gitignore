@@ -22,6 +22,8 @@
 /backend/.gradle/  # Cache do Gradle
 /backend/out/      # Diretórios de saída (output)
 *.jar              # Arquivos JAR compilados
+/build
+/.gradle
 
 ######################
 # DOCKER & LOGS      #
