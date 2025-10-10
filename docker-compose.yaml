@@ -2,7 +2,7 @@ services:
   db:
     image: postgres:15
     restart: always
-    container_name: postgres-container
+    container_name: trashmap-database
     environment:
       POSTGRES_DB: trashmap
       POSTGRES_USER: natan
@@ -16,7 +16,7 @@ services:
     build:
       context: "./backend"
       dockerfile: Dockerfile
-    container_name: teste
+    container_name: trashmap-backend
     restart: always
     ports:
       - "8080:8080"
