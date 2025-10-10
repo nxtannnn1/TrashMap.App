@@ -32,7 +32,7 @@
 *.log
 log/
 temp/
-/.idea
+.idea
 
 # Arquivos gerados pelo Docker Compose (se você usar volumes persistentes)
 # Você pode querer adicionar pastas de dados do PostgreSQL, se existirem na raiz
