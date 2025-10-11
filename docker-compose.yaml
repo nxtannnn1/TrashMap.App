@@ -18,7 +18,7 @@ services: # Services dizem respeito aos conteineres que serão inicializados
 
   backend: # Serviço do backend, API e regras de negócio
     build: # Instruções de build do container
-      context: "./backend" # Pasta onde se encontra o Dockerfile
+      context: "../backend" # Pasta onde se encontra o Dockerfile
     container_name: trashmap-backend # Nome do container
     restart: always # Sempre que a aplicação cair, ela reinicia
     ports:
@@ -37,7 +37,7 @@ services: # Services dizem respeito aos conteineres que serão inicializados
 
   frontend: # Serviço responsável pela interface do usuário
     build: # Instruções de build do container
-      context: "./frontend" # Pasta onde se encontra o Dockerfile
+      context: "../frontend" # Pasta onde se encontra o Dockerfile
     container_name: trashmap-frontend # Nome do container
     restart: always # Sempre que a aplicação cair, ela reinicia
     ports:
