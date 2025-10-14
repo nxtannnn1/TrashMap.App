@@ -12,7 +12,9 @@ import com.sistema.trashmap.exception.EmailJaExistenteException
 import com.sistema.trashmap.exception.UsuarioNaoEncontradoException
 import com.sistema.trashmap.infrastructure.repository.UsuarioRepository
 import com.sistema.trashmap.validation.NomeValidator
+import com.sistema.trashmap.validation.SenhaValidator
 import jakarta.annotation.PostConstruct
+import main.kotlin.com.sistema.trashmap.exception.SenhaIncorretaException
 import org.springframework.data.domain.Pageable
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
@@ -159,11 +161,30 @@ class UsuarioService(val usuarioRepository: UsuarioRepository, val passwordEncod
                 usuarioLoginDTORequest.senha,
                 usuario.senha
             )
-        ) throw RuntimeException("Senha incorreta")
+        ) throw SenhaIncorretaException("Senha incorreta")
 
 
         return LoginMapper.toDto(usuario)
     }
 
+    fun alterarSenha(id: Long, senhaAtual: String, senhaNova: String) {
+        val usuario = usuarioRepository.findById(id)
+            .orElseThrow { UsuarioNaoEncontradoException("Usuário de id $id não encontrado") }
+
+        if (!passwordEncoder.matches(
+                senhaAtual,
+                senhaNova
+            )
+        ) throw SenhaIncorretaException("Senha incorreta")
+
+        SenhaValidator.validate(senhaNova)
+
+        usuario.senha = passwordEncoder.encode(senhaNova)
+        usuarioRepository.save(usuario)
+
+    }
+
 
 }
+
+

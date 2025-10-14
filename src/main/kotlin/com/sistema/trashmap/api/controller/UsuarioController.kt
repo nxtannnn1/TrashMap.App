@@ -33,7 +33,10 @@ class UsuarioController(val usuarioService: UsuarioService) {
         ResponseEntity.ok(usuarioService.listarUsuarioPorId(id))
 
     @GetMapping
-    fun listarUsuarios(pageable: Pageable, @RequestParam(required = false) email: String?): ResponseEntity<List<UsuarioDTOResponse>> =
+    fun listarUsuarios(
+        pageable: Pageable,
+        @RequestParam(required = false) email: String?
+    ): ResponseEntity<List<UsuarioDTOResponse>> =
         ResponseEntity.ok(usuarioService.listarUsuarios(pageable, email))
 
     @PutMapping("/{id}")
@@ -47,4 +50,13 @@ class UsuarioController(val usuarioService: UsuarioService) {
     fun excluirUsuarioPorId(@PathVariable id: Long) =
         usuarioService.excluirUsuarioPorId(id)
 
+    @PutMapping("/alterar-senha")
+    fun alterarSenha(
+        @RequestParam(required = true) id: Long,
+        @RequestParam(required = true) senhaAtual: String,
+        @RequestParam(required = true) senhaNova: String
+    ): ResponseEntity<Void> {
+        usuarioService.alterarSenha(id, senhaAtual, senhaNova)
+        return ResponseEntity.noContent().build()
+    }
 }
