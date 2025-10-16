@@ -1,82 +1,85 @@
 // src/screens/App/RotasScreen.tsx
 import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, TextInput, SafeAreaView, StatusBar, Dimensions, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, Dimensions, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { StatusBar } from 'expo-status-bar';
 
-// Ferramentas de responsividade
 const { width } = Dimensions.get('window');
 const guidelineBaseWidth = 375;
 const scale = (size: number) => (width / guidelineBaseWidth) * size;
 const moderateScale = (size: number, factor = 0.5) => size + (scale(size) - size) * factor;
 
-// Dados de exemplo
-const rotas = [
-    { id: '1', name: 'Dendezeiros X Ribeira' }, { id: '2', name: 'Barra X Ondina' },
-    { id: '3', name: 'Cajazeiras X Valéria' }, { id: '4', name: 'Uruguai X Massaranduba' },
-    { id: '5', name: 'Paripe X Plataforma' }, { id: '6', name: 'Lobato X Pirajá' },
-];
+const rotas = [ { id: '1', name: 'Dendezeiros X Ribeira' }, { id: '2', name: 'Barra X Ondina' } ];
 
 const RotasScreen: React.FC = () => {
     const router = useRouter();
-    // Simulação de dados do usuário
-    const userName = "Kleber";
+    const insets = useSafeAreaInsets();
 
     return (
         <SafeAreaView style={styles.safeArea}>
-            <StatusBar barStyle="light-content" />
-            <View style={styles.header}>
+            <StatusBar style="light" backgroundColor="#2A6E4F" />
+            <View style={[styles.header, { paddingTop: insets.top + moderateScale(10) }]}>
                 <View>
                     <Text style={styles.headerTitle}>Rotas</Text>
                     <Text style={styles.headerSubtitle}>Escolha a rota mais próxima!</Text>
                 </View>
                 <View style={styles.headerIcons}>
-                    <TouchableOpacity onPress={() => router.push('/notificacoes')}><Text style={styles.emojiIcon}>🔔</Text></TouchableOpacity>
-                    <Image source={require('../../assets/profile_placeholder.png')} style={styles.profilePic} />
+                    <TouchableOpacity style={styles.headerIconButton} onPress={() => router.push('/notificacoes')}>
+                        <MaterialCommunityIcons name="bell-outline" size={moderateScale(26)} color="white" />
+                    </TouchableOpacity>
+                    {/* ANOTAÇÃO: CORREÇÃO AQUI! Imagem substituída pelo ícone de perfil. */}
+                    <TouchableOpacity style={styles.headerIconButton} onPress={() => {/* Lógica para perfil */}}>
+                        <Ionicons name="person-circle-outline" size={moderateScale(30)} color="white" />
+                    </TouchableOpacity>
                 </View>
             </View>
-
             <View style={styles.container}>
-                <TouchableOpacity style={styles.darkButton}>
+                <TouchableOpacity style={styles.darkButton} onPress={() => router.push('/favoritos')}>
                     <Text style={styles.darkButtonText}>Favoritos</Text>
                 </TouchableOpacity>
-
                 <View style={styles.searchContainer}>
-                    <Text style={styles.emojiIcon}>🔍</Text> 
+                    <Ionicons name="search" size={moderateScale(20)} color="#555" />
                     <TextInput style={styles.searchInput} placeholder="Rotas" placeholderTextColor="#888" />
-                    <TouchableOpacity style={styles.favoriteButton}><Text style={styles.emojiIcon}>🤍</Text></TouchableOpacity>
+                    <TouchableOpacity style={styles.favoriteButton}>
+                        <Ionicons name="heart-outline" size={moderateScale(20)} color="#555" />
+                    </TouchableOpacity>
                 </View>
-
                 <ScrollView style={styles.listContainer}>
                     {rotas.map(rota => (
                         <TouchableOpacity key={rota.id} style={styles.listItem}>
-                            <Text style={styles.listIcon}>🔁</Text>
+                            <MaterialCommunityIcons name="swap-horizontal" size={moderateScale(24)} color="#2E7D32" style={styles.listIcon} />
                             <Text style={styles.listItemText}>{rota.name}</Text>
                         </TouchableOpacity>
                     ))}
                 </ScrollView>
             </View>
-            <TouchableOpacity style={styles.closeButton} onPress={() => router.back()}>
-                <Text style={styles.closeButtonText}>X</Text>
+            <TouchableOpacity style={[styles.closeButton, { bottom: insets.bottom + moderateScale(20) }]} onPress={() => router.dismissAll()}>
+                <Ionicons name="close" size={moderateScale(28)} color="white" />
             </TouchableOpacity>
         </SafeAreaView>
     );
 };
 
-// Estilos para RotasScreen (e FavoritosScreen, são similares)
 const styles = StyleSheet.create({
-    safeArea: { flex: 1, backgroundColor: '#2E7D32' }, // Verde mais escuro do header
-    container: { flex: 1, backgroundColor: '#66BB6A', padding: moderateScale(20) }, // Verde claro do corpo
+    safeArea: { flex: 1, backgroundColor: '#2A6E4F' },
+    container: { flex: 1, backgroundColor: '#6EB030', padding: moderateScale(20) },
     header: {
-        backgroundColor: '#2E7D32', paddingHorizontal: moderateScale(20), paddingVertical: moderateScale(15),
+        backgroundColor: '#2A6E4F', paddingHorizontal: moderateScale(20), paddingVertical: moderateScale(15),
         borderBottomLeftRadius: moderateScale(20), borderBottomRightRadius: moderateScale(20),
         flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
     },
     headerTitle: { color: 'white', fontSize: moderateScale(28), fontWeight: 'bold' },
     headerSubtitle: { color: 'white', fontSize: moderateScale(16) },
     headerIcons: { flexDirection: 'row', alignItems: 'center', gap: moderateScale(15) },
-    profilePic: { width: moderateScale(45), height: moderateScale(45), borderRadius: moderateScale(22.5) },
+    headerIconButton: {
+        backgroundColor: '#6EB030',
+        width: moderateScale(45), height: moderateScale(45),
+        borderRadius: moderateScale(22.5), justifyContent: 'center', alignItems: 'center',
+    },
     darkButton: {
-        backgroundColor: '#2E7D32', alignSelf: 'center', paddingVertical: moderateScale(12),
+        backgroundColor: '#2A6E4F', alignSelf: 'center', paddingVertical: moderateScale(12),
         paddingHorizontal: moderateScale(30), borderRadius: moderateScale(50), marginBottom: moderateScale(20),
     },
     darkButtonText: { color: 'white', fontSize: moderateScale(16), fontWeight: 'bold' },
@@ -95,15 +98,14 @@ const styles = StyleSheet.create({
         backgroundColor: 'white', borderRadius: moderateScale(15), padding: moderateScale(20),
         flexDirection: 'row', alignItems: 'center', marginBottom: moderateScale(10),
     },
-    listIcon: { fontSize: moderateScale(20), marginRight: moderateScale(15), color: '#2E7D32' },
+    listIcon: { marginRight: moderateScale(15) },
     listItemText: { fontSize: moderateScale(16), fontWeight: '500', color: '#333' },
     closeButton: {
-        position: 'absolute', bottom: moderateScale(20), alignSelf: 'center',
-        backgroundColor: '#2E7D32', width: moderateScale(50), height: moderateScale(50),
-        borderRadius: moderateScale(25), justifyContent: 'center', alignItems: 'center',
+        position: 'absolute', alignSelf: 'center', backgroundColor: '#2A6E4F', 
+        width: moderateScale(50), height: moderateScale(50), borderRadius: moderateScale(25), 
+        justifyContent: 'center', alignItems: 'center', elevation: 5, shadowColor: '#000',
+        zIndex: 10,
     },
-    closeButtonText: { color: 'white', fontSize: moderateScale(20), fontWeight: 'bold' },
-    emojiIcon: { fontSize: moderateScale(20) }
 });
 
 export default RotasScreen;

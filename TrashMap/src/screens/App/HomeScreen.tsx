@@ -1,8 +1,9 @@
 // src/screens/App/HomeScreen.tsx
 import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, TextInput, StatusBar, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, StatusBar, Dimensions } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 
 const { width } = Dimensions.get('window');
 const guidelineBaseWidth = 375;
@@ -16,86 +17,127 @@ const HomeScreen: React.FC = () => {
     const userName = "Usuário";
 
     return (
-        <View style={styles.container}>
-            <StatusBar barStyle="light-content" backgroundColor="#2A6E4F" />
-            <View style={[styles.header, { paddingTop: insets.top + moderateScale(10) }]}>
+        <SafeAreaView style={styles.container}>
+            {/* ANOTAÇÃO: Cor do StatusBar atualizada */}
+            <StatusBar barStyle="light-content" backgroundColor="#1E603A" />
+
+            <View style={styles.innerContainer}>
                 <View>
-                    <Text style={styles.headerTitle}>Olá, {isLoggedIn ? userName : 'Visitante'}!</Text>
-                    <Text style={styles.headerSubtitle}>Combata a poluição!</Text>
+                    <View style={[styles.header, { paddingTop: insets.top > 0 ? insets.top : moderateScale(15) }]}>
+                        <View>
+                            <Text style={styles.headerTitle}>Olá, {isLoggedIn ? userName : 'Visitante'}!</Text>
+                            <Text style={styles.headerSubtitle}>Combata a poluição!</Text>
+                        </View>
+                        <View style={styles.headerIcons}>
+                            <TouchableOpacity style={styles.headerIconButton} onPress={() => router.push('/notificacoes')}>
+                                <MaterialCommunityIcons name="bell-outline" size={moderateScale(26)} color="white" />
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.headerIconButton} onPress={() => !isLoggedIn && router.push('/login')}>
+                                <Ionicons name="person-circle-outline" size={moderateScale(30)} color="white" />
+                            </TouchableOpacity>
+                        </View>
+                    </View>
                 </View>
-                <View style={styles.headerIcons}>
-                    <TouchableOpacity style={styles.iconButton} onPress={() => router.push('/notificacoes')}>
-                        <Text style={styles.emojiIcon}>🔔</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => !isLoggedIn && router.push('/login')}>
-                        <Image
-                            source={require('../../assets/profile_placeholder.png')}
-                            style={styles.profilePic}
-                        />
-                    </TouchableOpacity>
+
+                <View style={styles.mapPlaceholder}>
+                    <Text style={styles.mapPlaceholderText}>O mapa aparecerá aqui</Text>
                 </View>
-            </View>
 
-            <View style={styles.mapPlaceholder}>
-                <Text style={styles.mapPlaceholderText}>O mapa aparecerá aqui</Text>
-            </View>
+                <View style={styles.footerBackground} />
 
-            <TouchableOpacity onPress={() => router.push('/rotas')}>
-                <View style={[styles.searchContainer, { bottom: insets.bottom + moderateScale(15) }]}>
-                    <Text style={styles.emojiIcon}>🔍</Text>
+                {/* ANOTAÇÃO: Posição 'bottom' ajustada para 15, deixando a barra mais baixa. */}
+                <TouchableOpacity
+                    style={[styles.searchContainer, { bottom: insets.bottom > 0 ? insets.bottom + 5 : moderateScale(95) }]}
+                    onPress={() => router.push('/rotas')}
+                    activeOpacity={0.8}
+                >
+                    <Ionicons name="search" size={moderateScale(22)} color="#555" />
                     <TextInput
                         style={styles.searchInput}
-                        placeholder="Rotas"
+                        placeholder="Pesquisar rotas..."
                         placeholderTextColor="#888"
-                        // Impede que o teclado abra, já que a barra é um botão
                         editable={false}
                     />
                     <TouchableOpacity
                         style={styles.favoriteButton}
                         onPress={(e) => {
-                            // Impede que o clique na barra de busca seja ativado junto
                             e.stopPropagation();
                             router.push('/favoritos');
                         }}
                     >
-                        <Text style={styles.emojiIcon}>🤍</Text>
+                        <Ionicons name="heart-outline" size={moderateScale(22)} color="#555" />
                     </TouchableOpacity>
-                </View>
-            </TouchableOpacity>
-        </View>
-        </View >
+                </TouchableOpacity>
+            </View>
+        </SafeAreaView>
     );
 };
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#EAEAEA' },
+    container: {
+        flex: 1,
+        backgroundColor: '#EAEAEA',
+    },
+    innerContainer: {
+        flex: 1,
+    },
     header: {
-        backgroundColor: '#2A6E4F', paddingHorizontal: moderateScale(20),
-        paddingBottom: moderateScale(20), borderBottomLeftRadius: moderateScale(20),
-        borderBottomRightRadius: moderateScale(20), flexDirection: 'row',
-        justifyContent: 'space-between', alignItems: 'center',
+        // ANOTAÇÃO: Cor do cabeçalho atualizada
+        backgroundColor: '#1E603A', 
+        paddingHorizontal: moderateScale(20),
+        paddingBottom: moderateScale(20), 
+        borderBottomLeftRadius: moderateScale(20),
+        borderBottomRightRadius: moderateScale(20), 
+        flexDirection: 'row',
+        justifyContent: 'space-between', 
+        alignItems: 'center',
     },
     headerTitle: { color: 'white', fontSize: moderateScale(24), fontWeight: 'bold' },
     headerSubtitle: { color: 'white', fontSize: moderateScale(16) },
-    headerIcons: { flexDirection: 'row', alignItems: 'center' },
-    profilePic: { width: moderateScale(45), height: moderateScale(45), borderRadius: moderateScale(45 / 2) },
-    iconButton: { marginRight: moderateScale(15) },
-    mapPlaceholder: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+    headerIcons: { flexDirection: 'row', alignItems: 'center', gap: moderateScale(15) },
+    headerIconButton: {
+        backgroundColor: '#6EB030',
+        width: moderateScale(45), height: moderateScale(45),
+        borderRadius: moderateScale(22.5), justifyContent: 'center', alignItems: 'center',
+    },
+    mapPlaceholder: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
     mapPlaceholderText: { fontSize: moderateScale(18), color: '#999', fontWeight: '500' },
+    footerBackground: {
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        height: moderateScale(15),
+        // ANOTAÇÃO: Cor do rodapé atualizada
+        backgroundColor: '#1E603A',
+        borderTopLeftRadius: moderateScale(20),
+        borderTopRightRadius: moderateScale(20),
+    },
     searchContainer: {
-        position: 'absolute', left: moderateScale(20), right: moderateScale(20),
+        position: 'absolute',
+        left: moderateScale(20),
+        right: moderateScale(20),
         backgroundColor: 'white', borderRadius: moderateScale(50), height: moderateScale(60),
         flexDirection: 'row', alignItems: 'center', paddingHorizontal: moderateScale(20),
         elevation: 8, shadowColor: '#000', shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.15, shadowRadius: 5,
     },
-    searchInput: { flex: 1, fontSize: moderateScale(18), color: '#333', marginLeft: moderateScale(10) },
+    searchInput: {
+        flex: 1,
+        fontSize: moderateScale(18),
+        color: '#333',
+        marginLeft: moderateScale(10),
+        pointerEvents: 'none',
+    },
     favoriteButton: {
         width: moderateScale(40), height: moderateScale(40), borderRadius: moderateScale(20),
         backgroundColor: '#f0f0f0', justifyContent: 'center', alignItems: 'center',
         marginLeft: moderateScale(10),
     },
-    emojiIcon: { fontSize: moderateScale(20) }
 });
 
 export default HomeScreen;
