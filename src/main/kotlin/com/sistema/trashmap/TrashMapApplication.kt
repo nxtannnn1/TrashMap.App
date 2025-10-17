@@ -1,5 +1,3 @@
-package com.sistema.trashmap
-
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 

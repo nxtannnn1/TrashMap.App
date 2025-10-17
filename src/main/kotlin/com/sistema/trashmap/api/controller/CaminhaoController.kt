@@ -2,7 +2,6 @@ package com.sistema.trashmap.api.controller
 
 import com.sistema.trashmap.api.dto.CaminhaoDTORequest
 import com.sistema.trashmap.api.dto.CaminhaoDTOResponse
-import com.sistema.trashmap.api.mapper.CaminhaoMapper
 import com.sistema.trashmap.application.service.CaminhaoService
 import com.sistema.trashmap.domain.enum.StatusCaminhao
 import com.sistema.trashmap.domain.model.Geopoint
@@ -51,8 +50,10 @@ class CaminhaoController(val caminhaoService: CaminhaoService) {
 
 
     @DeleteMapping("/{id}")
-    fun excluirCaminhaoPorId(@PathVariable id: Long) =
+    fun excluirCaminhaoPorId(@PathVariable id: Long): ResponseEntity<Void> {
         caminhaoService.excluirCaminhaoPorId(id)
+        return ResponseEntity.noContent().build()
+    }
 
     @PatchMapping("/{id}/status")
     fun atualizarStatusDoCaminhao(

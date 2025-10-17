@@ -43,7 +43,7 @@ class Caminhao(
     @NotNull(message = "Coordenadas devem ser informada")
     var coordenadas: Geopoint,
     //Coordenadas geográficas
-    //Utilizada para rastreamento em tempo real'
+    //Utilizada para rastreamento em tempo real
 
     @NotNull(message = "Favor inserir um valor válido")
     @DecimalMin(value = "1", message = "Pesagem mínima = 1Kg")
