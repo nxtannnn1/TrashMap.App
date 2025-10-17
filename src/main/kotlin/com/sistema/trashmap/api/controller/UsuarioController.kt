@@ -47,8 +47,10 @@ class UsuarioController(val usuarioService: UsuarioService) {
         ResponseEntity.ok(usuarioService.editarUsuarioPorId(id, usuarioDTORequest))
 
     @DeleteMapping("/{id}")
-    fun excluirUsuarioPorId(@PathVariable id: Long) =
+    fun excluirUsuarioPorId(@PathVariable id: Long): ResponseEntity<Void> {
         usuarioService.excluirUsuarioPorId(id)
+        return ResponseEntity.noContent().build()
+    }
 
     @PutMapping("/alterar-senha")
     fun alterarSenha(

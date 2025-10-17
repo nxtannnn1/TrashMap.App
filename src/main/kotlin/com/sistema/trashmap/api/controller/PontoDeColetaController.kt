@@ -40,7 +40,9 @@ class PontoDeColetaController(val pontoDeColetaService: PontoDeColetaService) {
         ResponseEntity.ok(pontoDeColetaService.editarPontoPorId(id, pontoDeColetaDTORequest))
 
     @DeleteMapping("/{id}")
-    fun excluirPontoPorId(@PathVariable id: Long) =
+    fun excluirPontoPorId(@PathVariable id: Long): ResponseEntity<Void> {
         pontoDeColetaService.excluirPontoPorId(id)
+        return ResponseEntity.noContent().build()
+    }
 
 }

@@ -35,7 +35,7 @@ class EnderecoController(val enderecoService: EnderecoService) {
 
 
     @PutMapping("/{id}")
-    fun editarCaminhaoPorId(
+    fun editarEnderecoPorId(
         @PathVariable id: Long,
         @RequestBody @Valid enderecoDTORequest: EnderecoDTORequest
     ): ResponseEntity<EnderecoDTOResponse> =
@@ -43,8 +43,10 @@ class EnderecoController(val enderecoService: EnderecoService) {
 
 
     @DeleteMapping("/{id}")
-    fun excluirEnderecoPorId(@PathVariable id: Long) =
+    fun excluirEnderecoPorId(@PathVariable id: Long): ResponseEntity<Void> {
         enderecoService.excluirEnderecoPorId(id)
+        return ResponseEntity.noContent().build()
+    }
 
 
     @GetMapping("/proximos")
