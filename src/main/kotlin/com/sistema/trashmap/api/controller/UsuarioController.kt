@@ -54,11 +54,21 @@ class UsuarioController(val usuarioService: UsuarioService) {
 
     @PatchMapping("/{id}/alterar-senha")
     fun alterarSenha(
-        @RequestParam(required = true) id: Long,
+        @PathVariable id: Long,
         @RequestParam(required = true) senhaAtual: String,
         @RequestParam(required = true) senhaNova: String
     ): ResponseEntity<Void> {
         usuarioService.alterarSenha(id, senhaAtual, senhaNova)
+        return ResponseEntity.noContent().build()
+    }
+
+    @PatchMapping("/{id}/alterar-email")
+    fun alterarEmail(
+        @PathVariable id: Long,
+        @RequestParam(required = true) emailAtual: String,
+        @RequestParam(required = true) emailNovo: String
+    ): ResponseEntity<Void> {
+        usuarioService.alterarEmail(id, emailAtual, emailNovo)
         return ResponseEntity.noContent().build()
     }
 }
