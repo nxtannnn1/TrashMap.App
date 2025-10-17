@@ -8,6 +8,7 @@ import com.sistema.trashmap.api.mapper.LoginMapper
 import com.sistema.trashmap.api.mapper.UsuarioMapper
 import com.sistema.trashmap.domain.enum.TipoUsuario
 import com.sistema.trashmap.domain.model.Usuario
+import com.sistema.trashmap.exception.EmailIncorretoException
 import com.sistema.trashmap.exception.EmailJaExistenteException
 import com.sistema.trashmap.exception.UsuarioNaoEncontradoException
 import com.sistema.trashmap.infrastructure.repository.UsuarioRepository
@@ -172,8 +173,8 @@ class UsuarioService(val usuarioRepository: UsuarioRepository, val passwordEncod
             .orElseThrow { UsuarioNaoEncontradoException("Usuário de id $id não encontrado") }
 
         if (!passwordEncoder.matches(
-                senhaAtual,
-                senhaNova
+                senhaAtual, // Senha inputada
+                usuario.senha //Senha já registrada no BD
             )
         ) throw SenhaIncorretaException("Senha incorreta")
 
@@ -182,6 +183,17 @@ class UsuarioService(val usuarioRepository: UsuarioRepository, val passwordEncod
         usuario.senha = passwordEncoder.encode(senhaNova)
         usuarioRepository.save(usuario)
 
+    }
+
+    fun alterarEmail(id: Long, emailAtual: String, emailNovo: String) {
+        val usuario =
+            usuarioRepository.findById(id)
+                .orElseThrow { UsuarioNaoEncontradoException("Usuário de id $id não encontrado") }
+
+        if (usuario.email != emailAtual) throw EmailIncorretoException("E-mail não confere!")
+
+        usuario.email = emailNovo
+        usuarioRepository.save(usuario)
     }
 
 

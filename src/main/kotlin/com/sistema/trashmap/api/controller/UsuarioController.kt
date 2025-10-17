@@ -52,7 +52,7 @@ class UsuarioController(val usuarioService: UsuarioService) {
         return ResponseEntity.noContent().build()
     }
 
-    @PutMapping("/alterar-senha")
+    @PatchMapping("/{id}/alterar-senha")
     fun alterarSenha(
         @RequestParam(required = true) id: Long,
         @RequestParam(required = true) senhaAtual: String,
