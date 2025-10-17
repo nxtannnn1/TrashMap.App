@@ -2,21 +2,30 @@ package com.sistema.trashmap.api.exceptionhandler
 
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
-import org.springframework.web.bind.MethodArgumentNotValidException
 
 // Lista de exceções personalizadas
 open class AppException(message: String?) : RuntimeException(message)
+
+//Não existe
 class CaminhaoNaoEncontrado(message: String?) : AppException(message)
-class CepInvalido(message: String?) : AppException(message)
-class EmailExiste(message: String?) : AppException(message)
-class EnderecoNaoEncontrado(message: String?) : AppException(message)
-class PlacaInvalida(message: String?) : AppException(message)
-class PlacaJaExiste(message: String?) : AppException(message)
 class PlacaNaoExiste(message: String?) : AppException(message)
 class PontoNaoEncontrado(message: String?) : AppException(message)
 class UsuarioNaoEncontrado(message: String?) : AppException(message)
+
+//Duplicidade
+class EmailExiste(message: String?) : AppException(message)
+class PlacaJaExistente(message: String?) : AppException(message)
+
+//Dados inválidos
+class CepInvalido(message: String?) : AppException(message)
+class EnderecoNaoEncontrado(message: String?) : AppException(message)
+class PlacaInvalida(message: String?) : AppException(message)
+class SenhaInvalida(message: String?) : AppException(message)
+class NomeInvalido(message: String?) : AppException(message)
+class SenhaIncorreta(message: String?) : AppException(message)
 
 @RestControllerAdvice
 class GlobalExceptionHandler {
@@ -44,10 +53,13 @@ class GlobalExceptionHandler {
             is PlacaNaoExiste -> HttpStatus.NOT_FOUND
 
             is CepInvalido,
-            is PlacaInvalida -> HttpStatus.BAD_REQUEST
+            is PlacaInvalida,
+            is SenhaInvalida,
+            is NomeInvalido,
+            is SenhaIncorreta -> HttpStatus.BAD_REQUEST
 
             is EmailExiste,
-            is PlacaJaExiste -> HttpStatus.CONFLICT
+            is PlacaJaExistente -> HttpStatus.CONFLICT
 
             else -> HttpStatus.INTERNAL_SERVER_ERROR
         }
