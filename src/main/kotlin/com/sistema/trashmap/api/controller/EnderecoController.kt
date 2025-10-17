@@ -5,6 +5,7 @@ import com.sistema.trashmap.api.dto.EnderecoDTOResponse
 import com.sistema.trashmap.application.service.EnderecoService
 import com.sistema.trashmap.domain.enum.Estado
 import jakarta.validation.Valid
+import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -30,8 +31,15 @@ class EnderecoController(val enderecoService: EnderecoService) {
         ResponseEntity.ok(enderecoService.listarEnderecoPorId(id))
 
     @GetMapping
-    fun listarEnderecos(): ResponseEntity<List<EnderecoDTOResponse>> =
-        ResponseEntity.ok(enderecoService.listarEnderecos())
+    fun listarEnderecos(
+        pageable: Pageable,
+        @RequestParam(required = false) latitude: BigDecimal,
+        @RequestParam(required = false) longitude: BigDecimal,
+        @RequestParam(required = false) raioKm: BigDecimal,
+        @RequestParam(required = false) cidade: String?,
+        @RequestParam(required = false) estado: Estado?
+    ): ResponseEntity<List<EnderecoDTOResponse>> =
+        ResponseEntity.ok(enderecoService.listarEnderecos(pageable, latitude, longitude, raioKm, cidade, estado))
 
 
     @PutMapping("/{id}")
@@ -48,20 +56,4 @@ class EnderecoController(val enderecoService: EnderecoService) {
         return ResponseEntity.noContent().build()
     }
 
-
-    @GetMapping("/proximos")
-    fun listarEnderecosProximos(
-        @RequestParam latitude: BigDecimal,
-        @RequestParam longitude: BigDecimal,
-        @RequestParam(required = false, defaultValue = "5.0") raioKm: BigDecimal,
-        @RequestParam(required = false) cidade: String?,
-        @RequestParam(required = false) estado: Estado?
-    ): List<EnderecoDTOResponse> =
-        enderecoService.listarEnderecosProximos(
-            latitude = latitude,
-            longitude = longitude,
-            raioKm = raioKm,
-            cidade = cidade,
-            estado = estado
-        )
 }

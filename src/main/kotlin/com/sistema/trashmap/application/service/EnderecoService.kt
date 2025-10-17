@@ -12,6 +12,7 @@ import com.sistema.trashmap.infrastructure.repository.EnderecoRepository
 import com.sistema.trashmap.util.GeoUtils
 import com.sistema.trashmap.validation.CepValidator
 import jakarta.transaction.Transactional
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 
@@ -90,10 +91,29 @@ class EnderecoService(val enderecoRepository: EnderecoRepository) {
         return EnderecoMapper.toDto(enderecoRepository.save(endereco))
     }
 
-    fun listarEnderecos(): List<EnderecoDTOResponse> =
-        enderecoRepository.findAll().map {
-            EnderecoMapper.toDto(it)
+    fun listarEnderecos(
+        pageable: Pageable,
+        latitude: BigDecimal? = null,
+        longitude: BigDecimal? = null,
+        raioKm: BigDecimal = BigDecimal("5.0"), // raio como BigDecimal
+        cidade: String? = null,
+        estado: Estado? = null
+    ): List<EnderecoDTOResponse> {
+
+        val enderecos = if (latitude != null && longitude != null) {
+            listarEnderecosProximos(
+                latitude,
+                longitude,
+                raioKm,
+                cidade,
+                estado
+            )
+        } else {
+            enderecoRepository.findAll(pageable).content
         }
+
+        return enderecos.map { EnderecoMapper.toDto(it) }
+    }
 
 
     @Transactional
@@ -102,14 +122,13 @@ class EnderecoService(val enderecoRepository: EnderecoRepository) {
             enderecoRepository.findById(id)
                 .orElseThrow { EnderecoNaoEncontradoException("Endereço de id $id não encontrado") })
 
-
     fun listarEnderecosProximos(
         latitude: BigDecimal,
         longitude: BigDecimal,
         raioKm: BigDecimal = BigDecimal("5.0"), // raio como BigDecimal
         cidade: String? = null,
         estado: Estado? = null
-    ): List<EnderecoDTOResponse> {
+    ): List<Endereco> {
 
         val usuarioCoordenadas = Geopoint(latitude, longitude)
 
@@ -125,7 +144,7 @@ class EnderecoService(val enderecoRepository: EnderecoRepository) {
 
                 cidadeValida && estadoValido && dentroRaio
             }
-            .map { EnderecoMapper.toDto(it) }
+
     }
 
 }

@@ -77,12 +77,12 @@ class CaminhaoService(
 
 
     fun listarCaminhoes(
+        pageable: Pageable,
         statusCaminhao: StatusCaminhao?,
         placa: String?,
         latitude: BigDecimal?,
         longitude: BigDecimal?,
-        raioKm: BigDecimal?,
-        pageable: Pageable
+        raioKm: BigDecimal?
     ): List<CaminhaoDTOResponse> {
 
         val caminhoes: List<Caminhao> = when {

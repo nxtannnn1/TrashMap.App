@@ -31,14 +31,14 @@ class CaminhaoController(val caminhaoService: CaminhaoService) {
 
     @GetMapping
     fun listarCaminhoes(
+        pageable: Pageable,
         @RequestParam(required = false) statusCaminhao: StatusCaminhao? = null,
         @RequestParam(required = false) latitude: BigDecimal?,
         @RequestParam(required = false) longitude: BigDecimal?,
         @RequestParam(required = false) raioKm: BigDecimal? = BigDecimal("5.0"),
-        @RequestParam(required = false) placa: String? = null,
-        pageable: Pageable
+        @RequestParam(required = false) placa: String? = null
     ): ResponseEntity<List<CaminhaoDTOResponse>> =
-        ResponseEntity.ok(caminhaoService.listarCaminhoes(statusCaminhao, placa, latitude, longitude, raioKm, pageable))
+        ResponseEntity.ok(caminhaoService.listarCaminhoes(pageable, statusCaminhao, placa, latitude, longitude, raioKm))
 
 
     @PutMapping("/{id}")
