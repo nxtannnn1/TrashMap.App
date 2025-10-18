@@ -8,29 +8,45 @@ body, html {
     margin: 0;
     padding: 0;
     height: 100%;
-    /* Fundo suave para contraste */
-    background-color: #ecf0f1; 
+    background: url('../img/elevador-lacerda.jpeg') no-repeat center center fixed; 
+    background-size: cover;
+    font-family: Arial, Helvetica, sans-serif;
+    position: relative;
 }
+
+body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: hsla(120, 20%, 50%, 0.3); /* Escurece e cria translucidez */
+    pointer-events: none;
+    z-index: 1; /* Fica atrás de tudo */
+}
+
 
 .login-container {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
+    position: relative;
+    z-index: 2;
 }
 
 .login-box {
-    background-color: #fff;
+    background-color: rgba(255, 255, 255, 0.85); 
     padding: 30px;
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     width: 100%;
     max-width: 400px; /* Largura máxima para o formulário */
+    position: relative;
+    z-index: 3;
 }
 
 .login-box h1 {
     text-align: center;
-    color: #2c3e50;
+    color: #000000;
     margin-bottom: 25px;
     font-size: 1.8em;
 }
@@ -41,7 +57,7 @@ label {
     margin-top: 10px;
     margin-bottom: 4px;
     font-weight: bold;
-    color: #34495e;
+    color: #000000;
     font-size: 0.9em;
 }
 
@@ -57,13 +73,13 @@ input, select {
 }
 
 input:focus, select:focus {
-    border-color: #2980b9;
+    border-color: #1E603A;
     outline: none;
 }
 
 /* Estilo do botão (Reaproveitando o seu estilo) */
 button {
-    background-color: #2980b9;
+    background-color: #1E603A;
     color: #fff;
     border: none;
     padding: 12px 16px;
@@ -76,7 +92,7 @@ button {
 }
 
 button:hover {
-    background-color: #3498db;
+    background-color: #6EB030;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
@@ -86,4 +102,9 @@ button:hover {
     text-align: center;
     margin-top: 15px;
     font-weight: bold;
+}
+
+.icon-container{
+  text-align: center;
+  margin-bottom: 20px;
 }
