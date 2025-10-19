@@ -4,6 +4,8 @@ import { View, Text, StyleSheet, TouchableOpacity, TextInput, StatusBar, Dimensi
 import { useRouter } from 'expo-router';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+// ANOTAÇÃO: Importações para o Mapa
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 
 const { width } = Dimensions.get('window');
 const guidelineBaseWidth = 375;
@@ -16,9 +18,16 @@ const HomeScreen: React.FC = () => {
     const isLoggedIn = false;
     const userName = "Usuário";
 
+    // Região inicial do mapa (Salvador, Bahia)
+    const initialRegion = {
+        latitude: -12.9777,
+        longitude: -38.5016,
+        latitudeDelta: 0.0922, // Zoom level
+        longitudeDelta: 0.0421, // Zoom level
+    };
+
     return (
         <SafeAreaView style={styles.container}>
-            {/* ANOTAÇÃO: Cor do StatusBar atualizada */}
             <StatusBar barStyle="light-content" backgroundColor="#1E603A" />
 
             <View style={styles.innerContainer}>
@@ -39,15 +48,26 @@ const HomeScreen: React.FC = () => {
                     </View>
                 </View>
 
-                <View style={styles.mapPlaceholder}>
-                    <Text style={styles.mapPlaceholderText}>O mapa aparecerá aqui</Text>
-                </View>
+                {/* ANOTAÇÃO: Componente MapView substituindo o placeholder */}
+                <MapView
+                    style={styles.map} // Estilo flex: 1 para ocupar o espaço
+                    provider={PROVIDER_GOOGLE}
+                    initialRegion={initialRegion}
+                    showsUserLocation={true}
+                    showsMyLocationButton={false} // Você pode habilitar se quiser (true)
+                    // mapPadding={{ bottom: moderateScale(110) }} // Adiciona padding para botões sobre o mapa
+                >
+                    {/* Exemplo de Marcador */}
+                    {/* <Marker coordinate={{ latitude: -12.9777, longitude: -38.5016 }} title="Exemplo" /> */}
+                    {/* No futuro, buscará os pontos da API e fará um map aqui */}
+                </MapView>
 
+                {/* Fundo verde para a área da barra de busca */}
                 <View style={styles.footerBackground} />
 
-                {/* ANOTAÇÃO: Posição 'bottom' ajustada para 15, deixando a barra mais baixa. */}
+                {/* Barra de busca como botão de navegação */}
                 <TouchableOpacity
-                    style={[styles.searchContainer, { bottom: insets.bottom > 0 ? insets.bottom + 5 : moderateScale(95) }]}
+                    style={[styles.searchContainer, { bottom: insets.bottom > 0 ? insets.bottom + 5 : moderateScale(15) }]}
                     onPress={() => router.push('/rotas')}
                     activeOpacity={0.8}
                 >
@@ -57,6 +77,7 @@ const HomeScreen: React.FC = () => {
                         placeholder="Pesquisar rotas..."
                         placeholderTextColor="#888"
                         editable={false}
+                        pointerEvents="none" // Garante que o input não seja clicável
                     />
                     <TouchableOpacity
                         style={styles.favoriteButton}
@@ -76,20 +97,19 @@ const HomeScreen: React.FC = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#EAEAEA',
+        backgroundColor: '#EAEAEA', // Cor de fundo geral se o mapa não carregar
     },
     innerContainer: {
         flex: 1,
     },
     header: {
-        // ANOTAÇÃO: Cor do cabeçalho atualizada
-        backgroundColor: '#1E603A', 
+        backgroundColor: '#1E603A',
         paddingHorizontal: moderateScale(20),
-        paddingBottom: moderateScale(20), 
+        paddingBottom: moderateScale(20),
         borderBottomLeftRadius: moderateScale(20),
-        borderBottomRightRadius: moderateScale(20), 
+        borderBottomRightRadius: moderateScale(20),
         flexDirection: 'row',
-        justifyContent: 'space-between', 
+        justifyContent: 'space-between',
         alignItems: 'center',
     },
     headerTitle: { color: 'white', fontSize: moderateScale(24), fontWeight: 'bold' },
@@ -100,22 +120,20 @@ const styles = StyleSheet.create({
         width: moderateScale(45), height: moderateScale(45),
         borderRadius: moderateScale(22.5), justifyContent: 'center', alignItems: 'center',
     },
-    mapPlaceholder: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center'
+    map: {
+        flex: 1, // Faz o mapa ocupar todo o espaço disponível
     },
-    mapPlaceholderText: { fontSize: moderateScale(18), color: '#999', fontWeight: '500' },
     footerBackground: {
         position: 'absolute',
         bottom: 0,
         left: 0,
         right: 0,
-        height: moderateScale(15),
-        // ANOTAÇÃO: Cor do rodapé atualizada
+        height: moderateScale(100),
         backgroundColor: '#1E603A',
         borderTopLeftRadius: moderateScale(20),
         borderTopRightRadius: moderateScale(20),
+        // Adiciona um ponteiro none para garantir que toques no fundo verde não interfiram no mapa
+        pointerEvents: 'none',
     },
     searchContainer: {
         position: 'absolute',
@@ -131,7 +149,7 @@ const styles = StyleSheet.create({
         fontSize: moderateScale(18),
         color: '#333',
         marginLeft: moderateScale(10),
-        pointerEvents: 'none',
+        pointerEvents: 'none', // Necessário para TouchableOpacity funcionar corretamente
     },
     favoriteButton: {
         width: moderateScale(40), height: moderateScale(40), borderRadius: moderateScale(20),
