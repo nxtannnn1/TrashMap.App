@@ -1,22 +1,42 @@
 // app/_layout.tsx
-import { Stack } from 'expo-router';
-import React from 'react';
+import { Stack, SplashScreen } from 'expo-router';
+import React, { useEffect } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { AuthProvider, useAuth } from '../src/contexts/AuthContext';
+
+SplashScreen.preventAutoHideAsync();
+
+function RootLayoutNav() {
+    const { isLoading } = useAuth();
+
+    useEffect(() => {
+        if (!isLoading) {
+            SplashScreen.hideAsync();
+        }
+    }, [isLoading]);
+
+    if (isLoading) {
+        return null;
+    }
+
+    // ANOTAÇÃO: Este Stack agora é muito mais simples.
+    // Ele não precisa mais das opções para (app) e (auth),
+    // pois eles agora têm seus próprios _layout.tsx que cuidam disso.
+    return (
+        <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="index" />
+            <Stack.Screen name="(auth)" />
+            <Stack.Screen name="(app)" />
+        </Stack>
+    );
+}
 
 const RootLayout: React.FC = () => {
   return (
     <SafeAreaProvider>
-      <Stack>
-        {/* Telas já existentes */}
-        <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="login" options={{ presentation: 'modal', headerShown: false }} />
-        <Stack.Screen name="cadastro" options={{ presentation: 'modal', headerShown: false }} />
-
-        {/* --- ANOTAÇÃO: Adicionando as novas telas --- */}
-        <Stack.Screen name="rotas" options={{ presentation: 'fullScreenModal', headerShown: false }} />
-        <Stack.Screen name="favoritos" options={{ presentation: 'fullScreenModal', headerShown: false }} />
-        <Stack.Screen name="notificacoes" options={{ presentation: 'fullScreenModal', headerShown: false }} />
-      </Stack>
+        <AuthProvider>
+            <RootLayoutNav />
+        </AuthProvider>
     </SafeAreaProvider>
   );
 }

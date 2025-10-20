@@ -1,8 +1,9 @@
 // src/screens/Auth/LoginScreen.tsx
 import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, Alert, ActivityIndicator, Image, TouchableOpacity, Dimensions, SafeAreaView } from 'react-native';
-import { login } from '../../services/authService';
 import { useRouter } from 'expo-router';
+// ANOTAÇÃO: Importamos o hook useAuth
+import { useAuth } from '../../contexts/AuthContext';
 
 const { width } = Dimensions.get('window');
 const guidelineBaseWidth = 375;
@@ -13,17 +14,30 @@ const LoginScreen: React.FC = () => {
   const router = useRouter();
   const [email, setEmail] = useState<string>('');
   const [senha, setSenha] = useState<string>('');
+  
+  // ANOTAÇÃO: Pegamos o signIn do contexto
+  const { signIn } = useAuth();
+  // ANOTAÇÃO: Usamos um isLoading local para controlar o botão
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleLogin = async (): Promise<void> => {
     if (!email || !senha) { Alert.alert("Atenção", "Por favor, preencha o email e a senha."); return; }
-    setIsLoading(true);
+
+    setIsLoading(true); // Ativa o loading local
+    
     try {
-      const data = await login(email, senha);
-      Alert.alert("Sucesso!", `Seja bem-vindo(a), ${data.usuario.nome}!`);
-      router.back();
-    } catch (error) { Alert.alert("Falha no Login", "Credenciais inválidas.");
-    } finally { setIsLoading(false); }
+      // Chama a função signIn do contexto
+      await signIn(email, senha);
+      
+      // ANOTAÇÃO: Se o login deu certo, fechamos o modal manualmente.
+      router.back(); 
+
+    } catch (error) { 
+      // Se o signIn falhar, ele vai estourar um erro que nós pegamos aqui.
+      Alert.alert("Falha no Login", "Credenciais inválidas. Verifique seus dados e tente novamente.");
+    } finally {
+      setIsLoading(false); // Desativa o loading local
+    }
   };
 
   return (
@@ -35,17 +49,21 @@ const LoginScreen: React.FC = () => {
         <Text style={styles.label}>Senha</Text>
         <TextInput style={styles.input} placeholder="Digite a senha" value={senha} onChangeText={setSenha} secureTextEntry />
         <TouchableOpacity><Text style={styles.forgotPassword}>Esqueci minha senha</Text></TouchableOpacity>
+        
         <TouchableOpacity style={styles.button} onPress={handleLogin} disabled={isLoading}>
+          {/* ANOTAÇÃO: O botão agora olha para o isLoading local */}
           {isLoading ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>Entrar</Text>}
         </TouchableOpacity>
+        
         <View style={styles.signupContainer}>
             <Text style={styles.signupText}>Ainda não tem conta na TrashMap? </Text>
-            <TouchableOpacity onPress={() => router.push('/cadastro')}><Text style={[styles.signupText, styles.signupLink]}>Criar agora!</Text></TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push('/(auth)/cadastro')}><Text style={[styles.signupText, styles.signupLink]}>Criar agora!</Text></TouchableOpacity>
         </View>
     </SafeAreaView>
   );
 };
 
+// ... Seus estilos (iguais aos que você já tinha) ...
 const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: '#F0F0F0', justifyContent: 'center', paddingHorizontal: moderateScale(25) },
     logo: { width: moderateScale(100), height: moderateScale(100), resizeMode: 'contain', marginBottom: moderateScale(10), alignSelf: 'center' },
@@ -66,5 +84,6 @@ const styles = StyleSheet.create({
     signupText: { fontSize: moderateScale(14), color: '#555' },
     signupLink: { fontWeight: 'bold' }
 });
+
 
 export default LoginScreen;

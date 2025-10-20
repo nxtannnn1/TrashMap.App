@@ -1,11 +1,11 @@
 // src/screens/App/HomeScreen.tsx
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, StatusBar, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, StatusBar, Dimensions, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-// ANOTAÇÃO: Importações para o Mapa
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import { useAuth } from '../../contexts/AuthContext';
 
 const { width } = Dimensions.get('window');
 const guidelineBaseWidth = 375;
@@ -15,60 +15,66 @@ const moderateScale = (size: number, factor = 0.5) => size + (scale(size) - size
 const HomeScreen: React.FC = () => {
     const router = useRouter();
     const insets = useSafeAreaInsets();
-    const isLoggedIn = false;
-    const userName = "Usuário";
+    const { user, signOut } = useAuth();
+    
+    const isLoggedIn = !!user;
+    const userName = user ? user.nome : "Visitante";
 
-    // Região inicial do mapa (Salvador, Bahia)
     const initialRegion = {
         latitude: -12.9777,
         longitude: -38.5016,
-        latitudeDelta: 0.0922, // Zoom level
-        longitudeDelta: 0.0421, // Zoom level
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
+    };
+
+    const handleProfilePress = () => {
+        if (isLoggedIn && user) {
+            Alert.alert("Sair", `Você está logado como ${user.nome}. Deseja realmente sair?`, [
+                { text: "Cancelar", style: "cancel" },
+                { text: "Sair", onPress: signOut, style: "destructive" },
+            ]);
+        } else {
+            router.push('/(auth)/login');
+        }
     };
 
     return (
         <SafeAreaView style={styles.container}>
             <StatusBar barStyle="light-content" backgroundColor="#1E603A" />
-
             <View style={styles.innerContainer}>
                 <View>
                     <View style={[styles.header, { paddingTop: insets.top > 0 ? insets.top : moderateScale(15) }]}>
                         <View>
-                            <Text style={styles.headerTitle}>Olá, {isLoggedIn ? userName : 'Visitante'}!</Text>
+                            <Text style={styles.headerTitle}>Olá, {userName}!</Text>
                             <Text style={styles.headerSubtitle}>Combata a poluição!</Text>
                         </View>
                         <View style={styles.headerIcons}>
-                            <TouchableOpacity style={styles.headerIconButton} onPress={() => router.push('/notificacoes')}>
+                            <TouchableOpacity style={styles.headerIconButton} onPress={() => router.push('/(app)/notificacoes')}>
                                 <MaterialCommunityIcons name="bell-outline" size={moderateScale(26)} color="white" />
                             </TouchableOpacity>
-                            <TouchableOpacity style={styles.headerIconButton} onPress={() => !isLoggedIn && router.push('/login')}>
+                            <TouchableOpacity style={styles.headerIconButton} onPress={handleProfilePress}>
                                 <Ionicons name="person-circle-outline" size={moderateScale(30)} color="white" />
                             </TouchableOpacity>
                         </View>
                     </View>
                 </View>
 
-                {/* ANOTAÇÃO: Componente MapView substituindo o placeholder */}
                 <MapView
-                    style={styles.map} // Estilo flex: 1 para ocupar o espaço
+                    style={styles.map}
                     provider={PROVIDER_GOOGLE}
                     initialRegion={initialRegion}
                     showsUserLocation={true}
-                    showsMyLocationButton={false} // Você pode habilitar se quiser (true)
-                    // mapPadding={{ bottom: moderateScale(110) }} // Adiciona padding para botões sobre o mapa
+                    showsMyLocationButton={false} 
                 >
-                    {/* Exemplo de Marcador */}
-                    {/* <Marker coordinate={{ latitude: -12.9777, longitude: -38.5016 }} title="Exemplo" /> */}
-                    {/* No futuro, buscará os pontos da API e fará um map aqui */}
+                    {/* ANOTAÇÃO: Adicionamos um Marker de exemplo para usar a importação. */}
+                    <Marker coordinate={{ latitude: -12.9777, longitude: -38.5016 }} title="Exemplo" />
                 </MapView>
 
-                {/* Fundo verde para a área da barra de busca */}
                 <View style={styles.footerBackground} />
 
-                {/* Barra de busca como botão de navegação */}
                 <TouchableOpacity
                     style={[styles.searchContainer, { bottom: insets.bottom > 0 ? insets.bottom + 5 : moderateScale(15) }]}
-                    onPress={() => router.push('/rotas')}
+                    onPress={() => router.push('/(app)/rotas')}
                     activeOpacity={0.8}
                 >
                     <Ionicons name="search" size={moderateScale(22)} color="#555" />
@@ -77,13 +83,13 @@ const HomeScreen: React.FC = () => {
                         placeholder="Pesquisar rotas..."
                         placeholderTextColor="#888"
                         editable={false}
-                        pointerEvents="none" // Garante que o input não seja clicável
+                        pointerEvents="none"
                     />
                     <TouchableOpacity
                         style={styles.favoriteButton}
                         onPress={(e) => {
                             e.stopPropagation();
-                            router.push('/favoritos');
+                            router.push('/(app)/favoritos');
                         }}
                     >
                         <Ionicons name="heart-outline" size={moderateScale(22)} color="#555" />
@@ -97,7 +103,7 @@ const HomeScreen: React.FC = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#EAEAEA', // Cor de fundo geral se o mapa não carregar
+        backgroundColor: '#EAEAEA',
     },
     innerContainer: {
         flex: 1,
@@ -121,7 +127,7 @@ const styles = StyleSheet.create({
         borderRadius: moderateScale(22.5), justifyContent: 'center', alignItems: 'center',
     },
     map: {
-        flex: 1, // Faz o mapa ocupar todo o espaço disponível
+        flex: 1,
     },
     footerBackground: {
         position: 'absolute',
@@ -132,7 +138,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#1E603A',
         borderTopLeftRadius: moderateScale(20),
         borderTopRightRadius: moderateScale(20),
-        // Adiciona um ponteiro none para garantir que toques no fundo verde não interfiram no mapa
         pointerEvents: 'none',
     },
     searchContainer: {
@@ -149,7 +154,7 @@ const styles = StyleSheet.create({
         fontSize: moderateScale(18),
         color: '#333',
         marginLeft: moderateScale(10),
-        pointerEvents: 'none', // Necessário para TouchableOpacity funcionar corretamente
+        pointerEvents: 'none',
     },
     favoriteButton: {
         width: moderateScale(40), height: moderateScale(40), borderRadius: moderateScale(20),
