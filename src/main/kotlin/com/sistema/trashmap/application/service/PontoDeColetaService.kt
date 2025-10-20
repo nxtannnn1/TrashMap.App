@@ -8,6 +8,7 @@ import com.sistema.trashmap.domain.enum.Estado
 import com.sistema.trashmap.exception.PontoNaoEncontradoException
 import com.sistema.trashmap.infrastructure.repository.EnderecoRepository
 import com.sistema.trashmap.infrastructure.repository.PontoDeColetaRepository
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -40,10 +41,15 @@ class PontoDeColetaService(
         return pontos.map { PontoDeColetaMapper.toDto(it) }
     }
 
-    fun listarPontos(estado: Estado?) =
-        pontoDeColetaRepository.findAll()
-            .filter { estado == null || it.endereco.estado == estado }
+    fun listarPontos(pageable: Pageable, estado: Estado?): List<PontoDeColetaDTOResponse> {
+
+        return if (estado != null) {
+            pontoDeColetaRepository.findAllByEndereco_Estado(estado, pageable).content
+        } else {
+            pontoDeColetaRepository.findAll(pageable).content
+        }
             .map { PontoDeColetaMapper.toDto(it) }
+    }
 
     fun listarPontoPorId(id: Long): PontoDeColetaDTOResponse =
         PontoDeColetaMapper.toDto(
