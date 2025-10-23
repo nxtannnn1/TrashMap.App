@@ -8,7 +8,7 @@ body, html {
     margin: 0;
     padding: 0;
     height: 100%;
-    background: url('../img/elevador-lacerda.jpeg') no-repeat center center fixed; 
+    background: url('../public/img/elevador-lacerda.jpeg') no-repeat center center fixed; 
     background-size: cover;
     font-family: Arial, Helvetica, sans-serif;
     position: relative;
