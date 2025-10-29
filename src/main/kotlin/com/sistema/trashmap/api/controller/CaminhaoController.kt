@@ -40,14 +40,12 @@ class CaminhaoController(val caminhaoService: CaminhaoService) {
     ): ResponseEntity<List<CaminhaoDTOResponse>> =
         ResponseEntity.ok(caminhaoService.listarCaminhoes(pageable, statusCaminhao, placa, latitude, longitude, raioKm))
 
-
     @PutMapping("/{id}")
     fun editarCaminhaoPorId(
         @PathVariable id: Long,
         @RequestBody @Valid caminhaoDTORequest: CaminhaoDTORequest
     ): ResponseEntity<CaminhaoDTOResponse> =
         ResponseEntity.ok(caminhaoService.editarCaminhaoPorId(id, caminhaoDTORequest))
-
 
     @DeleteMapping("/{id}")
     fun excluirCaminhaoPorId(@PathVariable id: Long): ResponseEntity<Void> {
@@ -68,6 +66,5 @@ class CaminhaoController(val caminhaoService: CaminhaoService) {
         @RequestBody @Valid geopoint: Geopoint
     ): ResponseEntity<CaminhaoDTOResponse> =
         ResponseEntity.ok(caminhaoService.atualizarLocalizacao(id, geopoint))
-
 
 }

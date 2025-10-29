@@ -41,14 +41,12 @@ class EnderecoController(val enderecoService: EnderecoService) {
     ): ResponseEntity<List<EnderecoDTOResponse>> =
         ResponseEntity.ok(enderecoService.listarEnderecos(pageable, latitude, longitude, raioKm, cidade, estado))
 
-
     @PutMapping("/{id}")
     fun editarEnderecoPorId(
         @PathVariable id: Long,
         @RequestBody @Valid enderecoDTORequest: EnderecoDTORequest
     ): ResponseEntity<EnderecoDTOResponse> =
         ResponseEntity.ok(enderecoService.editarEnderecoPorId(id, enderecoDTORequest))
-
 
     @DeleteMapping("/{id}")
     fun excluirEnderecoPorId(@PathVariable id: Long): ResponseEntity<Void> {
