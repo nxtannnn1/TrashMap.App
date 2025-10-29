@@ -1,7 +1,7 @@
 package com.sistema.trashmap.api.mapper
 
-import com.sistema.trashmap.api.dto.UsuarioDTORequest
-import com.sistema.trashmap.api.dto.UsuarioDTOResponse
+import com.sistema.trashmap.api.dto.request.UsuarioDTORequest
+import com.sistema.trashmap.api.dto.response.UsuarioDTOResponse
 import com.sistema.trashmap.domain.model.Usuario
 
 object UsuarioMapper {

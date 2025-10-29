@@ -1,6 +1,6 @@
 package manual_testing.com.sistema.trashmap.application.service
 
-import com.sistema.trashmap.api.dto.CaminhaoDTORequest
+import com.sistema.trashmap.api.dto.request.CaminhaoDTORequest
 import com.sistema.trashmap.domain.enum.StatusCaminhao
 import com.sistema.trashmap.domain.model.Geopoint
 import java.math.BigDecimal

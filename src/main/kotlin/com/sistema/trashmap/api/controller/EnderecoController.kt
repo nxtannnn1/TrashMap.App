@@ -1,7 +1,7 @@
 package com.sistema.trashmap.api.controller
 
-import com.sistema.trashmap.api.dto.EnderecoDTORequest
-import com.sistema.trashmap.api.dto.EnderecoDTOResponse
+import com.sistema.trashmap.api.dto.request.EnderecoDTORequest
+import com.sistema.trashmap.api.dto.response.EnderecoDTOResponse
 import com.sistema.trashmap.application.service.EnderecoService
 import com.sistema.trashmap.domain.enum.Estado
 import jakarta.validation.Valid

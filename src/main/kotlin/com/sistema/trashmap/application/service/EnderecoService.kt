@@ -1,7 +1,7 @@
 package com.sistema.trashmap.application.service
 
-import com.sistema.trashmap.api.dto.EnderecoDTORequest
-import com.sistema.trashmap.api.dto.EnderecoDTOResponse
+import com.sistema.trashmap.api.dto.request.EnderecoDTORequest
+import com.sistema.trashmap.api.dto.response.EnderecoDTOResponse
 import com.sistema.trashmap.api.mapper.EnderecoMapper
 import com.sistema.trashmap.application.formatter.CepFormatter
 import com.sistema.trashmap.domain.enum.Estado

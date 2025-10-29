@@ -1,7 +1,7 @@
 package com.sistema.trashmap.api.controller
 
-import com.sistema.trashmap.api.dto.CaminhaoDTORequest
-import com.sistema.trashmap.api.dto.CaminhaoDTOResponse
+import com.sistema.trashmap.api.dto.request.CaminhaoDTORequest
+import com.sistema.trashmap.api.dto.response.CaminhaoDTOResponse
 import com.sistema.trashmap.application.service.CaminhaoService
 import com.sistema.trashmap.domain.enum.StatusCaminhao
 import com.sistema.trashmap.domain.model.Geopoint

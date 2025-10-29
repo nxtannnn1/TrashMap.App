@@ -1,9 +1,9 @@
 package com.sistema.trashmap.application.service
 
-import com.sistema.trashmap.api.dto.UsuarioDTORequest
-import com.sistema.trashmap.api.dto.UsuarioDTOResponse
-import com.sistema.trashmap.api.dto.UsuarioLoginDTORequest
-import com.sistema.trashmap.api.dto.UsuarioLoginDTOResponse
+import com.sistema.trashmap.api.dto.request.UsuarioDTORequest
+import com.sistema.trashmap.api.dto.response.UsuarioDTOResponse
+import com.sistema.trashmap.api.dto.request.UsuarioLoginDTORequest
+import com.sistema.trashmap.api.dto.response.UsuarioLoginDTOResponse
 import com.sistema.trashmap.api.mapper.LoginMapper
 import com.sistema.trashmap.api.mapper.UsuarioMapper
 import com.sistema.trashmap.domain.enum.TipoUsuario

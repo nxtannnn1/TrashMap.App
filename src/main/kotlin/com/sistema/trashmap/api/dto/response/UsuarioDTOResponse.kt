@@ -1,4 +1,4 @@
-package com.sistema.trashmap.api.dto
+package com.sistema.trashmap.api.dto.response
 
 import com.sistema.trashmap.domain.enum.TipoUsuario
 import java.time.LocalDateTime

@@ -1,7 +1,7 @@
 package manual_testing.com.sistema.trashmap.application.service
 
-import com.sistema.trashmap.api.dto.EnderecoDTORequest
-import com.sistema.trashmap.api.dto.PontoDeColetaDTORequest
+import com.sistema.trashmap.api.dto.request.EnderecoDTORequest
+import com.sistema.trashmap.api.dto.request.PontoDeColetaDTORequest
 import com.sistema.trashmap.domain.enum.Estado
 import com.sistema.trashmap.domain.model.Geopoint
 import java.math.BigDecimal

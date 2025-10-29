@@ -1,7 +1,7 @@
 package com.sistema.trashmap.api.mapper
 
-import com.sistema.trashmap.api.dto.PontoDeColetaDTORequest
-import com.sistema.trashmap.api.dto.PontoDeColetaDTOResponse
+import com.sistema.trashmap.api.dto.request.PontoDeColetaDTORequest
+import com.sistema.trashmap.api.dto.response.PontoDeColetaDTOResponse
 import com.sistema.trashmap.domain.model.Endereco
 import com.sistema.trashmap.domain.model.PontoDeColeta
 

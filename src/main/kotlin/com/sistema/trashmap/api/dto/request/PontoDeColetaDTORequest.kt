@@ -1,4 +1,4 @@
-package com.sistema.trashmap.api.dto
+package com.sistema.trashmap.api.dto.request
 
 import com.sistema.trashmap.domain.model.Geopoint
 import jakarta.persistence.Embedded

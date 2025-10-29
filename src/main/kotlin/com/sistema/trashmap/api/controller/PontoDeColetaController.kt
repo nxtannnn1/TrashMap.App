@@ -1,10 +1,11 @@
 package com.sistema.trashmap.api.controller
 
-import com.sistema.trashmap.api.dto.PontoDeColetaDTORequest
-import com.sistema.trashmap.api.dto.PontoDeColetaDTOResponse
+import com.sistema.trashmap.api.dto.request.PontoDeColetaDTORequest
+import com.sistema.trashmap.api.dto.response.PontoDeColetaDTOResponse
 import com.sistema.trashmap.application.service.PontoDeColetaService
 import com.sistema.trashmap.domain.enum.Estado
 import jakarta.validation.Valid
+import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -28,8 +29,8 @@ class PontoDeColetaController(val pontoDeColetaService: PontoDeColetaService) {
         ResponseEntity.ok(pontoDeColetaService.listarPontoPorId(id))
 
     @GetMapping
-    fun listarPontos(@RequestParam estado: Estado?): ResponseEntity<List<PontoDeColetaDTOResponse>> =
-        ResponseEntity.ok(pontoDeColetaService.listarPontos(estado))
+    fun listarPontos(@RequestParam estado: Estado?, pageable: Pageable): ResponseEntity<List<PontoDeColetaDTOResponse>> =
+        ResponseEntity.ok(pontoDeColetaService.listarPontos(pageable, estado))
 
 
     @PutMapping("/{id}")
