@@ -1,87 +1,83 @@
-// src/App.js
 import React, { useState, useEffect } from 'react';
-import './App.css'; // Nosso CSS
+import { APIProvider } from '@vis.gl/react-google-maps'; 
+import './App.css'; 
 
-// Importando nossos componentes de "página"
 import Home from './pages/Home';
 import Caminhoes from './pages/Caminhoes';
 import Pontos from './pages/Pontos';
 import Enderecos from './pages/Enderecos';
 import Usuarios from './pages/Usuarios';
 
+// ANOTAÇÃO: A chave da API agora está sendo usada corretamente
+const GOOGLE_MAPS_KEY = "AIzaSyCBs_5rLELLShtl5MR3lnIqova7IBWDGZg"; 
+
 function App() {
-  // Lógica de Autenticação (do index.html)
-  useEffect(() => {
-    const isLoggedIn = localStorage.getItem('userLoggedIn');
-    const userProfile = localStorage.getItem('userProfile');
+  useEffect(() => {
+    const isLoggedIn = localStorage.getItem('userLoggedIn');
+    const userProfile = localStorage.getItem('userProfile');
 
-    if (isLoggedIn !== 'true' || (userProfile !== 'ADMIN' && userProfile !== 'MODERADOR')) {
-      alert('Você precisa fazer login com um perfil válido para acessar o painel.');
-      window.location.href = '/login.html';
-    }
-  }, []);
+    if (isLoggedIn !== 'true' || (userProfile !== 'ADMIN' && userProfile !== 'MODERADOR')) {
+      alert('Você precisa fazer login com um perfil válido para acessar o painel.');
+      window.location.href = '/login.html';
+    }
+  }, []);
 
-  // Agora o "state" guarda o COMPONENTE ATIVO
-  const [ActiveComponent, setActiveComponent] = useState(() => Home); // Começa com o <Home />
+  const [ActiveComponent, setActiveComponent] = useState(() => Home); 
 
-  // Esta função agora é um "roteador" de componentes
-  function loadPage(pageName) {
-    switch (pageName) {
-      case 'caminhoes':
-        setActiveComponent(() => Caminhoes); // Vamos descomentar isso no próximo passo
-        alert('Componente Caminhoes ainda não criado');
-        break;
-      case 'pontos':
-        setActiveComponent(() => Pontos);
-        alert('Componente Pontos ainda não criado');
-        break;
-      case 'enderecos':
-        setActiveComponent(() => Enderecos);
-        alert('Componente Enderecos ainda não criado');
-        break;
-      case 'usuarios':
-        setActiveComponent(() => Usuarios);
-        alert('Componente Usuarios ainda não criado');
-        break;
-      default:
-        setActiveComponent(() => Home);
-    }
-  }
+  function loadPage(pageName) {
+    switch (pageName) {
+      case 'caminhoes':
+        setActiveComponent(() => Caminhoes);
+        alert('Componente Caminhoes ainda não criado');
+        break;
+      case 'pontos':
+        setActiveComponent(() => Pontos);
+        break;
+      case 'enderecos':
+        setActiveComponent(() => Enderecos);
+        alert('Componente Enderecos ainda não criado');
+        break;
+      case 'usuarios':
+        setActiveComponent(() => Usuarios);
+        alert('Componente Usuarios ainda não criado');
+        break;
+      default:
+        setActiveComponent(() => Home);
+    }
+  }
 
-  // Lógica de Logout
-  function logout() {
-    localStorage.clear();
-    alert('Você foi desconectado.');
-    window.location.href = '/login.html';
-  }
+  function logout() {
+    localStorage.clear();
+    alert('Você foi desconectado.');
+    window.location.href = '/login.html';
+  }
 
-  // O JSX (HTML) permanece quase o mesmo
-  return (
-    <div className="container">
-      {/* Sidebar */}
-      <nav className="sidebar">
-        <h2>TrashMap</h2>
-        <ul>
-          {/* Note que o onClick agora chama 'loadPage' */}
-          <li><a href="#" onClick={() => loadPage('caminhoes')}>Caminhões</a></li>
-          <li><a href="#" onClick={() => loadPage('pontos')}>Pontos de Coleta</a></li>
-          <li><a href="#" onClick={() => loadPage('enderecos')}>Endereços</a></li>
-          <li><a href="#" onClick={() => loadPage('usuarios')}>Usuários</a></li>
-          <li><a href="#" onClick={logout}>Sair</a></li>
-        </ul>
-      </nav>
+  return (
+    // ANOTAÇÃO: Usando a variável GOOGLE_MAPS_KEY
+    <APIProvider apiKey={GOOGLE_MAPS_KEY}> 
+      <div className="container">
+        <nav className="sidebar">
+          <h2>TrashMap</h2>
+          <ul>
+            {/*               ANOTAÇÃO: Trocamos <a> por <button> para corrigir os avisos
+              e ser semanticamente correto. Você pode precisar de um
+              CSS simples para que o <button> se pareça com o <a>:
+              .sidebar button { background: none; border: none; color: white; text-align: left; cursor: pointer; padding: 10px; font-size: 16px; }
+            */}
+            <li><button onClick={() => loadPage('caminhoes')}>Caminhões</button></li>
+            <li><button onClick={() => loadPage('pontos')}>Pontos de Coleta</button></li>
+            <li><button onClick={() => loadPage('enderecos')}>Endereços</button></li>
+            <li><button onClick={() => loadPage('usuarios')}>Usuários</button></li>
+            <li><button onClick={logout}>Sair</button></li>
+          </ul>
+        </nav>
 
-      {/* Main Content */}
-      <main className="content" id="main-content">
-        {/*
-          Aqui está a mágica do React:
-          Ele renderiza qualquer componente que estiver na variável 'ActiveComponent'.
-          Isso substitui o seu 'main.innerHTML = html'.
-        */}
-        <ActiveComponent />
-      </main>
-    </div>
-  );
+        <main className="content" id="main-content">
+          <ActiveComponent />
+        </main>
+      </div>
+    </APIProvider>
+  );
 }
 
 export default App;
