@@ -1,0 +1,16 @@
+{
+  "dependencies": {
+    "@react-google-maps/api": "^2.20.7",
+    "@vis.gl/react-google-maps": "^1.6.1"
+  },
+  "name": "trashmap.app-frontend.natan",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
