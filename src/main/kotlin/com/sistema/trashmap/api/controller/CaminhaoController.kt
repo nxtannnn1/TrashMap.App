@@ -56,7 +56,7 @@ class CaminhaoController(val caminhaoService: CaminhaoService) {
     @PatchMapping("/{id}/status")
     fun atualizarStatusDoCaminhao(
         @PathVariable id: Long,
-        @RequestParam(required = true) statusCaminhao: StatusCaminhao
+        @RequestParam statusCaminhao: StatusCaminhao
     ): ResponseEntity<CaminhaoDTOResponse> =
         ResponseEntity.ok(caminhaoService.atualizarStatusDoCaminhao(id, statusCaminhao))
 
