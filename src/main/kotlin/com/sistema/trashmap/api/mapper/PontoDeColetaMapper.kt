@@ -11,7 +11,6 @@ object PontoDeColetaMapper {
         PontoDeColetaDTOResponse(
             id = pontoDeColeta.id,
             nome = pontoDeColeta.nome,
-            coordenadas = pontoDeColeta.coordenadas,
             // Delega a conversão da entidade 'Endereco' para o 'EnderecoMapper'
             endereco = EnderecoMapper.toDto(pontoDeColeta.endereco)
         )
@@ -27,7 +26,6 @@ object PontoDeColetaMapper {
         PontoDeColeta(
             id = idExistente,
             nome = pontoDeColetaDTORequest.nome,
-            coordenadas = pontoDeColetaDTORequest.coordenadas,
             endereco = endereco
         )
 

@@ -13,6 +13,8 @@ import com.sistema.trashmap.infrastructure.repository.CaminhaoRepository
 import com.sistema.trashmap.util.GeoUtils
 import com.sistema.trashmap.validation.PlacaValidator
 import jakarta.transaction.Transactional
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
@@ -83,28 +85,29 @@ class CaminhaoService(
         latitude: BigDecimal?,
         longitude: BigDecimal?,
         raioKm: BigDecimal?
-    ): List<CaminhaoDTOResponse> {
+    ): Page<CaminhaoDTOResponse> {
 
-        val caminhoes: List<Caminhao> = when {
+        val pageCaminhoes: Page<Caminhao> = when {
             placa != null -> {
                 val caminhao = caminhaoRepository.findByPlaca(placa)
-                if (caminhao != null) listOf(caminhao) else emptyList()
+                if (caminhao != null) PageImpl(listOf(caminhao), pageable, 1) else PageImpl(emptyList(), pageable, 0)
             }
 
             statusCaminhao != null -> {
-                caminhaoRepository.findAllByStatusCaminhao(statusCaminhao, pageable).content
+                caminhaoRepository.findAllByStatusCaminhao(statusCaminhao, pageable)
             }
 
-            (latitude != null && longitude != null && raioKm != null) -> {
-                listarCaminhoesProximos(latitude, longitude, raioKm)
+            latitude != null && longitude != null && raioKm != null -> {
+                val listaProximos = listarCaminhoesProximos(latitude, longitude, raioKm)
+                PageImpl(listaProximos, pageable, listaProximos.size.toLong())
             }
 
             else -> {
-                caminhaoRepository.findAll(pageable).content
+                caminhaoRepository.findAll(pageable)
             }
-
         }
-        return caminhoes.map { CaminhaoMapper.toDto(it) }
+
+        return pageCaminhoes.map { CaminhaoMapper.toDto(it) }
     }
 
     @Transactional

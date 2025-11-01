@@ -62,7 +62,6 @@ class PontoDeColetaService(
             .orElseThrow { PontoNaoEncontradoException("Ponto de Coleta de id $id não encontrado!") }
 
         ponto.nome = pontoDeColetaDTORequest.nome
-        ponto.coordenadas = pontoDeColetaDTORequest.coordenadas
 
         val endereco = ponto.endereco
 

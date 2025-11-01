@@ -4,6 +4,7 @@ import com.sistema.trashmap.domain.enum.Estado
 import jakarta.persistence.*
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
+import jakarta.validation.constraints.Pattern
 import java.math.BigDecimal
 
 @Entity
@@ -26,6 +27,10 @@ class Endereco(
     // Número do prédio ou residência
 
     @NotBlank(message = "CEP não pode ser vazio!")
+    @Pattern(
+        regexp = "\\d{5}-?\\d{3}",
+        message = "CEP inválido. Formato esperado: 00000-000"
+    )
     @Column(name = "cep", nullable = false)
     var cep: String = "",
     // Código Postal (CEP)
@@ -60,15 +65,16 @@ class Endereco(
 
     constructor(id: Long) : this(
         id,
-        "",
-        "",
-        "",
-        null,
-        "",
-        Estado.BA,
-        "",
+        "",          // logradouro
+        null,        // numero
+        "",          // cep
+        null,        // complemento
+        "",          // bairro
+        Estado.BA,   // estado
+        "",          // cidade
         Geopoint(BigDecimal("0.0"), BigDecimal("0.0"))
     )
+
 // Construtor secundário
 // Cria um endereço com valores padrão para testes ou inicializações rápidas
 }

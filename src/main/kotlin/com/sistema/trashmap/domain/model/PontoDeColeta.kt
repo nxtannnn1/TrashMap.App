@@ -28,12 +28,5 @@ class PontoDeColeta(
     // Nome do ponto de coleta (ex: "Praça Central", "Mercado Municipal")
     // Importante para identificar o ponto para usuários e notificações
 
-    @Embedded
-    @NotNull(message = "Coordenadas devem ser informada")
-    var coordenadas: Geopoint
-    //Coordenadas geográficas
-    //Utilizada para rastreamento em tempo real
-
-
     //Utilizar campo URL ou Anexo para a foto/representação do ponto de coleta
 )

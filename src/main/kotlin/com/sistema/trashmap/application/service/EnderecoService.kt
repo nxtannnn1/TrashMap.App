@@ -135,12 +135,12 @@ class EnderecoService(val enderecoRepository: EnderecoRepository) {
         return enderecoRepository.findAll()
             .filter { endereco ->
                 // Filtro por cidade e estado, se fornecidos
-                val cidadeValida = cidade?.equals(endereco.cidade, ignoreCase = true) ?: true
-                val estadoValido = estado?.let { it == endereco.estado } ?: true
+                val cidadeValida = cidade == null || cidade.equals(endereco.cidade, ignoreCase = true)
+                val estadoValido = estado == null || estado == endereco.estado
 
                 // Calcula distância e compara com o raio
                 val distancia = GeoUtils.calcularDistanciaKm(endereco.coordenadas, usuarioCoordenadas)
-                val dentroRaio = distancia.compareTo(raioKm) <= 0
+                val dentroRaio = distancia <= raioKm
 
                 cidadeValida && estadoValido && dentroRaio
             }
