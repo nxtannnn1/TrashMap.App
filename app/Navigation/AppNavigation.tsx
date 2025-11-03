@@ -1,5 +1,7 @@
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
+import { StackScreenProps } from "@react-navigation/stack";
+import { RootStackParamList } from "@/app/Navigation/types";
 import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import HomeScreen from "@/src/screens/HomeScreen";
@@ -11,7 +13,7 @@ import CadastroScreen from "@/src/screens/Auth/CadastroScreen";
 
 const profileImageUrl = "https://i.pravatar.cc/150?u=a042581f4e29026704d";
 
-const Stack = createStackNavigator();
+const Stack = createStackNavigator<RootStackParamList>();
 
 const styles = StyleSheet.create({
   headerTextTop: {
@@ -33,7 +35,9 @@ function AppNavigation() {
       <Stack.Screen
         name="Home"
         component={HomeScreen}
-        options={({ navigation }) => ({
+        options={({
+          navigation,
+        }: StackScreenProps<RootStackParamList, "Home">) => ({
           title: "",
           headerStyle: { backgroundColor: "#1E603A", height: 140 },
           headerLeft: () => (

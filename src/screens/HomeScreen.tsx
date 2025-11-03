@@ -72,7 +72,7 @@ const HomeScreen: React.FC = () => {
       router.push("/(auth)/login");
     }
   };
-
+  
   return (
     <View style={Styles.container}>
       <View style={Styles.MapContainer}>

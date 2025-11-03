@@ -30,7 +30,7 @@ const CadastroScreen: React.FC = () => {
     };
 
     return (
-        <SafeAreaView style={styles.container}>
+        <View style={styles.container}>
             <ScrollView contentContainerStyle={styles.scrollContainer}>
                 <Image source={require('../../assets/logo.png')} style={styles.logo} />
                 <Text style={styles.title}>Criar conta</Text>
@@ -46,13 +46,13 @@ const CadastroScreen: React.FC = () => {
                     {isLoading ? <ActivityIndicator color="#FFF" /> : <Text style={styles.buttonText}>Criar conta</Text>}
                 </TouchableOpacity>
                 <Text style={styles.termsText}>
-                    Ao clicar no botão "Criar conta", você concorda com nossos <Text style={styles.link}>Termos de Uso</Text> e a nossa <Text style={styles.link}>Política de Privacidade</Text>.
+                    Ao clicar no botão Criar conta, você concorda com nossos <Text style={styles.link}>Termos de Uso</Text> e a nossa <Text style={styles.link}>Política de Privacidade</Text>.
                 </Text>
                 <TouchableOpacity style={{marginTop: moderateScale(15)}} onPress={() => router.back()}>
                     <Text style={styles.loginLink}>Já tem conta na TrashMap? <Text style={styles.link}>Acessar conta!</Text></Text>
                 </TouchableOpacity>
             </ScrollView>
-        </SafeAreaView>
+        </View>
     );
 };
 

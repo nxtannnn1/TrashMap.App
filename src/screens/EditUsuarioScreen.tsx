@@ -1,4 +1,4 @@
-// Arquivo: EditUsuario.js
+// Arquivo: src/screens/EditUsuarioScreen.tsx
 
 import React, { useState } from "react";
 import {
@@ -12,6 +12,16 @@ import {
   Alert, // Para exibir mensagens de confirmação
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { AppScreenProps } from "@/app/Navigation/types";
+
+interface UserData {
+  id: string;
+  nome: string;
+  genero: string;
+  email: string;
+  endereco: string;
+  cidade: string;
+}
 
 // Dados simulados para pré-preencher os campos
 const initialUserData = {
@@ -23,15 +33,20 @@ const initialUserData = {
   cidade: "Salvador - BA",
 };
 
+interface EditUsuarioScreenProps {
+  navigation: {
+    goBack: () => void;
+  };
+}
+
 const profileImageUrl = "https://i.pravatar.cc/150?u=a042581f4e29026704d";
 
-function EditUsuarioScreen({ navigation }) {
-  
+function EditUsuarioScreen({ navigation }: AppScreenProps<"EditUsuario">) {
   // Use o hook useState para gerenciar o estado dos dados do usuário
-  const [userData, setUserData] = useState(initialUserData);
+  const [userData, setUserData] = useState<UserData>(initialUserData);
 
   // Função para atualizar um campo específico
-  const handleChange = (field, value) => {
+  const handleChange = (field: keyof typeof initialUserData, value: string) => {
     setUserData((prevData) => ({
       ...prevData,
       [field]: value,

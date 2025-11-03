@@ -1,19 +1,23 @@
 // src/screens/Auth/LoginScreen.tsx
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, Alert, ActivityIndicator, Image, TouchableOpacity, Dimensions, SafeAreaView } from 'react-native';
-import { useRouter } from 'expo-router';
-// ANOTAÇÃO: Importamos o hook useAuth
+import { View, Text, TextInput, StyleSheet, Alert, ActivityIndicator, Image, TouchableOpacity, Dimensions} from 'react-native';
 import { useAuth } from '../../contexts/AuthContext';
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { RootStackParamList } from "@/app/Navigation/types";
 
 const { width } = Dimensions.get('window');
 const guidelineBaseWidth = 375;
 const scale = (size: number) => (width / guidelineBaseWidth) * size;
 const moderateScale = (size: number, factor = 0.5) => size + (scale(size) - size) * factor;
 
+type LoginScreenNavigationProp = StackNavigationProp<RootStackParamList>;
+
 const LoginScreen: React.FC = () => {
-  const router = useRouter();
   const [email, setEmail] = useState<string>('');
   const [senha, setSenha] = useState<string>('');
+
+  const navigation = useNavigation<LoginScreenNavigationProp>();
   
   // ANOTAÇÃO: Pegamos o signIn do contexto
   const { signIn } = useAuth();
@@ -30,7 +34,6 @@ const LoginScreen: React.FC = () => {
       await signIn(email, senha);
       
       // ANOTAÇÃO: Se o login deu certo, fechamos o modal manualmente.
-      router.back(); 
 
     } catch (error) { 
       // Se o signIn falhar, ele vai estourar um erro que nós pegamos aqui.
@@ -41,25 +44,52 @@ const LoginScreen: React.FC = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-        <Image source={require('../../assets/logo.png')} style={styles.logo} />
-        <Text style={styles.title}>Login</Text>
-        <Text style={styles.label}>E-mail</Text>
-        <TextInput style={styles.input} placeholder="Digite o seu e-mail" value={email} onChangeText={setEmail} keyboardType="email-address" autoCapitalize="none" />
-        <Text style={styles.label}>Senha</Text>
-        <TextInput style={styles.input} placeholder="Digite a senha" value={senha} onChangeText={setSenha} secureTextEntry />
-        <TouchableOpacity><Text style={styles.forgotPassword}>Esqueci minha senha</Text></TouchableOpacity>
-        
-        <TouchableOpacity style={styles.button} onPress={handleLogin} disabled={isLoading}>
-          {/* ANOTAÇÃO: O botão agora olha para o isLoading local */}
-          {isLoading ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>Entrar</Text>}
+    <View style={styles.container}>
+      <Image source={require("../../assets/logo.png")} style={styles.logo} />
+      <Text style={styles.title}>Login</Text>
+      <Text style={styles.label}>E-mail</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Digite o seu e-mail"
+        value={email}
+        onChangeText={setEmail}
+        keyboardType="email-address"
+        autoCapitalize="none"
+      />
+      <Text style={styles.label}>Senha</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Digite a senha"
+        value={senha}
+        onChangeText={setSenha}
+        secureTextEntry
+      />
+      <TouchableOpacity>
+        <Text style={styles.forgotPassword}>Esqueci minha senha</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.button}
+        onPress={handleLogin}
+        disabled={isLoading}
+      >
+        {/* ANOTAÇÃO: O botão agora olha para o isLoading local */}
+        {isLoading ? (
+          <ActivityIndicator color="#fff" />
+        ) : (
+          <Text style={styles.buttonText}>Entrar</Text>
+        )}
+      </TouchableOpacity>
+
+      <View style={styles.signupContainer}>
+        <Text style={styles.signupText}>Ainda não tem conta na TrashMap? </Text>
+        <TouchableOpacity onPress={() => navigation.navigate("Cadastro")}>
+          <Text style={[styles.signupText, styles.signupLink]}>
+            Criar agora!
+          </Text>
         </TouchableOpacity>
-        
-        <View style={styles.signupContainer}>
-            <Text style={styles.signupText}>Ainda não tem conta na TrashMap? </Text>
-            <TouchableOpacity onPress={() => router.push('/(auth)/cadastro')}><Text style={[styles.signupText, styles.signupLink]}>Criar agora!</Text></TouchableOpacity>
-        </View>
-    </SafeAreaView>
+      </View>
+    </View>
   );
 };
 

@@ -1,3 +1,5 @@
+// Arquivo: src/screens/UsuarioScreen.tsx
+
 import React from "react";
 import {
   View,
@@ -9,14 +11,18 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { RootStackParamList } from "@/app/Navigation/types";
 
 
+type NavigationProps = StackNavigationProp<RootStackParamList>;
 
 const profileImageUrl = "https://i.pravatar.cc/150?u=a042581f4e29026704d";
 
 function UsuarioScreen() {
-
-    const navigation = useNavigation();
+  
+  
+  const navigation = useNavigation<NavigationProps>();
 
   return (
     <ScrollView style={styles.containerScroll}>
@@ -75,7 +81,8 @@ function UsuarioScreen() {
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.customButton}
-              onPress={() => navigation.navigate("Login")}>
+              onPress={() => navigation.navigate("Login")}
+            >
               <Text style={styles.buttonText}>Sair da conta</Text>
             </TouchableOpacity>
             <TouchableOpacity
