@@ -1,26 +1,41 @@
-// src/screens/App/HomeScreen.tsx
-import React, {
-  useRef
-} from "react";
+import React, { useRef, useState, useEffect } from "react";
 import {
   View,
   StyleSheet,
   StatusBar,
   Dimensions,
   Alert,
+  ActivityIndicator, // Para feedback de loading
+  Text, // Para feedback de erro
 } from "react-native";
 import { useRouter } from "expo-router";
-import {
-  SafeAreaView,
-  useSafeAreaInsets,
-} from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "@/src/contexts/AuthContext";
+
 import CustomBottomSheet, {
   BottomSheetHandle,
 } from "@/src/components/CustomBottomSheet";
 import SearchBar from "@/src/components/ui/searchBar";
-import CardRotas from "../components/CardListRotas";
+import CardRotas from "@/src/components/CardListRotas";
+import api from "@/src/services/api"; // <-- NOSSA IMPORTAÇÃO DO AXIOS
+
+// --- DEFINIÇÃO DE TIPOS PARA OS DADOS DA API ---
+type Rota = {
+  id: string;
+  nome: string;
+  descricao: string;
+  // Adicione outros campos que sua API retorna
+};
+
+type MapMarker = {
+  id: string;
+  latitude: number;
+  longitude: number;
+  titulo: string;
+  descricao?: string;
+};
+// ------------------------------------------------
 
 const { width } = Dimensions.get("window");
 const guidelineBaseWidth = 375;
@@ -37,6 +52,40 @@ const HomeScreen: React.FC = () => {
   const userName = user ? user.nome : "Visitante";
 
   const bottomSheetRef = useRef<BottomSheetHandle | null>(null);
+
+  // --- ESTADOS PARA OS DADOS DA API ---
+  const [rotas, setRotas] = useState<Rota[]>([]);
+  const [markers, setMarkers] = useState<MapMarker[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  // -------------------------------------
+
+  // --- HOOK PARA BUSCAR DADOS QUANDO O COMPONENTE MONTAR ---
+  useEffect(() => {
+    const fetchDados = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        // Faz as duas requisições em paralelo
+        const [responseRotas, responseMarkers] = await Promise.all([
+          api.get("/rotas"), // Endpoint de rotas
+          api.get("/markers"), // Endpoint de marcadores
+        ]);
+
+        setRotas(responseRotas.data);
+        setMarkers(responseMarkers.data);
+      } catch (err) {
+        console.error("Erro ao buscar dados:", err);
+        setError("Não foi possível carregar os dados. Tente novamente.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDados();
+  }, []); // O array vazio [] garante que isso rode apenas 1 vez
+  // --------------------------------------------------------
 
   // ABRINDO NO ESTADO PADRÃO (50% da tela)
   const handlePresentSheet = () => {
@@ -69,10 +118,48 @@ const HomeScreen: React.FC = () => {
         ]
       );
     } else {
-      router.push("/(auth)/login");
+      router.push("/screens/Auth/LoginScreen");
     }
   };
-  
+
+  // --- FUNÇÃO PARA RENDERIZAR O CONTEÚDO DO BOTTOMSHEET ---
+  const renderBottomSheetContent = () => {
+    if (loading) {
+      return (
+        <ActivityIndicator
+          size="large"
+          color="#1E603A"
+          style={{ marginTop: 20 }}
+        />
+      );
+    }
+
+    if (error) {
+      return <Text style={Styles.errorText}>{error}</Text>;
+    }
+
+    return (
+      <>
+        <View style={Styles.viewPesquisa}>
+          <SearchBar
+            onChangeText={() => {
+              /* lógica para atualizar o estado de pesquisa */
+            }}
+            value={"" /* estado de pesquisa atual */}
+          />
+        </View>
+        <View style={Styles.viewRotas}>
+          {/* ANOTAÇÃO: 
+            Seu componente CardRotas agora precisa ser atualizado 
+            para receber a prop 'data' e renderizar a lista de rotas.
+          */}
+          <CardRotas data={rotas} />
+        </View>
+      </>
+    );
+  };
+  // ----------------------------------------------------------
+
   return (
     <View style={Styles.container}>
       <View style={Styles.MapContainer}>
@@ -83,26 +170,23 @@ const HomeScreen: React.FC = () => {
           showsUserLocation={true}
           showsMyLocationButton={false}
         >
-          {/* ANOTAÇÃO: Adicionamos um Marker de exemplo para usar a importação. */}
-          <Marker
-            coordinate={{ latitude: -12.9777, longitude: -38.5016 }}
-            title="Exemplo"
-          />
+          {/* Renderiza os markers vindos da API */}
+          {markers.map((marker) => (
+            <Marker
+              key={marker.id}
+              coordinate={{
+                latitude: marker.latitude,
+                longitude: marker.longitude,
+              }}
+              title={marker.titulo}
+              description={marker.descricao}
+            />
+          ))}
         </MapView>
       </View>
       <CustomBottomSheet ref={bottomSheetRef}>
         <View style={Styles.contentContainer}>
-          <View style={Styles.viewPesquisa}>
-            <SearchBar
-              onChangeText={() => {
-                /* lógica para atualizar o estado de pesquisa */
-              }}
-              value={"" /* estado de pesquisa atual */}
-            />
-          </View>
-          <View style={Styles.viewRotas}>
-            <CardRotas />
-          </View>
+          {renderBottomSheetContent()}
         </View>
       </CustomBottomSheet>
     </View>
@@ -110,7 +194,6 @@ const HomeScreen: React.FC = () => {
 };
 
 const Styles = StyleSheet.create({
-
   container: {
     flex: 1,
     backgroundColor: "#f0f0f0",
@@ -124,7 +207,6 @@ const Styles = StyleSheet.create({
   mapPlaceholder: {
     flex: 1,
   },
-
   title: {
     fontSize: 24,
     fontWeight: "bold",
@@ -168,11 +250,16 @@ const Styles = StyleSheet.create({
   viewPesquisa: {
     width: "100%",
   },
-
   viewRotas: {
     width: "100%",
     flex: 1,
     marginTop: 10,
+  },
+  errorText: {
+    color: "red",
+    textAlign: "center",
+    marginTop: 20,
+    fontSize: 16,
   },
 });
 

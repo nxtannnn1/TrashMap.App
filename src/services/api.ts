@@ -3,13 +3,10 @@ import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
 
 const api = axios.create({
-  // --- ATENÇÃO MÁXIMA ---
-  // Substitua pela URL do seu backend. Se estiver testando no seu celular,
-  // use o IP da sua máquina na rede, NUNCA 'localhost'.
-  // Exemplo: 'http://192.168.1.10:8080'
-  baseURL: '192.168.100.7:8080',
+
+  baseURL: "http://192.168.100.1:8080",
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
 });
 

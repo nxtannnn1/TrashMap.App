@@ -1,6 +1,4 @@
-// Arquivo: src/screens/UsuarioScreen.tsx
-
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   StyleSheet,
@@ -8,21 +6,81 @@ import {
   ScrollView,
   Image,
   TouchableOpacity,
+  ActivityIndicator, // Para o loading
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "@/app/Navigation/types";
-
+import api from "@/src/services/api"; // <-- Importa nossa instância do Axios
+import { Usuario } from "@/src/Types"; // <-- Importa o tipo que acabamos de criar
 
 type NavigationProps = StackNavigationProp<RootStackParamList>;
 
-const profileImageUrl = "https://i.pravatar.cc/150?u=a042581f4e29026704d";
+// URL de fallback
+const fallbackProfileImageUrl =
+  "https://i.pravatar.cc/150?u=a042581f4e29026704d";
 
 function UsuarioScreen() {
-  
-  
   const navigation = useNavigation<NavigationProps>();
+
+  // --- ESTADOS PARA OS DADOS DA API ---
+  const [usuario, setUsuario] = useState<Usuario | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // --- EFEITO PARA BUSCAR DADOS DA API QUANDO A TELA ABRE ---
+  useEffect(() => {
+    const fetchUsuario = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        // ATENÇÃO: Ajuste este endpoint ('/meu-perfil') para o endpoint real
+        // da sua API que retorna os dados do usuário logado.
+        const response = await api.get("/meu-perfil");
+
+        setUsuario(response.data);
+      } catch (err) {
+        console.error("Erro ao buscar usuário:", err);
+        setError("Não foi possível carregar os dados do perfil.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUsuario();
+  }, []); // O array vazio [] garante que isso rode apenas 1 vez
+
+  // --- RENDERIZAÇÃO CONDICIONAL (LOADING, ERRO) ---
+
+  if (loading) {
+    return (
+      <View style={[styles.containerScroll, styles.centerContent]}>
+        <ActivityIndicator size="large" color="#212ff1ff" />
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={[styles.containerScroll, styles.centerContent]}>
+        <Text style={styles.errorText}>{error}</Text>
+      </View>
+    );
+  }
+
+  // Se não está carregando, não tem erro, mas usuário é nulo
+  if (!usuario) {
+    return (
+      <View style={[styles.containerScroll, styles.centerContent]}>
+        <Text style={styles.errorText}>Nenhum dado de usuário encontrado.</Text>
+      </View>
+    );
+  }
+
+  // --- RENDERIZAÇÃO DE SUCESSO (DADOS CARREGADOS) ---
+  const profileImageUrl = usuario.fotoUrl || fallbackProfileImageUrl;
 
   return (
     <ScrollView style={styles.containerScroll}>
@@ -48,18 +106,17 @@ function UsuarioScreen() {
           </View>
         </View>
         <View style={styles.infoUsuario}>
+          {/* Dados agora vêm do estado 'usuario' */}
           <Text style={styles.tagUsuario}>ID</Text>
-          <Text>BR17BOZ0VSLUL413BR4Z1N0</Text>
+          <Text>{usuario.id}</Text>
           <Text style={styles.tagUsuario}>NOME</Text>
-          <Text>Leticia Silva Falcão</Text>
-          <Text style={styles.tagUsuario}>GENERO</Text>
-          <Text>Feminino</Text>
+          <Text>{usuario.nome}</Text>
           <Text style={styles.tagUsuario}>EMAIL</Text>
-          <Text>letsilva@gmail.com</Text>
+          <Text>{usuario.email}</Text>
           <Text style={styles.tagUsuario}>ENDEREÇO</Text>
-          <Text>Av. Caminho de Areia - 157</Text>
+          <Text>{usuario.endereco}</Text>
           <Text style={styles.tagUsuario}>CIDADE</Text>
-          <Text>Salvador - BA</Text>
+          <Text>{usuario.cidade}</Text>
         </View>
         <View style={styles.viewBottom}>
           <View style={styles.viewButtonsContainer}>
@@ -106,6 +163,20 @@ const styles = StyleSheet.create({
     backgroundColor: "#edf0eeff",
     paddingBottom: 50,
   },
+  // --- ADICIONADO ---
+  centerContent: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#edf0eeff",
+  },
+  errorText: {
+    color: "red",
+    fontSize: 16,
+    textAlign: "center",
+    paddingHorizontal: 20,
+  },
+  // ------------------
   viewContentWrapper: {
     width: "100%",
     alignItems: "center",
