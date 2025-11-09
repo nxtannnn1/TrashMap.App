@@ -91,30 +91,47 @@ class EnderecoService(val enderecoRepository: EnderecoRepository) {
         return EnderecoMapper.toDto(enderecoRepository.save(endereco))
     }
 
+    fun listarEnderecoPelasCoordenadas(
+        latitude: BigDecimal,
+        longitude: BigDecimal
+    ): Endereco {
+        return enderecoRepository.findByCoordenadas_LatitudeAndCoordenadas_Longitude(
+            latitude,
+            longitude
+        ) ?: throw EnderecoNaoEncontradoException(
+            "Nenhum endereço encontrado para as coordenadas: $latitude, $longitude"
+        )
+
+
+    }
+
     fun listarEnderecos(
         pageable: Pageable,
         latitude: BigDecimal? = null,
         longitude: BigDecimal? = null,
-        raioKm: BigDecimal = BigDecimal("5.0"), // raio como BigDecimal
+        raioKm: BigDecimal = BigDecimal("5.0"),
         cidade: String? = null,
         estado: Estado? = null
     ): List<EnderecoDTOResponse> {
 
-        val enderecos = if (latitude != null && longitude != null) {
-            listarEnderecosProximos(
-                latitude,
-                longitude,
-                raioKm,
-                cidade,
-                estado
-            )
-        } else {
-            enderecoRepository.findAll(pageable).content
+        val enderecos = when {
+            // Caso 1: coordenadas e raio zero → buscar endereço exato
+            latitude != null && longitude != null && raioKm.compareTo(BigDecimal.ZERO) == 0 -> {
+                val endereco = listarEnderecoPelasCoordenadas(latitude, longitude)
+                listOf(endereco)
+            }
+
+            // Caso 2: coordenadas e raio informado → buscar próximos
+            latitude != null && longitude != null -> {
+                listarEnderecosProximos(latitude, longitude, raioKm, cidade, estado)
+            }
+
+            // Caso 3: sem coordenadas → listar tudo paginado
+            else -> enderecoRepository.findAll(pageable).content
         }
 
         return enderecos.map { EnderecoMapper.toDto(it) }
     }
-
 
     @Transactional
     fun excluirEnderecoPorId(id: Long) =
