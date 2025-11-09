@@ -1,10 +1,8 @@
 package com.sistema.trashmap.domain.model
 
-import com.sistema.trashmap.domain.enum.TipoUsuario
 import jakarta.persistence.*
 import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotBlank
-import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Size
 import org.hibernate.annotations.CreationTimestamp
 import java.time.LocalDateTime
@@ -37,13 +35,6 @@ class Usuario(
     var senha: String,
     // Senha do usuário
     // Deve ter entre 8 e 20 caracteres
-
-    @Enumerated(EnumType.STRING)
-    @NotNull(message = "Tipo de usuário deve ser preenchido!")
-    @Column(name = "tipo_usuario", nullable = false)
-    var tipoUsuario: TipoUsuario,
-    // Define o tipo do usuário (ex.: ADMIN, COMUM, MODERADOR)
-    // Salvo como string no banco para melhor legibilidade
 
     @CreationTimestamp
     @Column(name = "criado_em", updatable = false, nullable = false)

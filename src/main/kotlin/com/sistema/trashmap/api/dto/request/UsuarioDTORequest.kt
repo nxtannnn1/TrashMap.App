@@ -1,6 +1,5 @@
 package com.sistema.trashmap.api.dto.request
 
-import com.sistema.trashmap.domain.enum.TipoUsuario
 import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
@@ -19,7 +18,5 @@ data class UsuarioDTORequest(
     @Size(min = 8, max = 20, message = "Senha deve possuir entre 8 e 20 caracteres")
     val senha: String,
 
-    @NotNull(message = "Tipo de usuário deve ser preenchido!")
-    val tipoUsuario: TipoUsuario
 )
 

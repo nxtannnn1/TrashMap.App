@@ -7,8 +7,7 @@ object LoginMapper {
 
     fun toDto(usuario: Usuario): UsuarioLoginDTOResponse = UsuarioLoginDTOResponse(
         email = usuario.email,
-        nome = usuario.nome,
-        tipoUsuario = usuario.tipoUsuario
+        nome = usuario.nome
     )
 
 }

@@ -6,7 +6,6 @@ import com.sistema.trashmap.api.dto.request.UsuarioLoginDTORequest
 import com.sistema.trashmap.api.dto.response.UsuarioLoginDTOResponse
 import com.sistema.trashmap.api.mapper.LoginMapper
 import com.sistema.trashmap.api.mapper.UsuarioMapper
-import com.sistema.trashmap.domain.enum.TipoUsuario
 import com.sistema.trashmap.domain.model.Usuario
 import com.sistema.trashmap.exception.EmailIncorretoException
 import com.sistema.trashmap.exception.EmailJaExistenteException
@@ -40,8 +39,7 @@ class UsuarioService(val usuarioRepository: UsuarioRepository, val passwordEncod
         val usuario = Usuario(
             email = usuarioDTORequest.email,
             nome = usuarioDTORequest.nome,
-            senha = hash,
-            tipoUsuario = usuarioDTORequest.tipoUsuario
+            senha = hash
         )
 
         usuarioRepository.save(usuario)
@@ -63,8 +61,7 @@ class UsuarioService(val usuarioRepository: UsuarioRepository, val passwordEncod
             Usuario(
                 email = dto.email,
                 nome = dto.nome,
-                senha = hash,
-                tipoUsuario = dto.tipoUsuario
+                senha = hash
             )
         }
 
@@ -116,7 +113,6 @@ class UsuarioService(val usuarioRepository: UsuarioRepository, val passwordEncod
 
         usuario.nome = usuarioDTORequest.nome
         usuario.email = usuarioDTORequest.email
-        usuario.tipoUsuario = usuarioDTORequest.tipoUsuario
         usuario.senha = hash
 
         usuarioRepository.save(usuario)
@@ -137,8 +133,7 @@ class UsuarioService(val usuarioRepository: UsuarioRepository, val passwordEncod
             val admin = Usuario(
                 nome = "Admin",
                 email = adminEmail1,
-                senha = passwordEncoder.encode("Admin123!"),
-                tipoUsuario = TipoUsuario.ADMIN
+                senha = passwordEncoder.encode("Admin123!")
             )
             usuarioRepository.save(admin)
         }
@@ -147,8 +142,7 @@ class UsuarioService(val usuarioRepository: UsuarioRepository, val passwordEncod
             val mod = Usuario(
                 nome = "Admin2",
                 email = adminEmail12,
-                senha = passwordEncoder.encode("Mod123!"),
-                tipoUsuario = TipoUsuario.ADMIN
+                senha = passwordEncoder.encode("Mod123!")
             )
             usuarioRepository.save(mod)
         }

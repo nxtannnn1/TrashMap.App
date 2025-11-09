@@ -10,7 +10,6 @@ object UsuarioMapper {
         UsuarioDTOResponse(
             email = usuario.email,
             nome = usuario.nome,
-            tipoUsuario = usuario.tipoUsuario,
             criadoEm = usuario.criadoEm
         )
 
@@ -20,7 +19,6 @@ object UsuarioMapper {
             email = usuarioDTORequest.email,
             nome = usuarioDTORequest.nome,
             senha = usuarioDTORequest.senha,
-            tipoUsuario = usuarioDTORequest.tipoUsuario
         )
 
 }
