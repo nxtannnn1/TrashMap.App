@@ -31,7 +31,7 @@ class CaminhaoService(
         PlacaValidator.validate(placaFormatada)
 
         if (caminhaoRepository.existsByPlaca(placaFormatada)) {
-            throw PlacaJaExistenteException("A placa ${caminhaoDTORequest.placa} já existe no Sistema! Utilize outra ou edite o caminhão existente.!")
+            throw PlacaJaExistenteException("A placa ${caminhaoDTORequest.placa} já existe no Sistema! Utilize outra ou edite o caminhão existente!")
         }
 
         val caminhao = caminhaoRepository.save(
@@ -76,7 +76,6 @@ class CaminhaoService(
         CaminhaoMapper.toDto(caminhaoRepository.findById(id).orElseThrow {
             CaminhaoNaoEncontradoException("Caminhão de id $id não encontrado!")
         })
-
 
     fun listarCaminhoes(
         pageable: Pageable,

@@ -1,4 +1,5 @@
 # TrashMap Backend – Init
+
 ## O que é "Init"
 
 Init é a camada responsável pela inicialização da infraestrutura da aplicação, garantindo que todos os componentes essenciais estejam configurados corretamente antes da execução completa do sistema.
