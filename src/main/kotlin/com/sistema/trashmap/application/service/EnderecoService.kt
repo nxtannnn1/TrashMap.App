@@ -69,6 +69,19 @@ class EnderecoService(val enderecoRepository: EnderecoRepository) {
             EnderecoNaoEncontradoException("Endereço de id $id não encontrado")
         })
 
+    fun persistirDados(endereco: Endereco, enderecoDTORequest: EnderecoDTORequest){
+        CepValidator.validate(enderecoDTORequest.cep)
+        val cepFormatado = CepFormatter.formatarCep(enderecoDTORequest.cep)
+        endereco.cep = cepFormatado
+        endereco.logradouro = enderecoDTORequest.logradouro
+        endereco.numero = enderecoDTORequest.numero
+        endereco.bairro = enderecoDTORequest.bairro
+        endereco.cidade = enderecoDTORequest.cidade
+        endereco.estado = enderecoDTORequest.estado
+        endereco.complemento = enderecoDTORequest.complemento
+        endereco.coordenadas = enderecoDTORequest.coordenadas
+    }
+
 
     @Transactional
     fun editarEnderecoPorId(id: Long, enderecoDTORequest: EnderecoDTORequest): EnderecoDTOResponse {
@@ -76,17 +89,7 @@ class EnderecoService(val enderecoRepository: EnderecoRepository) {
             EnderecoNaoEncontradoException("Endereço de id $id não encontrado")
         }
 
-        CepValidator.validate(enderecoDTORequest.cep)
-        val cepFormatado = CepFormatter.formatarCep(enderecoDTORequest.cep)
-
-        endereco.logradouro = enderecoDTORequest.logradouro
-        endereco.numero = enderecoDTORequest.numero
-        endereco.bairro = enderecoDTORequest.bairro
-        endereco.cidade = enderecoDTORequest.cidade
-        endereco.cep = cepFormatado
-        endereco.estado = enderecoDTORequest.estado
-        endereco.complemento = enderecoDTORequest.complemento
-        endereco.coordenadas = enderecoDTORequest.coordenadas
+        persistirDados(endereco,enderecoDTORequest)
 
         return EnderecoMapper.toDto(enderecoRepository.save(endereco))
     }
@@ -101,7 +104,6 @@ class EnderecoService(val enderecoRepository: EnderecoRepository) {
         ) ?: throw EnderecoNaoEncontradoException(
             "Nenhum endereço encontrado para as coordenadas: $latitude, $longitude"
         )
-
 
     }
 

@@ -10,9 +10,9 @@ object UsuarioMapper {
         UsuarioDTOResponse(
             email = usuario.email,
             nome = usuario.nome,
-            criadoEm = usuario.criadoEm
+            criadoEm = usuario.criadoEm,
+            isAdm = usuario.isAdm
         )
-
 
     fun toEntity(usuarioDTORequest: UsuarioDTORequest): Usuario =
         Usuario(

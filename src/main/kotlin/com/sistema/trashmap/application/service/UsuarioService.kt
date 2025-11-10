@@ -128,7 +128,8 @@ class UsuarioService(val usuarioRepository: UsuarioRepository, val passwordEncod
             val admin = Usuario(
                 nome = "Admin",
                 email = adminEmail1,
-                senha = passwordEncoder.encode("Admin123!")
+                senha = passwordEncoder.encode("Admin123!"),
+                isAdm = true
             )
             usuarioRepository.save(admin)
         }
@@ -137,7 +138,8 @@ class UsuarioService(val usuarioRepository: UsuarioRepository, val passwordEncod
             val mod = Usuario(
                 nome = "Admin2",
                 email = adminEmail2,
-                senha = passwordEncoder.encode("Mod123!")
+                senha = passwordEncoder.encode("Mod123!"),
+                isAdm = true
             )
             usuarioRepository.save(mod)
         }

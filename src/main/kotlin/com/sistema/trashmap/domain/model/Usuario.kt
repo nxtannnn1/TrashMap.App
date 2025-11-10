@@ -29,6 +29,9 @@ class Usuario(
     // Nome do usuário
     // Não deve estar em branco
 
+    @Column(name = "is_admin", nullable = false) //Se for da Staff, isAdm é true, senão, false
+    var isAdm: Boolean = false,
+
     @NotBlank(message = "Senha não pode ser vazio")
     @Size(min = 8, max = 20, message = "Senha deve possuir entre 8 e 20 caracteres")
     @Column(name = "senha", nullable = false)
