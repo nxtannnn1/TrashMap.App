@@ -1,8 +1,8 @@
 package com.sistema.trashmap.application.service
 
 import com.sistema.trashmap.api.dto.request.UsuarioDTORequest
-import com.sistema.trashmap.api.dto.response.UsuarioDTOResponse
 import com.sistema.trashmap.api.dto.request.UsuarioLoginDTORequest
+import com.sistema.trashmap.api.dto.response.UsuarioDTOResponse
 import com.sistema.trashmap.api.dto.response.UsuarioLoginDTOResponse
 import com.sistema.trashmap.api.mapper.LoginMapper
 import com.sistema.trashmap.api.mapper.UsuarioMapper
@@ -13,7 +13,6 @@ import com.sistema.trashmap.exception.UsuarioNaoEncontradoException
 import com.sistema.trashmap.infrastructure.repository.UsuarioRepository
 import com.sistema.trashmap.validation.NomeValidator
 import com.sistema.trashmap.validation.SenhaValidator
-import jakarta.annotation.PostConstruct
 import main.kotlin.com.sistema.trashmap.exception.SenhaIncorretaException
 import org.springframework.data.domain.Pageable
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -22,11 +21,6 @@ import org.springframework.stereotype.Service
 @Service
 class UsuarioService(val usuarioRepository: UsuarioRepository, val passwordEncoder: PasswordEncoder) {
 
-    @PostConstruct
-    fun initUsuariosPadrao() {
-        criarUsuariosPadrao()
-    }
-
     fun cadastrarUsuario(usuarioDTORequest: UsuarioDTORequest): UsuarioDTOResponse {
 
         if (usuarioRepository.findByEmail(usuarioDTORequest.email) != null) {
@@ -34,6 +28,7 @@ class UsuarioService(val usuarioRepository: UsuarioRepository, val passwordEncod
         }
 
         NomeValidator.validate(usuarioDTORequest.nome)
+        SenhaValidator.validate(usuarioDTORequest.senha)
         val hash = passwordEncoder.encode(usuarioDTORequest.senha)
 
         val usuario = Usuario(
@@ -107,7 +102,7 @@ class UsuarioService(val usuarioRepository: UsuarioRepository, val passwordEncod
             UsuarioNaoEncontradoException("Usuário de id $id não encontrado!")
         }
 
-        if (usuarioRepository.findByEmail(usuarioDTORequest.email) != null && usuarioDTORequest.email == usuario.email) {
+        if (usuarioRepository.findByEmail(usuarioDTORequest.email) != null && usuarioDTORequest.email != usuario.email) {
             throw EmailJaExistenteException("Já existe um usuário com esse e-mail!")
         }
 
@@ -127,7 +122,7 @@ class UsuarioService(val usuarioRepository: UsuarioRepository, val passwordEncod
 
     fun criarUsuariosPadrao() {
         val adminEmail1 = "admin1@trashmap.com"
-        val adminEmail12 = "admin2@trashmap.com"
+        val adminEmail2 = "admin2@trashmap.com"
 
         if (usuarioRepository.findByEmail(adminEmail1) == null) {
             val admin = Usuario(
@@ -138,10 +133,10 @@ class UsuarioService(val usuarioRepository: UsuarioRepository, val passwordEncod
             usuarioRepository.save(admin)
         }
 
-        if (usuarioRepository.findByEmail(adminEmail12) == null) {
+        if (usuarioRepository.findByEmail(adminEmail2) == null) {
             val mod = Usuario(
                 nome = "Admin2",
-                email = adminEmail12,
+                email = adminEmail2,
                 senha = passwordEncoder.encode("Mod123!")
             )
             usuarioRepository.save(mod)
@@ -151,13 +146,12 @@ class UsuarioService(val usuarioRepository: UsuarioRepository, val passwordEncod
     fun autenticarLogin(usuarioLoginDTORequest: UsuarioLoginDTORequest): UsuarioLoginDTOResponse {
 
         val usuario = usuarioRepository.findByEmail(usuarioLoginDTORequest.email)
-            ?: throw UsuarioNaoEncontradoException("Não foi encontrado um usuário com esse email")
+            ?: throw UsuarioNaoEncontradoException("Usuário não encontrado ou credenciais inválidas.")
         if (!passwordEncoder.matches(
                 usuarioLoginDTORequest.senha,
                 usuario.senha
             )
         ) throw SenhaIncorretaException("Senha incorreta")
-
 
         return LoginMapper.toDto(usuario)
     }
@@ -167,8 +161,8 @@ class UsuarioService(val usuarioRepository: UsuarioRepository, val passwordEncod
             .orElseThrow { UsuarioNaoEncontradoException("Usuário de id $id não encontrado") }
 
         if (!passwordEncoder.matches(
-                senhaAtual, // Senha inputada
-                usuario.senha //Senha já registrada no BD
+                senhaAtual, // Senha inputada pelo usuário raw (crua),
+                usuario.senha //Senha já registrada no BD coded (codificada)
             )
         ) throw SenhaIncorretaException("Senha incorreta")
 
@@ -185,6 +179,8 @@ class UsuarioService(val usuarioRepository: UsuarioRepository, val passwordEncod
                 .orElseThrow { UsuarioNaoEncontradoException("Usuário de id $id não encontrado") }
 
         if (usuario.email != emailAtual) throw EmailIncorretoException("E-mail não confere!")
+
+        if (usuarioRepository.findByEmail(emailAtual) != null) throw EmailJaExistenteException("Já existe um usuário com esse e-mail!")
 
         usuario.email = emailNovo
         usuarioRepository.save(usuario)
