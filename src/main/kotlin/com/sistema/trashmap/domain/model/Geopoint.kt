@@ -15,8 +15,8 @@ class Geopoint(
     @NotNull(message = "Latitude não pode ser nula!")
     var latitude: BigDecimal, //BigDecimal para garantir melhor precisão
 
-    @DecimalMax(value = "180.0", inclusive = true, message = "Latitude máxima é 180")
-    @DecimalMin(value = "-180.0", inclusive = true, message = "Latitude mínima é -180")
+    @DecimalMax(value = "180.0", inclusive = true, message = "Longitude máxima é 180")
+    @DecimalMin(value = "-180.0", inclusive = true, message = "Longitude mínima é -180")
     @NotNull(message = "Longitude não pode ser nula!")
     var longitude: BigDecimal //BigDecimal para garantir melhor precisão
 )
