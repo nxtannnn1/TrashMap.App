@@ -24,15 +24,23 @@ class CaminhaoService(
     val caminhaoRepository: CaminhaoRepository
 ) {
 
+    private fun validarEFormatarPlaca(placa: String, idExistente: Long? = null): String {
+
+        val placaFormatada = PlacaFormatter.formatarPlaca(placa)
+        PlacaValidator.validate(placa)
+
+        val caminhaoExistente = caminhaoRepository.findByPlaca(placa)
+
+        if (caminhaoExistente != null && caminhaoExistente.id != idExistente) {
+            throw PlacaJaExistenteException("A placa $placa já existe no sistema! Utilize outra ou edite o caminhão existente!")
+        }
+        return placaFormatada
+    }
+
     @Transactional
     fun cadastrarCaminhao(caminhaoDTORequest: CaminhaoDTORequest): CaminhaoDTOResponse {
 
-        val placaFormatada = PlacaFormatter.formatarPlaca(caminhaoDTORequest.placa)
-        PlacaValidator.validate(placaFormatada)
-
-        if (caminhaoRepository.existsByPlaca(placaFormatada)) {
-            throw PlacaJaExistenteException("A placa ${caminhaoDTORequest.placa} já existe no Sistema! Utilize outra ou edite o caminhão existente!")
-        }
+        val placaFormatada = validarEFormatarPlaca(caminhaoDTORequest.placa)
 
         val caminhao = caminhaoRepository.save(
             Caminhao(
@@ -52,12 +60,7 @@ class CaminhaoService(
     fun cadastrarVariosCaminhoes(caminhoesDTO: List<CaminhaoDTORequest>): List<CaminhaoDTOResponse> {
 
         val caminhoes = caminhoesDTO.map { dto ->
-            val placaFormatada = PlacaFormatter.formatarPlaca(dto.placa)
-            PlacaValidator.validate(placaFormatada)
-
-            if (caminhaoRepository.existsByPlaca(placaFormatada)) {
-                throw PlacaJaExistenteException("A placa ${dto.placa} já existe no Sistema! Impossível cadastrar!")
-            }
+            val placaFormatada = validarEFormatarPlaca(dto.placa)
 
             Caminhao(
                 id = null,
@@ -114,12 +117,8 @@ class CaminhaoService(
         val caminhao: Caminhao = caminhaoRepository.findById(id).orElseThrow {
             CaminhaoNaoEncontradoException("Caminhão de id $id não encontrado!")
         }
-        val placaFormatada = PlacaFormatter.formatarPlaca(caminhaoDTORequest.placa)
-        PlacaValidator.validate(placaFormatada)
 
-        if (caminhaoRepository.existsByPlaca(placaFormatada) && caminhao.placa != placaFormatada) {
-            throw PlacaJaExistenteException("A placa ${caminhaoDTORequest.placa} já existe no Sistema! Impossível cadastrar!")
-        }
+        val placaFormatada = validarEFormatarPlaca(caminhaoDTORequest.placa)
 
         caminhao.placa = placaFormatada
         caminhao.statusCaminhao = caminhaoDTORequest.statusCaminhao

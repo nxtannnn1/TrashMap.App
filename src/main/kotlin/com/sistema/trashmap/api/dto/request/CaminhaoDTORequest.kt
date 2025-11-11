@@ -16,8 +16,6 @@ data class CaminhaoDTORequest(
     @Enumerated(EnumType.STRING)
     @NotNull(message = "Status deve ser preenchido!")
     var statusCaminhao: StatusCaminhao,
-    //Indica o estado do caminhão desejado
-    // Teremos: Ativo, Inativo e Em Manutenção
 
     @NotBlank(message = "Placa não pode ser vazia!")
     @Pattern(
@@ -25,16 +23,11 @@ data class CaminhaoDTORequest(
         message = "Placa inválida. Formatos aceitos: ABC-1234 ou ABC1D23"
     )
     var placa: String,
-    //Placa do caminhão coletor
-    //Modelo Placa: "AAA-0123"
-    //Única para evitar duplicidade
 
     @Valid
     @NotNull(message = "Localização deve ser informada")
     @Embedded
     var coordenadas: Geopoint,
-    //Coordenadas geográficas
-    //Utilizada para rastreamento em tempo real
 
     @NotNull(message = "Favor inserir um valor válido")
     @DecimalMin(value = "1", message = "Pesagem mínima = 1Kg")
