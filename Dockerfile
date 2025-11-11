@@ -1,15 +1,14 @@
-# Etapa de build (opcional se você não quiser depender do Gradle local)
-# FROM gradle:8.6-jdk17-alpine AS build
-# COPY --chown=gradle:gradle . /home/gradle/src
-# WORKDIR /home/gradle/src
-# RUN gradle build -x test
+# Use uma imagem oficial do OpenJDK 17
+FROM openjdk:17-ea-21-slim-buster
 
-# Etapa final
-FROM openjdk:17-jdk-slim
-WORKDIR /aplicacao
+# Cria diretório de trabalho
+WORKDIR /app
 
-# Copia o jar gerado pelo build (ajuste o nome conforme o seu)
+# Copia o jar do backend
 COPY build/libs/trashmap-0.0.1-SNAPSHOT.jar trashmap.jar
 
+# Expõe a porta do Spring Boot
 EXPOSE 8080
+
+# Comando para rodar a aplicação
 ENTRYPOINT ["java", "-jar", "trashmap.jar"]

@@ -23,7 +23,7 @@ class Endereco(
     // Obrigatório para localizar o ponto de coleta ou o caminhão, se houver vínculo
 
     @Column(name = "numero", nullable = true)
-    var numero: String?,
+    var numero: String? = null,
     // Número do prédio ou residência
 
     @NotBlank(message = "CEP não pode ser vazio!")
