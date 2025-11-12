@@ -1,18 +1,18 @@
 // Arquivo: src/screens/EditUsuarioScreen.tsx
 
+import { AppScreenProps } from "@/app/(navigation)/types";
+import { Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";
 import {
-  View,
+  Alert,
+  Image,
+  ScrollView,
   StyleSheet,
   Text,
-  ScrollView,
-  Image,
+  TextInput,
   TouchableOpacity,
-  TextInput, // Importante: para campos de entrada de texto
-  Alert, // Para exibir mensagens de confirmação
+  View,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { AppScreenProps } from "@/app/Navigation/types";
 
 interface UserData {
   id: string;

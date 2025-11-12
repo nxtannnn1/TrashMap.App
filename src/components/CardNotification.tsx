@@ -1,142 +1,132 @@
-import React, { ComponentProps } from "react";
+import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
+// Importamos a interface que define o tipo da notificação
+// (Ajuste o caminho se necessário)
+import { NotificationType } from "@/src/Types";
 
-// Este tipo descreve o formato de um objeto de notificação
-export interface NotificationItem {
-  id: string;
-  title: string;
-  message: string;
-  time: string;
-  read: boolean;
-  // Isso garante que 'icon' seja um nome de ícone válido do Ionicons
-  icon: ComponentProps<typeof Ionicons>["name"];
-  iconColor: string;
-  iconBg: string;
+// 1. Definimos os tipos das props que o CardNotification espera receber
+interface CardProps {
+  notification: NotificationType;
+  onMarkAsRead: (id: number) => void; // Espera uma função que recebe um number e não retorna nada
+  onDelete: (id: number) => void; // Idem
 }
 
-// Este tipo descreve as propriedades (props) que o componente CardNotification espera receber
-export interface CardNotificationProps {
-  item: NotificationItem;
-  onMarkAsRead: (id: string) => void;
-  onDelete: (id: string) => void;
-}
-
-// 2. Definição do Componente
-const CardNotification: React.FC<CardNotificationProps> = ({
-  item,
+// 2. Aplicamos os tipos ao componente usando React.FC (Functional Component)
+const NotificationCard: React.FC<CardProps> = ({
+  notification,
   onMarkAsRead,
   onDelete,
 }) => {
-  // Estilo condicional: se estiver lida, aplica o estilo 'cardRead'
-  const cardStyles = [
-    styles.cardNotification,
-    item.read ? styles.cardRead : null,
-  ];
-
   return (
-    <View style={cardStyles}>
-      {/* Ícone */}
-      <View
-        style={[styles.iconCardNotification, { backgroundColor: item.iconBg }]}
-      >
-        <Ionicons name={item.icon} size={40} color={item.iconColor} />
-      </View>
+    <View
+      style={[styles.cardNotification, notification.lido && styles.cardLido]}
+    >
+      <View style={styles.cardContentNotification}>
+        <View
+          style={[
+            styles.iconCardNotification,
+            { backgroundColor: notification.iconBg },
+          ]}
+        >
+          <Ionicons // @ts-ignore (Usamos isso se o iconName não for do tipo exato do Ionicons) // Se você garantiu que os nomes são corretos, pode remover o @ts-ignore
+            name={notification.iconName as any} // Ou tratamos como 'any' aqui
+            size={50}
+            color={notification.iconColor}
+          />
+        </View>
 
-      {/* Conteúdo de Texto */}
-      <View style={styles.componetNotification}>
-        <Text style={styles.tituloNotification}>{item.title}</Text>
-        <Text style={styles.mensagemNotification}>{item.message}</Text>
-        <Text style={styles.tempoNotification}>{item.time}</Text>
-      </View>
+        <View style={styles.componetNotification}>
+          <Text style={styles.tituloNotification}>{notification.titulo}</Text>
+          <Text style={styles.mensagemNotification}>
+            {notification.mensagem}
+          </Text>
 
-      {/* Botões de Ação */}
+          <Text style={styles.tempoNotification}>{notification.tempo}</Text>
+        </View>
+      </View>
       <View style={styles.actionContainer}>
         <TouchableOpacity
           style={styles.actionButton}
-          onPress={() => onDelete(item.id)}
+          onPress={() => onDelete(notification.id)}
         >
-          <Ionicons name="trash-outline" size={24} color="#ff3b30" />
+          <Ionicons name="trash" size={25} color="#ff0000" />
         </TouchableOpacity>
 
-        {/* Só mostra o botão de "marcar como lida" se ainda não foi lida */}
-        {!item.read && (
-          <TouchableOpacity
-            style={styles.actionButton}
-            onPress={() => onMarkAsRead(item.id)}
-          >
-            <Ionicons name="eye-outline" size={24} color="#007aff" />
-          </TouchableOpacity>
-        )}
+        <TouchableOpacity
+          style={styles.actionButton}
+          onPress={() => onMarkAsRead(notification.id)}
+        >
+          <Text style={styles.marcarLido}>Marcar como Lido</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
 };
 
-// 3. Estilos
-// Contém APENAS os estilos usados por este componente
 const styles = StyleSheet.create({
   cardNotification: {
-    width: "95%",
-    minHeight: 100,
-    padding: 12,
-    gap: 12,
+    width: "97%",
+    height: 120,
+    padding: 10,
+    gap: 8,
     borderRadius: 15,
+    display: "flex",
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#f1eeeeff",
-    marginTop: 10,
-    alignSelf: "center", // Importante para centralizar no FlatList
-    elevation: 3,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
+    marginVertical: 5,
+    alignSelf: "center",
   },
-  cardRead: {
-    backgroundColor: "#e0e0e0",
-    opacity: 0.8,
+  cardLido: {
+    opacity: 0.6,
+  },
+  cardContentNotification: {
+    flexDirection: "row",
+    alignItems: "center",
+    flex: 1,
+    gap: 12,
   },
   iconCardNotification: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    width: 65,
+    height: 65,
+    borderRadius: 50,
     alignItems: "center",
     justifyContent: "center",
   },
   componetNotification: {
-    flex: 1, // Ocupa o espaço restante
+    display: "flex",
     flexDirection: "column",
-    justifyContent: "center",
-    gap: 4,
+    flex: 1,
   },
   tituloNotification: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: "bold",
-    color: "#333",
   },
   mensagemNotification: {
     fontSize: 14,
-    color: "#555",
-    flexWrap: "wrap",
+    color: "#333",
   },
   tempoNotification: {
     fontSize: 12,
-    color: "#888",
+    color: "#666",
     marginTop: 4,
   },
   actionContainer: {
+    display: "flex",
     flexDirection: "column",
-    justifyContent: "space-between",
     alignItems: "center",
+    justifyContent: "space-between",
+    width: 100,
     height: "100%",
-    gap: 10,
+    paddingVertical: 5,
   },
-  actionButton: {
-    padding: 5,
+  actionButton: {},
+  marcarLido: {
+    color: "#007aff",
+    textAlign: "center",
   },
 });
 
-// 4. Exportação Padrão
-export default CardNotification;
+export default NotificationCard;

@@ -1,19 +1,19 @@
-import React, { useState, useEffect } from "react";
-import {
-  View,
-  StyleSheet,
-  Text,
-  ScrollView,
-  Image,
-  TouchableOpacity,
-  ActivityIndicator, // Para o loading
-} from "react-native";
+import { RootStackParamList } from "@/app/types";
+import api from "@/src/services/api"; // <-- Importa nossa instância do Axios
+import { Usuario } from "@/src/Types"; // <-- Importa o tipo que acabamos de criar
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { RootStackParamList } from "@/app/Navigation/types";
-import api from "@/src/services/api"; // <-- Importa nossa instância do Axios
-import { Usuario } from "@/src/Types"; // <-- Importa o tipo que acabamos de criar
+import React, { useEffect, useState } from "react";
+import {
+  ActivityIndicator,
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 type NavigationProps = StackNavigationProp<RootStackParamList>;
 
@@ -42,8 +42,14 @@ function UsuarioScreen() {
 
         setUsuario(response.data);
       } catch (err) {
-        console.error("Erro ao buscar usuário:", err);
-        setError("Não foi possível carregar os dados do perfil.");
+        // console.error("Erro ao buscar usuário:", err);
+        // setError("Não foi possível carregar os dados do perfil.");
+
+        console.warn(
+          "Perfil não logado ou erro ao buscar. Redirecionando...",
+          err
+        );
+        navigation.navigate("Login"); // Redireciona para o Login
       } finally {
         setLoading(false);
       }

@@ -1,15 +1,17 @@
-import React from "react";
-import { createStackNavigator } from "@react-navigation/stack";
-import { StackScreenProps } from "@react-navigation/stack";
-import { RootStackParamList } from "@/app/Navigation/types";
-import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
-import Ionicons from "react-native-vector-icons/Ionicons";
-import HomeScreen from "@/src/screens/HomeScreen";
-import UsuarioScreen from "@/src/screens/UsuarioScreen";
-import NotificationScreen from "@/src/screens/NotificationScreen";
-import EditUsuarioScreen from "@/src/screens/EditUsuarioScreen";
-import LoginScreen from "@/src/screens/Auth/LoginScreen";
+import { RootStackParamList } from "@/app/(navigation)/types";
 import CadastroScreen from "@/src/screens/Auth/CadastroScreen";
+import LoginScreen from "@/src/screens/Auth/LoginScreen";
+import EditUsuarioScreen from "@/src/screens/EditUsuarioScreen";
+import HomeScreen from "@/src/screens/HomeScreen";
+import NotificationScreen from "@/src/screens/NotificationScreen";
+import UsuarioScreen from "@/src/screens/UsuarioScreen";
+import {
+  createStackNavigator,
+  StackScreenProps,
+} from "@react-navigation/stack";
+import React from "react";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import Ionicons from "react-native-vector-icons/Ionicons";
 
 const profileImageUrl = "https://i.pravatar.cc/150?u=a042581f4e29026704d";
 

@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, Alert, Image, TouchableOpacity, Dimensions, SafeAreaView, ActivityIndicator, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
-import { cadastrar } from '../../services/authService';
+import { cadastrar } from '@/src/services/authService';
 
 const { width } = Dimensions.get('window');
 const guidelineBaseWidth = 375;
