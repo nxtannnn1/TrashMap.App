@@ -98,7 +98,7 @@ class EnderecoService(val enderecoRepository: EnderecoRepository) {
         latitude: BigDecimal,
         longitude: BigDecimal
     ): Endereco {
-        return enderecoRepository.findByCoordenadas_LatitudeAndCoordenadas_Longitude(
+        return enderecoRepository.findByCoordenadasLatitudeAndCoordenadasLongitude(
             latitude,
             longitude
         ) ?: throw EnderecoNaoEncontradoException(

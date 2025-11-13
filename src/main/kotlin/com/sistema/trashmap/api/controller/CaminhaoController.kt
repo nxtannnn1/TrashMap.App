@@ -68,4 +68,9 @@ class CaminhaoController(val caminhaoService: CaminhaoService) {
     ): ResponseEntity<CaminhaoDTOResponse> =
         ResponseEntity.ok(caminhaoService.atualizarLocalizacao(id, geopoint))
 
+    @GetMapping("/posicoes")
+    fun listarPosicoesAtuais(): ResponseEntity<List<CaminhaoDTOResponse>> =
+        ResponseEntity.ok(caminhaoService.listarPosicoesAtuais())
+
+
 }

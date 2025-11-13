@@ -45,14 +45,6 @@ class Caminhao(
     //Coordenadas geográficas
     //Utilizada para rastreamento em tempo real
 
-    @NotNull(message = "Favor inserir um valor válido")
-    @DecimalMin(value = "1", message = "Pesagem mínima = 1Kg")
-    @DecimalMax(value = "10000", message = "Pesagem máxima = 10.000kg")
-    @Column(name = "capacidade_em_kg", nullable = false, precision = 10, scale = 2)
-    var capacidadeKg: BigDecimal,
-    //Diz respeito à capacidade de armazenagem, em kg, do caminhão de lixo
-    //Devem ser tomados certos cuidados para não ultrapassar o limite, a fim de evitar incidentes
-
     @UpdateTimestamp
     @Column(name = "ultima_atualizacao", nullable = false)
     var ultimaAtualizacao: LocalDateTime = LocalDateTime.now()

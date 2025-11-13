@@ -11,6 +11,5 @@ data class CaminhaoDTOResponse(
     var statusCaminhao: StatusCaminhao,
     var placa: String,
     var coordenadas: Geopoint,
-    var capacidadeKg: BigDecimal,
     var ultimaAtualizacao: LocalDateTime
 )

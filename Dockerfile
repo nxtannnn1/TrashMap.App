@@ -1,5 +1,5 @@
-# Use uma imagem oficial do OpenJDK 17
-FROM openjdk:17-ea-21-slim-buster
+# Use uma imagem oficial do OpenJDK 21
+FROM amazoncorretto:21
 
 # Cria diretório de trabalho
 WORKDIR /app

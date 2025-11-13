@@ -37,7 +37,9 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
 
     // MariaDB - apenas para profile mariadb
-    runtimeOnly("org.mariadb.jdbc:mariadb-java-client:3.2.0")
+    // runtimeOnly("org.mariadb.jdbc:mariadb-java-client:3.2.0")
+
+    implementation("com.h2database:h2")
 
     // SWAGGER
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0")
@@ -62,6 +64,10 @@ dependencies {
     // DOTENV
     implementation(kotlin("stdlib"))
     implementation("io.github.cdimascio:dotenv-kotlin:6.2.2")
+
+    implementation("org.springframework.boot:spring-boot-starter-websocket")
+
+
 
 }
 

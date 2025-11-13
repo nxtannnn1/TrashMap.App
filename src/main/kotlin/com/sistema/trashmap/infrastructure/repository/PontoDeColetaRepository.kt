@@ -9,7 +9,6 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface PontoDeColetaRepository : JpaRepository<PontoDeColeta, Long> {
-    fun countByEndereco_Estado(estado: Estado): Int //Retorna os pontos de coleta cadastrados conforme o Estado informado
     fun findAllByEndereco_Estado(estado: Estado?, pageable: Pageable): Page<PontoDeColeta>
 
 }

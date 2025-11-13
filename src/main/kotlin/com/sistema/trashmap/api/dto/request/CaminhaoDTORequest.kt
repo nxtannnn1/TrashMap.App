@@ -28,10 +28,4 @@ data class CaminhaoDTORequest(
     @NotNull(message = "Localização deve ser informada")
     @Embedded
     var coordenadas: Geopoint,
-
-    @NotNull(message = "Favor inserir um valor válido")
-    @DecimalMin(value = "1", message = "Pesagem mínima = 1Kg")
-    var capacidadeKg: BigDecimal
-    //Diz respeito à capacidade de armazenagem, em kg, do caminhão de lixo
-    //Devem ser tomados certos cuidados para não ultrapassar o limite, a fim de evitar incidentes
-)
+    )

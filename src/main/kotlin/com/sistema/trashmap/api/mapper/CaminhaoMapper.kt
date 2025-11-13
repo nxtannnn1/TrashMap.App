@@ -12,7 +12,6 @@ object CaminhaoMapper {
             statusCaminhao = caminhao.statusCaminhao,
             placa = caminhao.placa,
             coordenadas = caminhao.coordenadas,
-            capacidadeKg = caminhao.capacidadeKg,
             ultimaAtualizacao = caminhao.ultimaAtualizacao
         )
 
@@ -21,8 +20,7 @@ object CaminhaoMapper {
         Caminhao(
             statusCaminhao = caminhaoDTORequest.statusCaminhao,
             placa = caminhaoDTORequest.placa,
-            coordenadas = caminhaoDTORequest.coordenadas,
-            capacidadeKg = caminhaoDTORequest.capacidadeKg
+            coordenadas = caminhaoDTORequest.coordenadas
         )
 
 }

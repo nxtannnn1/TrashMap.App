@@ -34,8 +34,8 @@ class PontoDeColetaService(
         )
 
         val coordenadasDique = Geopoint(
-            latitude = BigDecimal("-12.984471184983887"),
-            longitude = BigDecimal("-38.503843973429724")
+            latitude = BigDecimal("-12.984463"),
+            longitude =BigDecimal("-38.503864")
         )
 
         val coordenadasFarolBarra = Geopoint(
