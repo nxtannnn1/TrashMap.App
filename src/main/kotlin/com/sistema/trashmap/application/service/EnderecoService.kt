@@ -95,8 +95,8 @@ class EnderecoService(val enderecoRepository: EnderecoRepository) {
     }
 
     fun listarEnderecoPelasCoordenadas(
-        latitude: BigDecimal,
-        longitude: BigDecimal
+        latitude: Double,
+        longitude: Double
     ): Endereco {
         return enderecoRepository.findByCoordenadasLatitudeAndCoordenadasLongitude(
             latitude,
@@ -109,8 +109,8 @@ class EnderecoService(val enderecoRepository: EnderecoRepository) {
 
     fun listarEnderecos(
         pageable: Pageable,
-        latitude: BigDecimal? = null,
-        longitude: BigDecimal? = null,
+        latitude: Double? = null,
+        longitude: Double? = null,
         raioKm: BigDecimal = BigDecimal("5.0"),
         cidade: String? = null,
         estado: Estado? = null
@@ -142,8 +142,8 @@ class EnderecoService(val enderecoRepository: EnderecoRepository) {
                 .orElseThrow { EnderecoNaoEncontradoException("Endereço de id $id não encontrado") })
 
     fun listarEnderecosProximos(
-        latitude: BigDecimal,
-        longitude: BigDecimal,
+        latitude: Double,
+        longitude: Double,
         raioKm: BigDecimal = BigDecimal("5.0"), // raio como BigDecimal
         cidade: String? = null,
         estado: Estado? = null

@@ -34,8 +34,8 @@ class CaminhaoController(val caminhaoService: CaminhaoService) {
     fun listarCaminhoes(
         pageable: Pageable,
         @RequestParam(required = false) statusCaminhao: StatusCaminhao? = null,
-        @RequestParam(required = false) latitude: BigDecimal?,
-        @RequestParam(required = false) longitude: BigDecimal?,
+        @RequestParam(required = false) latitude: Double?,
+        @RequestParam(required = false) longitude: Double?,
         @RequestParam(required = false) raioKm: BigDecimal? = BigDecimal("5.0"),
         @RequestParam(required = false) placa: String? = null
     ): ResponseEntity<Page<CaminhaoDTOResponse>> =

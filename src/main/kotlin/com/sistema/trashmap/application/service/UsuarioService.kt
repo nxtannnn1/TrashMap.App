@@ -19,7 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 
 @Service
-class UsuarioService(val usuarioRepository: UsuarioRepository, val passwordEncoder: PasswordEncoder) {
+class UsuarioService(val usuarioRepository: UsuarioRepository, val passwordEncoder:PasswordEncoder) {
 
     fun cadastrarUsuario(usuarioDTORequest: UsuarioDTORequest): UsuarioDTOResponse {
 
@@ -120,30 +120,6 @@ class UsuarioService(val usuarioRepository: UsuarioRepository, val passwordEncod
             usuarioRepository.findById(id)
                 .orElseThrow { UsuarioNaoEncontradoException("Usuário de id $id não encontrado") })
 
-    fun criarUsuariosPadrao() {
-        val adminEmail1 = "admin1@trashmap.com"
-        val adminEmail2 = "admin2@trashmap.com"
-
-        if (usuarioRepository.findByEmail(adminEmail1) == null) {
-            val admin = Usuario(
-                nome = "Admin",
-                email = adminEmail1,
-                senha = passwordEncoder.encode("Admin123!"),
-                isAdm = true
-            )
-            usuarioRepository.save(admin)
-        }
-
-        if (usuarioRepository.findByEmail(adminEmail2) == null) {
-            val mod = Usuario(
-                nome = "Admin2",
-                email = adminEmail2,
-                senha = passwordEncoder.encode("Mod123!"),
-                isAdm = true
-            )
-            usuarioRepository.save(mod)
-        }
-    }
 
     fun autenticarLogin(usuarioLoginDTORequest: UsuarioLoginDTORequest): UsuarioLoginDTOResponse {
 

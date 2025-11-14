@@ -14,7 +14,7 @@ fun main() {
         cidade = "Salvador",
         cep = "40240220",
         estado = Estado.BA,
-        coordenadas = Geopoint(latitude = BigDecimal("41.40338"), BigDecimal("34.17403"))
+        coordenadas = Geopoint(latitude = 41.40338, 34.17403)
     )
 
     print("Endereço criado $endereco1")

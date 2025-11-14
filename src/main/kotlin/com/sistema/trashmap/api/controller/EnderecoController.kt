@@ -33,8 +33,8 @@ class EnderecoController(val enderecoService: EnderecoService) {
     @GetMapping
     fun listarEnderecos(
         pageable: Pageable,
-        @RequestParam(required = false) latitude: BigDecimal,
-        @RequestParam(required = false) longitude: BigDecimal,
+        @RequestParam(required = false) latitude: Double,
+        @RequestParam(required = false) longitude: Double,
         @RequestParam(required = false) raioKm: BigDecimal,
         @RequestParam(required = false) cidade: String?,
         @RequestParam(required = false) estado: Estado?

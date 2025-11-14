@@ -37,7 +37,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
 
     // MariaDB - apenas para profile mariadb
-    // runtimeOnly("org.mariadb.jdbc:mariadb-java-client:3.2.0")
+    runtimeOnly("org.mariadb.jdbc:mariadb-java-client:3.2.0")
 
     implementation("com.h2database:h2")
 

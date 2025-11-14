@@ -82,8 +82,8 @@ class CaminhaoService(
         pageable: Pageable,
         statusCaminhao: StatusCaminhao?,
         placa: String?,
-        latitude: BigDecimal?,
-        longitude: BigDecimal?,
+        latitude: Double?,
+        longitude: Double?,
         raioKm: BigDecimal?
     ): Page<CaminhaoDTOResponse> {
 
@@ -154,8 +154,8 @@ class CaminhaoService(
     }
 
     fun listarCaminhoesProximos(
-        latitude: BigDecimal,
-        longitude: BigDecimal,
+        latitude: Double,
+        longitude: Double,
         raioKm: BigDecimal,
     ): List<Caminhao> {
 
@@ -168,22 +168,6 @@ class CaminhaoService(
             ) <= raioKm //Filtra apenas os caminhões dentro do raio
         }
 
-    }
-
-    fun criarCaminhoesPadrao(){
-        val caminhao1 = Caminhao(
-            statusCaminhao = StatusCaminhao.ATIVO,
-            placa = "ABC1D23",
-            coordenadas = Geopoint(BigDecimal("-12.932365025683284"), BigDecimal("-38.507123296179934")) //Ele está no SENAI aproximado
-        )
-
-        val caminhao2 = Caminhao(
-            statusCaminhao = StatusCaminhao.ATIVO,
-            placa = "ABC1D93",
-            coordenadas = Geopoint(BigDecimal("-12.977450000000000"), BigDecimal("-38.508300000000000")) //Ele está no Habibs Dique aproximado
-        )
-
-        caminhaoRepository.saveAll(listOf(caminhao1, caminhao2))
     }
 
     fun listarPosicoesAtuais(): List<CaminhaoDTOResponse> {

@@ -2,13 +2,10 @@ package com.sistema.trashmap.domain.model
 
 import com.sistema.trashmap.domain.enum.StatusCaminhao
 import jakarta.persistence.*
-import jakarta.validation.constraints.DecimalMax
-import jakarta.validation.constraints.DecimalMin
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Pattern
 import org.hibernate.annotations.UpdateTimestamp
-import java.math.BigDecimal
 import java.time.LocalDateTime
 
 @Entity

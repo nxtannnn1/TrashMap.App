@@ -5,7 +5,6 @@ import jakarta.persistence.*
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Pattern
-import java.math.BigDecimal
 
 @Entity
 @Table(name = "enderecos")
@@ -72,7 +71,7 @@ class Endereco(
         "",          // bairro
         Estado.BA,   // estado
         "",          // cidade
-        Geopoint(BigDecimal("0.0"), BigDecimal("0.0"))
+        Geopoint((0.0), (0.0))
     )
 
 // Construtor secundário

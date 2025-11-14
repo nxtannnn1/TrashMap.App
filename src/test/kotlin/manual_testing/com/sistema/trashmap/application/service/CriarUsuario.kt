@@ -7,8 +7,7 @@ fun main() {
     val usuario1 = UsuarioDTORequest(
         email = "joao@hotmail.com",
         nome = "João",
-        senha = "joaodatorre",
-        tipoUsuario = TipoUsuario.COMUM
+        senha = "joaodatorre"
     )
 
     print("Usuário criado $usuario1")
