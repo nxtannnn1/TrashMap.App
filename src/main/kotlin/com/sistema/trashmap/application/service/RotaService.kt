@@ -38,14 +38,14 @@ class RotaService(
     fun listarRotas(): List<RotaDTOResponse> =
         rotaRepository.findAll().map { RotaMapper.toDto(it) }
 
-    fun buscarPorId(id: Long): RotaDTOResponse {
+    fun listarRotaPorId(id: Long): RotaDTOResponse {
         val rota = rotaRepository.findById(id)
             .orElseThrow { IllegalArgumentException("Rota não encontrada.") }
         return RotaMapper.toDto(rota)
     }
 
     @Transactional
-    fun deletarRota(id: Long) {
+    fun excluirRotaPorId(id: Long) {
         if (!rotaRepository.existsById(id)) {
             throw IllegalArgumentException("Rota não encontrada para exclusão.")
         }
@@ -53,7 +53,7 @@ class RotaService(
     }
 
     @Transactional
-    fun atualizarRota(id: Long, dto: RotaDTORequest): RotaDTOResponse {
+    fun atualizarRotaPorId(id: Long, dto: RotaDTORequest): RotaDTOResponse {
         val rota = rotaRepository.findById(id)
             .orElseThrow { IllegalArgumentException("Rota não encontrada.") }
 
