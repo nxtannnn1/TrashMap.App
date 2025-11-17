@@ -1,4 +1,4 @@
-import { RootStackParamList } from "@/app/(navigation)/types";
+import { RootStackParamList } from "@/src/Types/types";
 import CadastroScreen from "@/src/screens/Auth/CadastroScreen";
 import LoginScreen from "@/src/screens/Auth/LoginScreen";
 import EditUsuarioScreen from "@/src/screens/EditUsuarioScreen";
@@ -10,10 +10,15 @@ import {
   StackScreenProps,
 } from "@react-navigation/stack";
 import React from "react";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  ActivityIndicator,
+  TouchableOpacity,
+} from "react-native"; // Adicionei TouchableOpacity
 import Ionicons from "react-native-vector-icons/Ionicons";
-
-const profileImageUrl = "https://i.pravatar.cc/150?u=a042581f4e29026704d";
+import { useAuth } from "@/src/contexts/AuthContext";
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -28,12 +33,55 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "bold",
   },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#F0F0F0",
+  },
+  // Estilo para o botão de entrar (Visitante)
+  loginButtonHeader: {
+    backgroundColor: "#fff",
+    paddingHorizontal: 15,
+    paddingVertical: 8,
+    borderRadius: 20,
+    marginRight: 15,
+  },
+  loginButtonText: {
+    color: "#1E603A",
+    fontWeight: "bold",
+  },
 });
 
-// Lógica de navegação
 function AppNavigation() {
+  const { user, isLoading } = useAuth();
+
+  if (isLoading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#1E603A" />
+      </View>
+    );
+  }
+
+  // Função auxiliar para proteger rotas
+  // Se não tiver user, manda pro Login. Se tiver, manda pra tela desejada.
+  const handleProtectedRoute = (
+    navigation: any,
+    screenName: keyof RootStackParamList
+  ) => {
+    if (user) {
+      navigation.navigate(screenName);
+    } else {
+      navigation.navigate("Login");
+    }
+  };
+
   return (
     <Stack.Navigator>
+      {/* A Home agora é acessível para TODOS.
+          A mágica acontece dentro do 'options'
+      */}
       <Stack.Screen
         name="Home"
         component={HomeScreen}
@@ -42,41 +90,75 @@ function AppNavigation() {
         }: StackScreenProps<RootStackParamList, "Home">) => ({
           title: "",
           headerStyle: { backgroundColor: "#1E603A", height: 140 },
+
+          // LADO ESQUERDO DO HEADER (Saudação)
           headerLeft: () => (
             <View style={{ marginLeft: 15 }}>
-              <Text style={styles.headerTextTop}>Olá, Leticia</Text>
+              <Text style={styles.headerTextTop}>
+                {user ? `Olá, ${user.nome}` : "Olá, Visitante"}
+              </Text>
               <Text style={styles.headerTextBottom}>Combata a Poluição</Text>
             </View>
           ),
-          headerRight: () => [
-            <Ionicons
-              key="notifications"
-              name="notifications-outline"
-              size={30}
-              color="#000"
-              style={{ marginRight: 15 }}
-              onPress={() => navigation.navigate("Notification")}
-            />,
 
-            <TouchableOpacity
-              key="profile"
-              onPress={() => navigation.navigate("Usuario")}
-              style={{ marginRight: 15 }}
-            >
-              <Image
-                source={{ uri: profileImageUrl }}
-                style={{
-                  width: 57,
-                  height: 57,
-                  borderRadius: 27,
-                  borderWidth: 1,
-                  borderColor: "#ddd",
-                }}
-              />
-            </TouchableOpacity>,
-          ],
+          // LADO DIREITO DO HEADER (Ações)
+          headerRight: () => {
+            if (!user) {
+              // =================================================
+              // CENÁRIO VISITANTE: Botão "Entrar"
+              // =================================================
+              return (
+                <TouchableOpacity
+                  style={styles.loginButtonHeader}
+                  onPress={() => navigation.navigate("Login")}
+                >
+                  <Text style={styles.loginButtonText}>
+                    Entrar / Criar Conta
+                  </Text>
+                </TouchableOpacity>
+              );
+            }
+
+            // =================================================
+            // CENÁRIO LOGADO: Ícones de Notificação e Perfil
+            // =================================================
+            return (
+              <View style={{ flexDirection: "row", alignItems: "center" }}>
+                <Ionicons
+                  name="notifications"
+                  size={36}
+                  color="#f0cf17ff"
+                  style={{
+                    padding: 3,
+                    marginRight: 15,
+                    backgroundColor: "#1E603A",
+                    borderRadius: 50,
+                  }}
+                  // Usa a função de proteção (embora aqui o user já exista, é boa prática)
+                  onPress={() =>
+                    handleProtectedRoute(navigation, "Notification")
+                  }
+                />
+
+                <Ionicons
+                  name="person-circle-outline"
+                  size={45}
+                  color="#f0cf17ff"
+                  style={{
+                    marginRight: 16,
+                    backgroundColor: "#1E603A",
+                    borderRadius: 25,
+                  }}
+                  onPress={() => handleProtectedRoute(navigation, "Usuario")}
+                />
+              </View>
+            );
+          },
         })}
       />
+
+      {/* As outras telas continuam aqui, disponíveis na pilha */}
+
       <Stack.Screen
         name="Usuario"
         component={UsuarioScreen}
@@ -87,6 +169,7 @@ function AppNavigation() {
           headerTitleStyle: { fontWeight: "bold" },
         }}
       />
+
       <Stack.Screen
         name="EditUsuario"
         component={EditUsuarioScreen}
@@ -97,6 +180,7 @@ function AppNavigation() {
           headerTitleStyle: { fontWeight: "bold" },
         }}
       />
+
       <Stack.Screen
         name="Notification"
         component={NotificationScreen}
@@ -107,19 +191,18 @@ function AppNavigation() {
           headerTitleStyle: { fontWeight: "bold" },
         }}
       />
+
+      {/* Telas de Auth agora fazem parte da pilha principal */}
       <Stack.Screen
         name="Login"
         component={LoginScreen}
-        options={{
-          headerShown: false,
-        }}
+        options={{ headerShown: false }} // Login sem header
       />
+
       <Stack.Screen
         name="Cadastro"
         component={CadastroScreen}
-        options={{
-          headerShown: false,
-        }}
+        options={{ headerShown: false }} // Cadastro sem header
       />
     </Stack.Navigator>
   );

@@ -16,10 +16,7 @@ module.exports = function (api) {
         },
       ],
 
-      // 2. Plugin do Expo Router (corrigido o espaço)
-      "expo-router/babel",
-
-      // 3. O plugin do Reanimated DEVE ser o ÚLTIMO
+      // 2. O plugin do Reanimated DEVE ser o ÚLTIMO
       "react-native-reanimated/plugin",
     ],
   };

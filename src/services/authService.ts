@@ -1,37 +1,42 @@
-// src/services/authService.ts
-import api from './api';
-import { AxiosError } from 'axios';
+import api from "./api";
+import { AxiosError } from "axios";
 
-// Interfaces que descrevem os dados da nossa API
+// 1. Interface ajustada para bater com o UsuarioLoginDTOResponse do Java
 interface LoginResponse {
-  
-  token: string;
-
-  Usuario: {
-    id: number;
-    nome: string;
-    email: string;
-  };
+  id: number;
+  nome: string;
+  email: string;
+  isAdmin: boolean; // O Java manda true/false
+  token: string; // O Token JWT gerado
 }
 
+// 2. Interface ajustada para bater com o UsuarioDTORequest
 interface CadastroData {
   nome: string;
   email: string;
   senha: string;
-  tipoUsuario: string;
+  // Removemos tipoUsuario para evitar erro 400 no Java
 }
 
+// 3. Interface ajustada para bater com o UsuarioDTOResponse
 interface CadastroResponse {
-    id: number;
-    nome: string;
-    email: string;
-    tipoUsuario: string;
+  id: number;
+  nome: string;
+  email: string;
+  isAdmin: boolean;
 }
 
 // Função para fazer login
-export const login = async (email: string, senha: string): Promise<LoginResponse> => {
+export const login = async (
+  email: string,
+  senha: string
+): Promise<LoginResponse> => {
   try {
-    const response = await api.post<LoginResponse>('/usuarios/login', { email, senha });
+  
+    const response = await api.post<LoginResponse>("/auth/login", {
+      email,
+      senha,
+    });
     return response.data;
   } catch (err) {
     const error = err as AxiosError;
@@ -41,9 +46,15 @@ export const login = async (email: string, senha: string): Promise<LoginResponse
 };
 
 // Função para cadastrar um novo usuário
-export const cadastrar = async (dadosUsuario: CadastroData): Promise<CadastroResponse> => {
+export const cadastrar = async (
+  dadosUsuario: CadastroData
+): Promise<CadastroResponse> => {
   try {
-    const response = await api.post<CadastroResponse>('/usuarios', dadosUsuario);
+    // Esta rota bate com o @PostMapping no UsuarioController
+    const response = await api.post<CadastroResponse>(
+      "/usuarios",
+      dadosUsuario
+    );
     return response.data;
   } catch (err) {
     const error = err as AxiosError;

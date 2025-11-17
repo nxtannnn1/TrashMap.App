@@ -3,7 +3,7 @@ import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
 
 const api = axios.create({
-  baseURL: "http://192.168.100.7:8080/api",
+  baseURL: "http://192.168.100.7:8080",
   headers: {
     "Content-Type": "application/json",
   },
@@ -28,9 +28,9 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     if (error.response && error.response.status === 401) {
-      // Exemplo: Se o backend retornar 401 (Não autorizado),
-      // podemos limpar o token e forçar o logout.
-      // Isso será tratado melhor no AuthContext.
+    
+      
+    
       await SecureStore.deleteItemAsync('user-token');
     }
     return Promise.reject(error);

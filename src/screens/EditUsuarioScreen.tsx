@@ -1,7 +1,3 @@
-// Arquivo: src/screens/EditUsuarioScreen.tsx
-
-import { AppScreenProps } from "@/app/(navigation)/types";
-import { Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";
 import {
   Alert,
@@ -12,141 +8,166 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  ActivityIndicator,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { AppScreenProps } from "@/src/Types/types";
 
-interface UserData {
-  id: string;
-  nome: string;
-  genero: string;
-  email: string;
-  endereco: string;
-  cidade: string;
-}
+// 1. Importações para conectar com a API e Contexto
+import api from "@/src/services/api";
+import { useAuth } from "@/src/contexts/AuthContext";
+import { AxiosError } from "axios";
 
-// Dados simulados para pré-preencher os campos
-const initialUserData = {
-  id: "BR17BOZ0VSLUL413BR4Z1N0",
-  nome: "Leticia Silva Falcão",
-  genero: "Feminino",
-  email: "letsilva@gmail.com",
-  endereco: "Av. Caminho de Areia - 157",
-  cidade: "Salvador - BA",
-};
-
-interface EditUsuarioScreenProps {
-  navigation: {
-    goBack: () => void;
-  };
-}
-
-const profileImageUrl = "https://i.pravatar.cc/150?u=a042581f4e29026704d";
+// Imagem de placeholder (já que ainda não temos upload de foto real)
+const profileImageUrl = "https://i.pravatar.cc/150?u=trashmap-user";
 
 function EditUsuarioScreen({ navigation }: AppScreenProps<"EditUsuario">) {
-  // Use o hook useState para gerenciar o estado dos dados do usuário
-  const [userData, setUserData] = useState<UserData>(initialUserData);
+  const { user, signOut } = useAuth(); // Pegamos o usuário atual
 
-  // Função para atualizar um campo específico
-  const handleChange = (field: keyof typeof initialUserData, value: string) => {
-    setUserData((prevData) => ({
-      ...prevData,
-      [field]: value,
-    }));
-  };
+  // 2. Estados inicializados com os dados REAIS do usuário
+  const [nome, setNome] = useState(user?.nome || "");
+  const [email, setEmail] = useState(user?.email || "");
 
-  // Lógica de salvar (simulação)
-  const handleSave = () => {
-    // Aqui você enviaria os dados (userData) para a sua API/backend.
-    console.log("Dados a serem salvos:", userData);
-    Alert.alert("Sucesso", "Seus dados foram atualizados!", [
-      { text: "OK", onPress: () => navigation.goBack() },
-    ]);
+  // Campos visuais (Futura implementação no Backend)
+  const [endereco, setEndereco] = useState("");
+  const [cidade, setCidade] = useState("");
+
+  const [isLoading, setIsLoading] = useState(false);
+
+  // 3. Lógica de Salvar
+  const handleSave = async () => {
+    if (!user?.id) return;
+
+    setIsLoading(true);
+
+    try {
+      // Montamos o objeto conforme o DTO do Java (UsuarioDTORequest)
+      // Nota: Enviamos senha vazia para o backend ignorar a troca de senha
+      const dadosAtualizados = {
+        nome: nome,
+        email: email,
+        senha: "", // Backend foi configurado para ignorar senha vazia na edição
+      };
+
+      // Chamada PUT para /usuarios/{id}
+      await api.put(`/usuarios/${user.id}`, dadosAtualizados);
+
+      Alert.alert(
+        "Sucesso",
+        "Seus dados foram atualizados! Faça login novamente para ver as alterações.",
+        [
+          {
+            text: "OK",
+            onPress: () => {
+              // Como o Contexto não atualiza sozinho, forçamos o logout
+              // para o usuário logar de novo e baixar os dados novos.
+              signOut();
+              navigation.reset({ index: 0, routes: [{ name: "Login" }] });
+            },
+          },
+        ]
+      );
+    } catch (error) {
+      const err = error as AxiosError;
+      console.error("Erro ao atualizar:", err.response?.data);
+      Alert.alert(
+        "Erro",
+        "Não foi possível atualizar os dados. Verifique o e-mail."
+      );
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <ScrollView style={styles.containerScroll}>
       <View style={styles.viewContentWrapper}>
-        {/* Imagem de Perfil e Ícone (Mantido para consistência) */}
-        <View style={styles.viewImage}>
-          <Image
-            source={{ uri: profileImageUrl }}
-            style={styles.profileImage}
-          />
+        {/* === FOTO DE PERFIL === */}
+        <View style={styles.profileImageContainer}>
+          {/* Usamos a inicial do nome enquanto não tem foto */}
+          <Text style={styles.profileImageText}>
+            {nome.charAt(0).toUpperCase()}
+          </Text>
+
           <View style={styles.viewIcon}>
-            {/* O ícone aqui pode ser para trocar a foto, não vamos navegar */}
             <Ionicons
-              style={[styles.iconEdit, { color: "#ffffff" }]}
               name="camera"
+              size={20}
+              color="#ffffff"
               onPress={() =>
-                Alert.alert("Funcionalidade", "Abrir seletor de fotos.")
+                Alert.alert("Em breve", "Upload de foto será implementado.")
               }
             />
           </View>
         </View>
 
-        {/* Campos de Edição */}
-        <View style={styles.infoUsuario}>
-          {/* ID (Geralmente não editável, mantido como texto) */}
-          <Text style={styles.tagUsuario}>ID</Text>
-          <Text style={styles.fieldValue}>{userData.id}</Text>
+        {/* === FORMULÁRIO === */}
+        <View style={styles.cardForm}>
+          {/* ID (Apenas Leitura) */}
+          <Text style={styles.label}>ID DO USUÁRIO</Text>
+          <Text style={styles.valueReadOnly}>{user?.id}</Text>
 
           {/* NOME */}
-          <Text style={styles.tagUsuario}>NOME</Text>
+          <Text style={styles.label}>NOME COMPLETO</Text>
           <TextInput
-            style={styles.textInput}
-            value={userData.nome}
-            onChangeText={(text) => handleChange("nome", text)}
+            style={styles.input}
+            value={nome}
+            onChangeText={setNome}
             placeholder="Digite seu nome"
           />
 
-          {/* GÊNERO */}
-          {/* Nota: Para o Gênero, o ideal seria um Picker/Dropdown, mas usamos TextInput por simplicidade */}
-          <Text style={styles.tagUsuario}>GÊNERO</Text>
-          <TextInput
-            style={styles.textInput}
-            value={userData.genero}
-            onChangeText={(text) => handleChange("genero", text)}
-            placeholder="Digite seu gênero"
-          />
-
           {/* EMAIL */}
-          <Text style={styles.tagUsuario}>EMAIL</Text>
+          <Text style={styles.label}>E-MAIL</Text>
           <TextInput
-            style={styles.textInput}
-            value={userData.email}
-            onChangeText={(text) => handleChange("email", text)}
+            style={styles.input}
+            value={email}
+            onChangeText={setEmail}
             placeholder="Digite seu e-mail"
             keyboardType="email-address"
+            autoCapitalize="none"
           />
 
-          {/* ENDEREÇO */}
-          <Text style={styles.tagUsuario}>ENDEREÇO</Text>
+          {/* CAMPOS VISUAIS (Desabilitados ou Opcionais por enquanto) */}
+          {/* O Backend precisa criar tabela de endereços vinculada ao usuário para isso funcionar */}
+          <Text style={styles.label}>ENDEREÇO (Opcional)</Text>
           <TextInput
-            style={styles.textInput}
-            value={userData.endereco}
-            onChangeText={(text) => handleChange("endereco", text)}
-            placeholder="Digite seu endereço"
+            style={[styles.input, styles.inputDisabled]}
+            value={endereco}
+            onChangeText={setEndereco}
+            placeholder="Endereço não vinculado"
+            editable={false} // Travado por enquanto
           />
 
-          {/* CIDADE */}
-          <Text style={styles.tagUsuario}>CIDADE</Text>
+          <Text style={styles.label}>CIDADE (Opcional)</Text>
           <TextInput
-            style={styles.textInput}
-            value={userData.cidade}
-            onChangeText={(text) => handleChange("cidade", text)}
-            placeholder="Digite sua cidade"
+            style={[styles.input, styles.inputDisabled]}
+            value={cidade}
+            onChangeText={setCidade}
+            placeholder="Cidade não vinculada"
+            editable={false} // Travado por enquanto
           />
         </View>
 
-        {/* Botão de Salvar */}
-        <View style={styles.viewBottom}>
-          <View style={styles.viewButtonsContainer}>
-            <TouchableOpacity
-              style={[styles.customButton, styles.saveButton]}
-              onPress={handleSave}
-            >
-              <Text style={styles.buttonText}>SALVAR ALTERAÇÕES</Text>
-            </TouchableOpacity>
-          </View>
+        {/* === BOTÃO SALVAR === */}
+        <View style={styles.footer}>
+          <TouchableOpacity
+            style={styles.saveButton}
+            onPress={handleSave}
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <ActivityIndicator color="#FFF" />
+            ) : (
+              <Text style={styles.saveButtonText}>SALVAR ALTERAÇÕES</Text>
+            )}
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            style={styles.cancelButton}
+          >
+            <Text style={styles.cancelButtonText}>Cancelar</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </ScrollView>
@@ -155,105 +176,117 @@ function EditUsuarioScreen({ navigation }: AppScreenProps<"EditUsuario">) {
 
 const styles = StyleSheet.create({
   containerScroll: {
-    backgroundColor: "#edf0eeff",
     flex: 1,
+    backgroundColor: "#33b368ff", // Fundo Verde Claro da Identidade
   },
   viewContentWrapper: {
     width: "100%",
     alignItems: "center",
-    paddingBottom: 50, // Adicionado padding inferior para evitar corte
+    paddingVertical: 30,
   },
-  viewImage: {
-    width: 155,
-    height: 155,
-    borderRadius: 100,
-    marginTop: 25,
-    backgroundColor: "#212ff1ff",
+
+  // Estilo da Imagem de Perfil (Circular com Letra)
+  profileImageContainer: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    backgroundColor: "#1E603A", // Verde Escuro
     justifyContent: "center",
     alignItems: "center",
+    borderWidth: 3,
+    borderColor: "#f0cf17ff", // Amarelo
+    marginBottom: 25,
+    position: "relative",
   },
-  profileImage: {
-    width: 150,
-    height: 150,
-    borderRadius: 100,
-    borderWidth: 1,
-    borderColor: "#ddd",
+  profileImageText: {
+    fontSize: 50,
+    color: "#FFF",
+    fontWeight: "bold",
   },
   viewIcon: {
     position: "absolute",
     bottom: 0,
     right: 0,
-    backgroundColor: "#6EB030",
-    width: 40,
-    height: 40,
-    borderRadius: 25,
+    backgroundColor: "#1E603A",
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 2,
+    borderColor: "#FFF",
   },
-  iconEdit: {
-    marginTop: 10,
-    marginLeft: 10,
-    fontSize: 20,
-  },
-  infoUsuario: {
+
+  // Card Branco do Formulário
+  cardForm: {
     width: "90%",
-    marginTop: 30,
-    borderRadius: 15,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 20,
     padding: 20,
-    backgroundColor: "#ffffff", // Cor clara para melhor contraste com TextInput
-    alignItems: "flex-start",
-    shadowColor: "#000",
+    elevation: 4, // Sombra Android
+    shadowColor: "#000", // Sombra iOS
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5,
+    shadowRadius: 4,
   },
-  tagUsuario: {
-    fontWeight: "bold",
-    marginTop: 15,
-    marginBottom: 5,
+
+  label: {
     fontSize: 12,
-    color: "#555",
-  },
-  fieldValue: {
-    // Estilo para campos não editáveis (como o ID)
-    color: "#777",
+    fontWeight: "bold",
+    color: "#1E603A", // Verde Escuro nos labels
     marginBottom: 5,
+    marginTop: 10,
+    textTransform: "uppercase",
   },
-  textInput: {
-    width: "100%",
-    padding: 10,
+  valueReadOnly: {
+    fontSize: 14,
+    color: "#888",
     marginBottom: 10,
+    paddingLeft: 5,
+  },
+  input: {
+    width: "100%",
+    padding: 12,
     borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 8,
-    backgroundColor: "#f9f9f9",
+    borderColor: "#ddd",
+    borderRadius: 10,
+    backgroundColor: "#FAFAFA",
     fontSize: 16,
     color: "#333",
   },
-  viewBottom: {
-    width: "100%",
-    alignItems: "center",
-    marginTop: 30, // Reduzi a margem superior
-    marginBottom: 30,
+  inputDisabled: {
+    backgroundColor: "#EEE",
+    color: "#999",
   },
-  viewButtonsContainer: {
+
+  // Rodapé e Botões
+  footer: {
     width: "90%",
-    alignItems: "center",
-  },
-  customButton: {
-    padding: 15,
-    borderRadius: 8,
-    width: "100%",
-    marginVertical: 5,
+    marginTop: 30,
     alignItems: "center",
   },
   saveButton: {
-    backgroundColor: "#1E603A", // Cor de destaque para salvar
-    marginTop: 20,
+    width: "100%",
+    backgroundColor: "#1E603A", // Botão Verde Escuro
+    paddingVertical: 15,
+    borderRadius: 10,
+    alignItems: "center",
+    elevation: 3,
+    marginBottom: 15,
   },
-  buttonText: {
-    color: "#ffffff",
+  saveButtonText: {
+    color: "#FFFFFF",
     fontWeight: "bold",
     fontSize: 16,
+  },
+  cancelButton: {
+    padding: 10,
+  },
+  cancelButtonText: {
+    color: "#FFF", // Branco sobre o fundo verde claro fica legível? Se não, use #1E603A
+    fontWeight: "bold",
+    fontSize: 16,
+    textDecorationLine: "underline",
   },
 });
 

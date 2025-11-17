@@ -1,5 +1,5 @@
 // src/screens/Auth/LoginScreen.tsx
-import { RootStackParamList } from "@/app/(navigation)/types";
+import { RootStackParamList } from "@/src/Types/types";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import React, { useState } from "react";
@@ -14,6 +14,8 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+// Importando ícones (Padrão do Expo. Se não usar Expo, use react-native-vector-icons)
+import { Ionicons } from "@expo/vector-icons";
 import { useAuth } from "../../contexts/AuthContext";
 
 const { width } = Dimensions.get("window");
@@ -28,34 +30,35 @@ const LoginScreen: React.FC = () => {
   const [email, setEmail] = useState<string>("");
   const [senha, setSenha] = useState<string>("");
 
-  const navigation = useNavigation<LoginScreenNavigationProp>();
+  // NOVO: Estado para controlar visibilidade da senha
+  const [showPassword, setShowPassword] = useState<boolean>(false);
 
-  // ANOTAÇÃO: Pegamos o signIn do contexto
+  const navigation = useNavigation<LoginScreenNavigationProp>();
   const { signIn } = useAuth();
-  // ANOTAÇÃO: Usamos um isLoading local para controlar o botão
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleLogin = async (): Promise<void> => {
-    if (!email || !senha) {
+    // Remove espaços em branco
+    const emailTrimmed = email.trim();
+    const senhaTrimmed = senha.trim();
+
+    if (!emailTrimmed || !senhaTrimmed) {
       Alert.alert("Atenção", "Por favor, preencha o email e a senha.");
       return;
     }
 
-    setIsLoading(true); // Ativa o loading local
+    setIsLoading(true);
 
     try {
-      // Chama a função signIn do contexto
-      await signIn(email, senha);
-
-      // ANOTAÇÃO: Se o login deu certo, fechamos o modal manualmente.
+      // CORREÇÃO IMPORTANTE: Passar as variáveis "Trimmed" (limpas)
+      await signIn(emailTrimmed, senhaTrimmed);
     } catch (error) {
-      // Se o signIn falhar, ele vai estourar um erro que nós pegamos aqui.
       Alert.alert(
         "Falha no Login",
         "Credenciais inválidas. Verifique seus dados e tente novamente."
       );
     } finally {
-      setIsLoading(false); // Desativa o loading local
+      setIsLoading(false);
     }
   };
 
@@ -63,6 +66,7 @@ const LoginScreen: React.FC = () => {
     <View style={styles.container}>
       <Image source={require("../../assets/logo.png")} style={styles.logo} />
       <Text style={styles.title}>Login</Text>
+
       <Text style={styles.label}>E-mail</Text>
       <TextInput
         style={styles.input}
@@ -72,14 +76,33 @@ const LoginScreen: React.FC = () => {
         keyboardType="email-address"
         autoCapitalize="none"
       />
+
       <Text style={styles.label}>Senha</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Digite a senha"
-        value={senha}
-        onChangeText={setSenha}
-        secureTextEntry
-      />
+
+      {/* MUDANÇA: Container para agrupar Input + Ícone */}
+      <View style={styles.passwordContainer}>
+        <TextInput
+          style={styles.inputFlex} // Estilo modificado para preencher espaço
+          placeholder="Digite a senha"
+          value={senha}
+          onChangeText={setSenha}
+          // Lógica: Se showPassword for true, secureText é false
+          secureTextEntry={!showPassword}
+        />
+
+        {/* Botão do Olho */}
+        <TouchableOpacity
+          onPress={() => setShowPassword(!showPassword)}
+          style={styles.iconContainer}
+        >
+          <Ionicons
+            name={showPassword ? "eye-off" : "eye"}
+            size={24}
+            color="#555"
+          />
+        </TouchableOpacity>
+      </View>
+
       <TouchableOpacity>
         <Text style={styles.forgotPassword}>Esqueci minha senha</Text>
       </TouchableOpacity>
@@ -89,7 +112,6 @@ const LoginScreen: React.FC = () => {
         onPress={handleLogin}
         disabled={isLoading}
       >
-        {/* ANOTAÇÃO: O botão agora olha para o isLoading local */}
         {isLoading ? (
           <ActivityIndicator color="#fff" />
         ) : (
@@ -109,7 +131,6 @@ const LoginScreen: React.FC = () => {
   );
 };
 
-// ... Seus estilos (iguais aos que você já tinha) ...
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -136,6 +157,7 @@ const styles = StyleSheet.create({
     fontSize: moderateScale(14),
     color: "#555",
   },
+  // Estilo do Input Comum (Email)
   input: {
     width: "100%",
     height: moderateScale(50),
@@ -146,6 +168,30 @@ const styles = StyleSheet.create({
     fontSize: moderateScale(16),
     borderWidth: 1,
     borderColor: "#ddd",
+  },
+  // NOVO: Estilo do Container da Senha (Imita o visual do input normal)
+  passwordContainer: {
+    width: "100%",
+    height: moderateScale(50),
+    backgroundColor: "#FFF",
+    borderRadius: moderateScale(10),
+    marginBottom: moderateScale(15),
+    borderWidth: 1,
+    borderColor: "#ddd",
+    flexDirection: "row", // Coloca input e ícone lado a lado
+    alignItems: "center",
+    paddingHorizontal: moderateScale(15),
+  },
+  // NOVO: Input dentro do container (Sem borda, ocupa o espaço restante)
+  inputFlex: {
+    flex: 1,
+    height: "100%",
+    fontSize: moderateScale(16),
+    color: "#000",
+  },
+  // NOVO: Área de toque do ícone
+  iconContainer: {
+    padding: 5,
   },
   forgotPassword: {
     alignSelf: "flex-end",
