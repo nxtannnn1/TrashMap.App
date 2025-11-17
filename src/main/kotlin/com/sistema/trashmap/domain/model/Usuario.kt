@@ -5,6 +5,9 @@ import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Size
 import org.hibernate.annotations.CreationTimestamp
+import org.springframework.security.core.GrantedAuthority
+import org.springframework.security.core.authority.SimpleGrantedAuthority
+import org.springframework.security.core.userdetails.UserDetails
 import java.time.LocalDateTime
 
 @Entity
@@ -44,4 +47,25 @@ class Usuario(
     val criadoEm: LocalDateTime = LocalDateTime.now()
     // Data e hora de criação do registro
     // Setado automaticamente pelo Hibernate, não pode ser alterado
-)
+
+): UserDetails { // <--- IMPLEMENTE ESSA INTERFACE
+
+
+
+    // Esse método define as permissões
+    override fun getAuthorities(): Collection<GrantedAuthority> {
+
+        if (isAdm) {
+            return listOf(SimpleGrantedAuthority("ROLE_ADMIN"), SimpleGrantedAuthority("ROLE_USER"))
+        }
+        return listOf(SimpleGrantedAuthority("ROLE_USER"))
+    }
+
+    // Métodos obrigatórios do UserDetails (padrão)
+    override fun getPassword(): String = senha
+    override fun getUsername(): String = email
+    override fun isAccountNonExpired(): Boolean = true
+    override fun isAccountNonLocked(): Boolean = true
+    override fun isCredentialsNonExpired(): Boolean = true
+    override fun isEnabled(): Boolean = true
+}

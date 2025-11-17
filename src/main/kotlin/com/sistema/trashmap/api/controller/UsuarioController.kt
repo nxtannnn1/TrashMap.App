@@ -18,6 +18,13 @@ class UsuarioController(val usuarioService: UsuarioService) {
     fun cadastrarVariosUsuarios(@RequestBody @Valid usuarioDTORequest: List<UsuarioDTORequest>): ResponseEntity<List<UsuarioDTOResponse>> =
         ResponseEntity.status(HttpStatus.CREATED).body(usuarioService.cadastrarVariosUsuarios(usuarioDTORequest))
 
+    @PostMapping
+    fun cadastrarUsuario(@RequestBody @Valid usuarioDTORequest: UsuarioDTORequest): ResponseEntity<UsuarioDTOResponse> {
+
+        val novoUsuario = usuarioService.cadastrarUsuario(usuarioDTORequest)
+        return ResponseEntity.status(HttpStatus.CREATED).body(novoUsuario)
+    }
+
     @GetMapping("/{id}")
     fun listarUsuarioPorId(@PathVariable id: Long): ResponseEntity<UsuarioDTOResponse> =
         ResponseEntity.ok(usuarioService.listarUsuarioPorId(id))

@@ -17,11 +17,16 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @CrossOrigin(origins = ["*"])
 @RequestMapping("/auth")
-class AuthController (val usuarioService: UsuarioService){
+class AuthController (
+    val usuarioService: UsuarioService
+){
 
-    @PostMapping("/login")
-    fun autenticarLogin(@RequestBody @Valid usuarioLoginDTORequest: UsuarioLoginDTORequest): ResponseEntity<UsuarioLoginDTOResponse> =
-        ResponseEntity.ok(usuarioService.autenticarLogin(usuarioLoginDTORequest))
+    @PostMapping("/login") // Define o final da URL
+    fun login(@RequestBody @Valid loginRequest: UsuarioLoginDTORequest): ResponseEntity<UsuarioLoginDTOResponse> {
+        // Chama a lógica que criamos no Service
+        val resposta = usuarioService.autenticarLogin(loginRequest)
+        return ResponseEntity.ok(resposta)
+    }
 
     @PostMapping
     fun cadastrarUsuario(@RequestBody @Valid usuarioDTORequest: UsuarioDTORequest): ResponseEntity<UsuarioDTOResponse> =
