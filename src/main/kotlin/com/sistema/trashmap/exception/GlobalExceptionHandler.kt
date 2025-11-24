@@ -14,6 +14,7 @@ class CaminhaoNaoEncontrado(message: String?) : AppException(message)
 class PlacaNaoExiste(message: String?) : AppException(message)
 class PontoNaoEncontrado(message: String?) : AppException(message)
 class UsuarioNaoEncontrado(message: String?) : AppException(message)
+class RotaNaoEncontrada(message: String?) : AppException(message)
 
 //Duplicidade
 class EmailExiste(message: String?) : AppException(message)
@@ -50,6 +51,7 @@ class GlobalExceptionHandler {
             is EnderecoNaoEncontrado,
             is PontoNaoEncontrado,
             is UsuarioNaoEncontrado,
+            is RotaNaoEncontrada,
             is PlacaNaoExiste -> HttpStatus.NOT_FOUND
 
             is CepInvalido,

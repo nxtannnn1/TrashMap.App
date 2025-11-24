@@ -65,9 +65,13 @@ dependencies {
     implementation(kotlin("stdlib"))
     implementation("io.github.cdimascio:dotenv-kotlin:6.2.2")
 
+    //WebSocket para In-Real-Time
     implementation("org.springframework.boot:spring-boot-starter-websocket")
 
-
+    //JsonWebToken
+    implementation("io.jsonwebtoken:jjwt-api:0.11.5")
+    runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.5")
+    runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.5")
 
 }
 

@@ -3,12 +3,16 @@ package com.sistema.trashmap.application.service
 import com.sistema.trashmap.api.dto.GeopointDTO
 import com.sistema.trashmap.api.dto.request.RotaDTORequest
 import com.sistema.trashmap.api.dto.response.RotaDTOResponse
+import com.sistema.trashmap.api.exceptionhandler.PontoNaoEncontrado
 import com.sistema.trashmap.api.mapper.RotaMapper
 import com.sistema.trashmap.domain.model.Geopoint
 import com.sistema.trashmap.domain.model.Rota
+import com.sistema.trashmap.exception.RotaNaoEncontradaException
 import com.sistema.trashmap.infrastructure.repository.PontoDeColetaRepository
 import com.sistema.trashmap.infrastructure.repository.RotaRepository
 import jakarta.transaction.Transactional
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 
 @Service
@@ -22,7 +26,7 @@ class RotaService(
     @Transactional
     fun cadastrarRota(dto: RotaDTORequest): RotaDTOResponse {
         if (!pontoDeColetaRepository.existsById(dto.pontoDeColetaId)) {
-            throw IllegalArgumentException("Ponto de coleta informado não existe.")
+            throw PontoNaoEncontrado("Ponto de coleta informado não existe.")
         }
 
         val rota = Rota(
@@ -35,12 +39,12 @@ class RotaService(
         return RotaMapper.toDto(rotaSalva)
     }
 
-    fun listarRotas(): List<RotaDTOResponse> =
-        rotaRepository.findAll().map { RotaMapper.toDto(it) }
+    fun listarRotas(pageable: Pageable): Page<RotaDTOResponse> =
+        rotaRepository.findAll(pageable).map { RotaMapper.toDto(it) }
 
     fun listarRotaPorId(id: Long): RotaDTOResponse {
         val rota = rotaRepository.findById(id)
-            .orElseThrow { IllegalArgumentException("Rota não encontrada.") }
+            .orElseThrow { RotaNaoEncontradaException("Rota não encontrada.") }
         return RotaMapper.toDto(rota)
     }
 
@@ -55,7 +59,7 @@ class RotaService(
     @Transactional
     fun atualizarRotaPorId(id: Long, dto: RotaDTORequest): RotaDTOResponse {
         val rota = rotaRepository.findById(id)
-            .orElseThrow { IllegalArgumentException("Rota não encontrada.") }
+            .orElseThrow { RotaNaoEncontradaException("Rota não encontrada.") }
 
         if (!pontoDeColetaRepository.existsById(dto.pontoDeColetaId)) {
             throw IllegalArgumentException("Ponto de coleta informado não existe.")
