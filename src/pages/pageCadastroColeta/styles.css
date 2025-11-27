@@ -1,0 +1,9 @@
+.Container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 95vw;
+    height: 99vh;
+    background-color: #f4f4f4; 
+    border-radius: 25px;
+}
