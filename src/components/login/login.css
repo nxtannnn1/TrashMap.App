@@ -8,7 +8,7 @@ body, html {
     margin: 0;
     padding: 0;
     height: 100%;
-    background: url('../assets/img/elevador-lacerda.jpeg') no-repeat center center fixed; 
+    background: url('../../assets/img/elevador-lacerda.jpeg') no-repeat center center fixed; 
     background-size: cover;
     font-family: Arial, Helvetica, sans-serif;
     position: relative;
@@ -78,7 +78,7 @@ input:focus, select:focus {
 }
 
 /* Estilo do botão (Reaproveitando o seu estilo) */
-button {
+.entrar-btn {
     background-color: #1E603A;
     color: #fff;
     border: none;
@@ -91,7 +91,7 @@ button {
     transition: background 0.2s, box-shadow 0.2s;
 }
 
-button:hover {
+.entrar-btn:hover {
     background-color: #6EB030;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }

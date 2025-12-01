@@ -1,4 +1,4 @@
-import GerenciadorRotas from "../../components/gerencia/PageGerenRotas";
+import GerenciadorRotas from "../../components/gerencia/PageGerenRotas/GerenciadorRotas.jsx";
 import "./styles.css";
 
 function PageGerencRotas() {

@@ -1,5 +1,5 @@
 import "./styles.css";
-import CadastroCaminhão from "../../components/cadastro/PageCadCaminhão";
+import CadastroCaminhão from "../../components/cadastro/PageCadCaminhão/CadastroCaminhao.jsx";
 
 function PageCadastroCaminhao() {
     return (

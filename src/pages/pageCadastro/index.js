@@ -1,11 +1,11 @@
-import PageCadRotas from "../../components/cadastro/PageCadRotas";
+import CadastroRotas from "../../components/cadastro/PageCadRotas/CadastroRotas";
 import "./styles.css";
 
 
 function PageCadastroRotas() {
     return (
       <div className="Container">
-        <PageCadRotas />
+        <CadastroRotas />
       </div>
     );
 }

@@ -1,45 +1,36 @@
-// src/login/Login.jsx
-import React, { useState } from 'react';
-import { API_BASE_URL } from '../../config/api';
-import './login.css';
-import elevadorImg from '../assets/img/elevador-lacerda.jpeg';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom"; // Importante para redirecionar sem recarregar
+import { useAuth } from "../../context/AuthContext"; // Importe o hook
+import "./login.css";
+import elevadorImg from "../../assets/img/elevador-lacerda.jpeg";
 
 export default function Login() {
-  const [email, setEmail] = useState('');
-  const [senha, setSenha] = useState('');
-  const [erro, setErro] = useState('');
+  const { signIn } = useAuth();
+  const navigate = useNavigate();
+
+  const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
+  const [erro, setErro] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setErro('');
+    setErro("");
 
     if (!email || !senha) {
-      setErro('Preencha todos os campos.');
+      setErro("Preencha todos os campos.");
       return;
     }
 
-    try {
-      const res = await fetch(`${API_BASE_URL}/auth/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, senha }),
-      });
+    setLoading(true);
+    // Chama a função do contexto
+    const resultado = await signIn(email, senha);
+    setLoading(false);
 
-      if (!res.ok) {
-        setErro(res.status === 401 ? 'E-mail ou senha inválidos.' : 'Erro no servidor.');
-        return;
-      }
-
-      const usuario = await res.json();
-      localStorage.setItem('userLoggedIn', 'true');
-      localStorage.setItem('userEmail', usuario.email);
-      localStorage.setItem('userNome', usuario.nome);
-      localStorage.setItem('userProfile', usuario.perfil || 'ADMIN');
-
-      window.location.href = '/'; // redireciona para o painel
-    } catch (err) {
-      console.error(err);
-      setErro('Erro inesperado, tente novamente.');
+    if (resultado.success) {
+      navigate("/"); // Redireciona para a Home protegida
+    } else {
+      setErro(resultado.msg);
     }
   };
 
@@ -47,13 +38,12 @@ export default function Login() {
     <div
       className="login-container"
       style={{
-        backgroundImage: `url(${elevadorImg})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center center',
-        height: '100vh',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
+        backgroundSize: "cover",
+        backgroundPosition: "center center",
+        height: "100vh",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
       }}
     >
       <div className="login-box">
@@ -79,7 +69,10 @@ export default function Login() {
             required
           />
 
-          <button type="submit">Entrar no Sistema</button>
+          <button className="entrar-btn" type="submit" disabled={loading}>
+            {loading ? "Entrando..." : "Entrar no Sistema"}
+          </button>
+
           {erro && <p className="erro">{erro}</p>}
         </form>
       </div>

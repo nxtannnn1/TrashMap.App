@@ -1,0 +1,121 @@
+/* --- LADO ESQUERDO (FORMULÁRIO) --- */
+
+.card-form-caminhao {
+  width: 100%;
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.card-form-caminhao label {
+  font-weight: bold;
+  font-size: 0.9rem;
+  margin-bottom: 5px;
+  margin-top: 10px;
+  color: #333;
+}
+.card-form-caminhao label:first-child {
+  margin-top: 0;
+}
+
+.card-form-caminhao input,
+.card-form-caminhao select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  background-color: #fff; /* Garante fundo branco no select */
+  font-size: 1rem;
+}
+
+/* Botão Padrão (reutilizado para manter consistência) */
+.btn-success {
+  width: 100%;
+  padding: 12px;
+  background-color: #28a745;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  margin-top: 15px;
+  transition: background 0.3s;
+}
+.btn-success:hover {
+  background-color: #218838;
+}
+
+/* --- LADO DIREITO (MAPA + TABELA) --- */
+
+.right-panel-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+}
+
+/* Metade Superior: Mapa */
+.map-section {
+  flex: 1; /* Ocupa 50% do espaço, ou o que sobrar */
+  min-height: 300px; /* Garante altura mínima */
+  background-color: #e0e0e0; /* Cor placeholder do mapa */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-bottom: 2px solid #ccc;
+  color: #555;
+}
+
+/* Metade Inferior: Tabela */
+.table-section {
+  flex: 1; /* Ocupa o restante do espaço */
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* Evita que a tabela estoure o container */
+}
+
+.table-section h3 {
+  margin: 10px 0;
+  text-align: center;
+  color: #036b1a;
+}
+
+.table-wrapper {
+  width: 100%;
+  height: 100%;
+  overflow-y: auto; /* Adiciona scroll se tiver muitos caminhões */
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+  font-size: 0.9rem;
+}
+
+th {
+  background-color: #f8f9fa;
+  position: sticky; /* Mantém o cabeçalho fixo ao rolar */
+  top: 0;
+  font-weight: bold;
+  color: #333;
+}
+
+tr:hover {
+  background-color: #f1f1f1;
+}

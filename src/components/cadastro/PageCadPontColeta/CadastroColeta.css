@@ -1,0 +1,61 @@
+/* Reutilizando o estilo de card branco */
+.card-form {
+  width: 100%;
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.card-form label {
+  font-weight: bold;
+  font-size: 0.9rem;
+  margin-bottom: 5px;
+  margin-top: 10px;
+  color: #333;
+}
+/* Remove a margem do primeiro label para alinhar ao topo */
+.card-form label:first-child {
+  margin-top: 0;
+}
+
+.card-form input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box; /* Garante que o padding não estoure a largura */
+}
+
+/* Botão Verde (Igual ao da tela anterior) */
+.btn-success {
+  width: 100%;
+  padding: 12px;
+  background-color: #28a745;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  margin-top: 15px; /* Espaço entre o card e o botão */
+  transition: background 0.3s;
+}
+
+.btn-success:hover {
+  background-color: #218838;
+}
+
+/* Placeholder do Mapa (Caso não esteja num CSS global ainda) */
+.map-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #e0e0e0;
+  color: #555;
+}

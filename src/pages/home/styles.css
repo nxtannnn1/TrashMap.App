@@ -9,7 +9,8 @@
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.4);
   border-radius: 10px;
-  height: 80vh;
+  width: 80vw;
+  height: 85vh;
   gap: 20px;
   padding: 15px;
 }
@@ -30,7 +31,7 @@
 }
 .Painel {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 20px;
 }
 
@@ -79,4 +80,33 @@
 .button-icon {
   margin-bottom: 8px;
   font-size: 28px !important;
+}
+
+/* Mantenha o CSS que você já tinha e adicione este: */
+
+.btn-sair-flutuante {
+  position: fixed; /* Fixa na tela, independente do scroll */
+  bottom: -66px;
+  right: 0px;
+  width: 100px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  background-color: #dc3545; /* Vermelho para indicar saída */
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 50px; /* Bordas bem redondas */
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Sombra para destacar */
+  z-index: 1000; /* Garante que fique acima de tudo */
+  transition: transform 0.2s, background-color 0.2s;
+}
+
+.btn-sair-flutuante:hover {
+  background-color: #c82333; /* Vermelho mais escuro ao passar o mouse */
+  transform: scale(1.05); /* Leve aumento */
 }
