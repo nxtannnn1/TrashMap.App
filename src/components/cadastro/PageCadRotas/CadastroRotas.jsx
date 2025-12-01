@@ -9,6 +9,7 @@ function CadastroRotas() {
   const [pontos, setPontos] = useState([]);
   const [nomeRota, setNomeRota] = useState("");
   const [descricao, setDescricao] = useState("");
+  const [pontoDeColetaId, setPontoDeColetaId] = useState("");
 
   const [pontoInicial, setPontoInicial] = useState({
     nome: "",
@@ -49,8 +50,8 @@ function CadastroRotas() {
 
     try {
       const payload = {
+        pontoDeColetaId: Number(pontoDeColetaId),
         nome: nomeRota,
-        descricao: descricao,
         coordenadas: [
           {
             latitude: parseFloat(pontoInicial.lat),
@@ -157,13 +158,18 @@ function CadastroRotas() {
           onChange={(e) => setNomeRota(e.target.value)}
         />
 
-        <label>Descrição</label>
-        <input
-          type="text"
-          placeholder="Digite a descrição da rota"
-          value={descricao}
-          onChange={(e) => setDescricao(e.target.value)}
-        />
+        <label>Ponto de Coleta</label>
+        <select
+          value={pontoDeColetaId}
+          onChange={(e) => setPontoDeColetaId(e.target.value)}
+        >
+          <option value="">Selecione um ponto</option>
+          {pontos.map((p) => (
+            <option key={p.id} value={p.id}>
+              {p.nome}
+            </option>
+          ))}
+        </select>
       </div>
 
       <div className="row-cards">

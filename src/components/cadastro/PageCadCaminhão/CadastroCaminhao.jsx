@@ -7,10 +7,7 @@ import "./CadastroCaminhao.css";
 function CadastroCaminhao() {
   // --- STATES ---
   const [form, setForm] = useState({
-    modelo: "",
     placa: "",
-    capacidade: "",
-    motoristaId: "",
     statusCaminhao: "ATIVO",
     // Adicionei coordenadas para poder enviar ao backend
     latitude: 0,
@@ -47,8 +44,8 @@ function CadastroCaminhao() {
     setFeedback({ type: "", msg: "" });
 
     // Validação simples
-    if (!form.placa || !form.modelo) {
-      setFeedback({ type: "error", msg: "Preencha Placa e Modelo." });
+    if (!form.placa) {
+      setFeedback({ type: "error", msg: "Preencha Placa." });
       return;
     }
 
@@ -57,11 +54,7 @@ function CadastroCaminhao() {
     try {
       const payload = {
         placa: form.placa,
-        modelo: form.modelo,
-        capacidade: form.capacidade,
-        motoristaId: form.motoristaId,
         statusCaminhao: form.statusCaminhao,
-        // Agora envia as coordenadas clicadas (ou 0 se não clicou)
         coordenadas: {
           latitude: parseFloat(form.latitude),
           longitude: parseFloat(form.longitude),
@@ -80,10 +73,7 @@ function CadastroCaminhao() {
 
       // Limpar formulário
       setForm({
-        modelo: "",
         placa: "",
-        capacidade: "",
-        motoristaId: "",
         statusCaminhao: "ATIVO",
         latitude: 0,
         longitude: 0,
@@ -148,15 +138,6 @@ function CadastroCaminhao() {
     <ScreenLayout title="Cadastro de Caminhões" rightContent={RightSideContent}>
       {/* Formulário na Esquerda */}
       <div className="card-form-caminhao">
-        <label>Modelo do Caminhão</label>
-        <input
-          name="modelo"
-          type="text"
-          placeholder="Ex: Volvo VM 270"
-          value={form.modelo}
-          onChange={handleChange}
-        />
-
         <label>Placa</label>
         <input
           name="placa"
@@ -165,26 +146,6 @@ function CadastroCaminhao() {
           value={form.placa}
           onChange={handleChange}
         />
-
-        <label>Capacidade (Toneladas)</label>
-        <input
-          name="capacidade"
-          type="number"
-          placeholder="Ex: 10"
-          value={form.capacidade}
-          onChange={handleChange}
-        />
-
-        <label>Motorista Responsável</label>
-        <select
-          name="motoristaId"
-          value={form.motoristaId}
-          onChange={handleChange}
-        >
-          <option value="">Selecione um motorista...</option>
-          <option value="1">João Silva (Mock)</option>
-          <option value="2">Maria Souza (Mock)</option>
-        </select>
 
         <label>Status</label>
         <select
