@@ -1,15 +1,16 @@
+
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom"; // Importante para redirecionar sem recarregar
-import { useAuth } from "../../context/AuthContext"; // Importe o hook
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 import "./login.css";
-import elevadorImg from "../../assets/img/elevador-lacerda.jpeg";
 
 export default function Login() {
   const { signIn } = useAuth();
   const navigate = useNavigate();
 
-  const [email, setEmail] = useState("");
-  const [senha, setSenha] = useState("");
+  // Valores pré-preenchidos para facilitar testes
+  const [email, setEmail] = useState("admin1@trashmap.com");
+  const [senha, setSenha] = useState("AdmTrashMap");
   const [erro, setErro] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -23,29 +24,27 @@ export default function Login() {
     }
 
     setLoading(true);
-    // Chama a função do contexto
-    const resultado = await signIn(email, senha);
-    setLoading(false);
-
-    if (resultado.success) {
-      navigate("/"); // Redireciona para a Home protegida
-    } else {
-      setErro(resultado.msg);
+    
+    try {
+      console.log("Enviando login para:", email); // Debug
+      const resultado = await signIn(email, senha);
+      
+      if (resultado.success) {
+        console.log("Login bem-sucedido!");
+        navigate("/dashboard");
+      } else {
+        setErro(resultado.msg || "Credenciais inválidas");
+      }
+    } catch (err) {
+      console.error("Erro no login:", err);
+      setErro("Erro de conexão com o servidor");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div
-      className="login-container"
-      style={{
-        backgroundSize: "cover",
-        backgroundPosition: "center center",
-        height: "100vh",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
+    <div className="login-container">
       <div className="login-box">
         <h1>Acesso Restrito</h1>
         <form onSubmit={handleSubmit}>
@@ -75,6 +74,11 @@ export default function Login() {
 
           {erro && <p className="erro">{erro}</p>}
         </form>
+        
+        {/* DEBUG: Mostra os valores atuais */}
+        <div style={{ fontSize: '12px', color: '#666', marginTop: '10px' }}>
+          Debug: Email: {email} | Senha: {senha.replace(/./g, '*')}
+        </div>
       </div>
     </div>
   );

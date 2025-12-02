@@ -1,9 +1,9 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { AuthProvider } from "./context/AuthContext"; // Importe o Provider
-import PrivateRoute from "./routes/PrivateRoute"; // Importe a Rota Privada
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider } from "./context/AuthContext";
+import PrivateRoute from "./routes/PrivateRoute";
 
 // Suas páginas
-import Login from "./components/login/Login"; // Importe seu Login aqui
+import Login from "./components/login/Login";
 import PaginaInicio from "./pages/home";
 import PageCadastroRotas from "./pages/pageCadastro";
 import PageCadastroCaminhao from "./pages/pageCadastroCaminhao";
@@ -12,6 +12,7 @@ import PageGerencRotas from "./pages/pageGerenRotas";
 import PageGerenCaminhoes from "./pages/pageGerenCaminhoes";
 import PageGerenPontoColeta from "./pages/pageGerenPontoColeta";
 import PageSimulador from "./pages/pageSimulador";
+import PageSimulacaoMulti from "./pages/pageSimulacaoMulti"; // NOVO IMPORT
 import PageCadUsuario from "./pages/pageCadUsuario";
 
 import "./App.css";
@@ -23,10 +24,13 @@ function App() {
         <Routes>
           {/* Rota Pública - Login */}
           <Route path="/login" element={<Login />} />
+          
+          {/* Redireciona raiz para login se não autenticado */}
+          <Route path="/" element={<Navigate to="/login" replace />} />
 
           {/* Rotas Privadas (Protegidas) */}
           <Route
-            path="/"
+            path="/dashboard"
             element={
               <PrivateRoute>
                 <PaginaInicio />
@@ -92,6 +96,17 @@ function App() {
               </PrivateRoute>
             }
           />
+          
+          {/* NOVA ROTA ADICIONADA AQUI */}
+          <Route
+            path="/simulacao-multi"
+            element={
+              <PrivateRoute>
+                <PageSimulacaoMulti />
+              </PrivateRoute>
+            }
+          />
+          
           <Route
             path="/gerenciamento-usuario"
             element={
@@ -100,6 +115,9 @@ function App() {
               </PrivateRoute>
             }
           />
+
+          {/* Rota de fallback para páginas não encontradas */}
+          <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </Router>
     </AuthProvider>

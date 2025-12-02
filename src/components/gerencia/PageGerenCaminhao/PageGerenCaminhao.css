@@ -1,6 +1,5 @@
 /* --- LADO ESQUERDO --- */
 
-/* Barra de Busca (Estilo Clean que você enviou, com pequenos ajustes de largura) */
 .barra-busca-clean {
   display: flex;
   align-items: center;
@@ -9,7 +8,7 @@
   border: 1px solid #e0e0e0;
   border-radius: 15px;
   padding: 5px;
-  margin-bottom: 15px; /* Espaço para o formulário abaixo */
+  margin-bottom: 15px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
   box-sizing: border-box;
 }
@@ -29,34 +28,58 @@
   color: white;
   padding: 8px 12px;
   border: none;
-  border-radius: 50%; /* Botão redondo para a lupa fica mais clean */
+  border-radius: 50%;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: background-color 0.2s;
 }
-.botao-busca-clean:hover { background-color: #004d99; }
 
-/* Card de Edição (Padronizado com telas anteriores) */
+.botao-busca-clean:hover {
+  background-color: #004d99;
+}
+
+/* Botão de Cadastrar Novo */
+.btn-add-new {
+  width: 100%;
+  padding: 12px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  margin-bottom: 15px;
+  cursor: pointer;
+  transition: background 0.3s;
+  font-size: 16px;
+}
+
+.btn-add-new:hover {
+  background-color: #218838;
+}
+
+/* Card de Formulário */
 .card-edit-form {
   width: 100%;
   background-color: #ffffff;
   border-radius: 8px;
-  padding: 15px;
+  padding: 20px;
   display: flex;
   flex-direction: column;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   box-sizing: border-box;
+  margin-top: 10px;
 }
 
 .card-edit-form h3 {
   margin-top: 0;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
   color: #036b1a;
   text-align: center;
   border-bottom: 1px solid #eee;
   padding-bottom: 10px;
+  font-size: 1.2rem;
 }
 
 .card-edit-form label {
@@ -64,41 +87,80 @@
   font-size: 0.9rem;
   margin-bottom: 5px;
   color: #333;
+  margin-top: 12px;
 }
 
-.card-edit-form input {
+.card-edit-form label:first-of-type {
+  margin-top: 0;
+}
+
+.card-edit-form input,
+.card-edit-form select {
   width: 100%;
-  padding: 8px;
+  padding: 10px;
   border: 1px solid #ccc;
   border-radius: 4px;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
   box-sizing: border-box;
+  font-size: 0.95rem;
 }
 
-/* Grupo de Botões (Lado a Lado) */
+.card-edit-form input:focus,
+.card-edit-form select:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+/* Grupo de Botões */
 .button-group {
   display: flex;
   gap: 10px;
-  margin-top: 10px;
+  margin-top: 20px;
 }
 
 .btn-action {
   flex: 1;
-  padding: 10px;
+  padding: 12px;
   border: none;
   border-radius: 6px;
   font-weight: bold;
   color: white;
   cursor: pointer;
-  transition: opacity 0.3s;
+  transition: opacity 0.3s, transform 0.2s;
+  font-size: 0.95rem;
 }
-.btn-action:hover { opacity: 0.9; }
 
-.btn-save { background-color: #28a745; }
-.btn-delete { background-color: #dc3545; } /* Vermelho perigo */
+.btn-action:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
 
+.btn-save {
+  background-color: #28a745;
+}
 
-/* --- LADO DIREITO (DIVIDIDO) --- */
+.btn-save:hover {
+  background-color: #218838;
+}
+
+.btn-cancel {
+  background-color: #6c757d;
+}
+
+.btn-cancel:hover {
+  background-color: #5a6268;
+}
+
+.btn-delete {
+  background-color: #dc3545;
+}
+
+.btn-delete:hover {
+  background-color: #c82333;
+}
+
+/* --- LADO DIREITO COM MAPA --- */
 
 .right-panel-split {
   width: 100%;
@@ -106,72 +168,207 @@
   display: flex;
   flex-direction: column;
   background-color: #f7f7f9;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Tabela ocupa aprox 40% da altura */
+/* Seção da Tabela */
 .top-section-table {
-  flex: 0 0 45%; 
+  flex: 0 0 50%;
   display: flex;
   flex-direction: column;
-  padding: 10px;
+  padding: 15px;
   box-sizing: border-box;
   overflow: hidden;
+  background-color: white;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.header-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
 }
 
 .header-box h2 {
-    margin: 0 0 10px 0;
-    font-size: 1.2rem;
-    color: #333;
+  margin: 0;
+  font-size: 1.3rem;
+  color: #333;
 }
 
-/* Wrapper para fazer o scroll funcionar apenas no corpo da tabela se precisar */
+.header-box .btn-save {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  transition: background-color 0.3s;
+}
+
+.header-box .btn-save:hover {
+  background-color: #0056b3;
+}
+
+/* Wrapper da Tabela */
 .table-wrapper-scroll {
-    flex: 1;
-    overflow-y: auto;
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  flex: 1;
+  overflow-y: auto;
+  background: white;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
 }
 
+/* Tabela */
 table {
   width: 100%;
   border-collapse: collapse;
 }
 
 th, td {
-  padding: 10px;
+  padding: 12px 15px;
   text-align: left;
   border-bottom: 1px solid #eee;
   font-size: 0.9rem;
 }
 
 th {
-  background-color: #007bff; /* Azul da tabela */
-  color: white;
+  background-color: #f8f9fa;
+  color: #495057;
   position: sticky;
   top: 0;
+  font-weight: 600;
+  border-bottom: 2px solid #dee2e6;
+}
+
+tbody tr:hover {
+  background-color: #f8f9fa;
 }
 
 /* Status Badges */
 .status {
-  padding: 4px 8px;
-  border-radius: 12px;
+  padding: 6px 12px;
+  border-radius: 20px;
   font-size: 0.75rem;
   font-weight: bold;
   text-transform: uppercase;
+  display: inline-block;
+  min-width: 80px;
+  text-align: center;
 }
-.em-viagem { background-color: #fff3cd; color: #856404; }
-.disponivel { background-color: #d4edda; color: #155724; }
-.manutencao { background-color: #f8d7da; color: #721c24; }
 
-/* Mapa ocupa o resto (aprox 55-60%) */
+.em-viagem {
+  background-color: #d1ecf1;
+  color: #0c5460;
+}
+
+.disponivel {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.manutencao {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.inativo {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+/* Seção do Mapa */
 .bottom-section-map {
   flex: 1;
-  background-color: #e0e0e0;
-  border-top: 2px solid #ccc;
   display: flex;
   flex-direction: column;
+  background-color: white;
+  min-height: 300px;
+  position: relative;
+}
+
+.map-header {
+  padding: 10px 15px;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #e0e0e0;
+  font-weight: bold;
+  color: #333;
+  font-size: 1rem;
+}
+
+.map-container {
+  width: 100%;
+  height: calc(100% - 45px);
+}
+
+/* Ícone personalizado para caminhões no mapa */
+.truck-icon {
+  background-color: #007bff;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
   align-items: center;
   justify-content: center;
-  color: #555;
+  color: white;
+  font-size: 12px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+}
+
+/* Estilo para linha selecionada na tabela */
+.selected-row {
+  background-color: #e8f4ff !important;
+  border-left: 3px solid #007bff;
+}
+
+/* Scrollbar personalizada */
+.table-wrapper-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.table-wrapper-scroll::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.table-wrapper-scroll::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.table-wrapper-scroll::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .right-panel-split {
+    flex-direction: column;
+  }
+  
+  .top-section-table {
+    flex: 0 0 auto;
+    height: 300px;
+  }
+  
+  .bottom-section-map {
+    min-height: 250px;
+  }
+  
+  .button-group {
+    flex-direction: column;
+  }
+  
+  .btn-action {
+    width: 100%;
+  }
 }

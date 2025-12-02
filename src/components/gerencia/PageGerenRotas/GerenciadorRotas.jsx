@@ -11,16 +11,14 @@ const GerenciadorRotas = () => {
   const [termoBusca, setTermoBusca] = useState("");
 
   // Form de Edição (Nome + Ponto A + Ponto B)
-const [form, setForm] = useState({
-  id: "",
-  nome: "",
-  pontoDeColetaId: "",
-  latA: "",
-  lngA: "",
-  latB: "",
-  lngB: "",
-});
-
+  const [form, setForm] = useState({
+    id: "",
+    nome: "",
+    latA: "",
+    lngA: "", // Origem
+    latB: "",
+    lngB: "", // Destino
+  });
 
   // --- EFEITOS ---
   useEffect(() => {
@@ -48,15 +46,13 @@ const [form, setForm] = useState({
     }
 
     // Monta payload no formato que o backend espera (array de coordenadas)
-   const payload = {
-  pontoDeColetaId: Number(form.pontoDeColetaId),
-  nome: form.nome,
-  coordenadas: [
-    { latitude: parseFloat(form.latA), longitude: parseFloat(form.lngA) },
-    { latitude: parseFloat(form.latB), longitude: parseFloat(form.lngB) },
-  ],
-};
-
+    const payload = {
+      nome: form.nome,
+      coordenadas: [
+        { latitude: parseFloat(form.latA), longitude: parseFloat(form.lngA) },
+        { latitude: parseFloat(form.latB), longitude: parseFloat(form.lngB) },
+      ],
+    };
 
     try {
       const url = form.id

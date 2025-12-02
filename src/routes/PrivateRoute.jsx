@@ -1,19 +1,19 @@
-import React from "react";
-import { Navigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import React from 'react';
+import { Navigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
-export default function PrivateRoute({ children }) {
-  const { signed, loading } = useAuth();
-
-  if (loading) {
-    return <div>Carregando...</div>;
+const PrivateRoute = ({ children }) => {
+  const { isAuthenticated } = useAuth();
+  
+  console.log("🔐 [PrivateRoute] isAuthenticated:", isAuthenticated);
+  
+  if (!isAuthenticated) {
+    console.log("🔐 [PrivateRoute] Não autenticado, redirecionando para /login");
+    return <Navigate to="/login" replace />;
   }
-
-  // Se não estiver logado, manda para a tela de login (/login)
-  if (!signed) {
-    return <Navigate to="/login" />;
-  }
-
-  // Se estiver logado, mostra o conteúdo (Home, Cadastro, etc)
+  
+  console.log("🔐 [PrivateRoute] Autenticado, renderizando conteúdo");
   return children;
-}
+};
+
+export default PrivateRoute;
