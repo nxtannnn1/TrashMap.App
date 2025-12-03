@@ -35,7 +35,7 @@ export const AuthProvider = ({ children }) => {
     console.log("🔍 [signIn] Tentando login para:", email);
     
     try {
-      const response = await fetch(`${API_BASE_URL}/auth/login`, {
+      const response = await fetch(`${API_BASE_URL}/usuarios/login`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',

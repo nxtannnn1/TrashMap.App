@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import ScreenLayout from "../../ScreenLayout/ScreenLayout";
 import { API_BASE_URL } from "../../../config/api";
@@ -20,11 +19,7 @@ function PageGerenCaminhao() {
     statusCaminhao: "ATIVO",
   });
 
-  // Estado para coordenadas do mapa
-  const [mapCoords, setMapCoords] = useState({
-    lat: "",
-    lng: ""
-  });
+  const [mapCoords, setMapCoords] = useState({ lat: "", lng: "" });
 
   useEffect(() => {
     listarCaminhoes();
@@ -91,7 +86,7 @@ function PageGerenCaminhao() {
       setFeedback({ type: "error", msg: "Selecione um caminhão para excluir." });
       return;
     }
-    
+
     if (!window.confirm(`Tem certeza que deseja excluir o caminhão ${formEditar.placa}?`)) {
       return;
     }
@@ -103,7 +98,7 @@ function PageGerenCaminhao() {
       const res = await fetch(`${API_BASE_URL}/caminhoes/${formEditar.id}`, {
         method: "DELETE",
       });
-      
+
       if (!res.ok) {
         const errorData = await res.json();
         throw new Error(errorData.message || `Erro ${res.status}`);
@@ -126,21 +121,18 @@ function PageGerenCaminhao() {
 
   const selecionarCaminhao = (caminhao) => {
     setFormEditar({
-      id: caminhao.id || caminhao._id,
+      id: caminhao.id,
       placa: caminhao.placa,
       modelo: caminhao.modelo || "",
-      latitude: caminhao.coordenadas?.latitude || caminhao.latitude || "",
-      longitude: caminhao.coordenadas?.longitude || caminhao.longitude || "",
+      latitude: caminhao.coordenadas?.latitude || "",
+      longitude: caminhao.coordenadas?.longitude || "",
       statusCaminhao: caminhao.statusCaminhao || "ATIVO",
     });
-    
-    // Atualiza as coordenadas do mapa
-    if (caminhao.coordenadas?.latitude && caminhao.coordenadas?.longitude) {
-      setMapCoords({
-        lat: caminhao.coordenadas.latitude,
-        lng: caminhao.coordenadas.longitude
-      });
-    }
+
+    setMapCoords({
+      lat: caminhao.coordenadas?.latitude || "",
+      lng: caminhao.coordenadas?.longitude || "",
+    });
   };
 
   const limparForm = () => {
@@ -156,27 +148,25 @@ function PageGerenCaminhao() {
     setFeedback({ type: "", msg: "" });
   };
 
-  // Handler para clique no mapa
   const handleMapClick = (coords) => {
     if (!formEditar.id) {
       setFeedback({ type: "error", msg: "Selecione um caminhão para editar primeiro." });
       return;
     }
-    
-    setFormEditar(prev => ({
+
+    setFormEditar((prev) => ({
       ...prev,
       latitude: coords.lat.toString(),
-      longitude: coords.lng.toString()
+      longitude: coords.lng.toString(),
     }));
     setMapCoords(coords);
-    
-    setFeedback({ 
-      type: "success", 
-      msg: `Nova localização definida: ${coords.lat.toFixed(6)}, ${coords.lng.toFixed(6)}` 
+
+    setFeedback({
+      type: "success",
+      msg: `Nova localização definida: ${coords.lat.toFixed(6)}, ${coords.lng.toFixed(6)}`,
     });
   };
 
-  // Limpar feedback após 5 segundos
   useEffect(() => {
     if (feedback.msg) {
       const timer = setTimeout(() => {
@@ -186,17 +176,16 @@ function PageGerenCaminhao() {
     }
   }, [feedback.msg]);
 
-  // Filtro local
+  // 🔹 Filtro ajustado para seu DTO
   const caminhoesFiltrados = listaCaminhoes.filter(
     (c) =>
       c.placa?.toLowerCase().includes(termoBusca.toLowerCase()) ||
-      c.modelo?.toLowerCase().includes(termoBusca.toLowerCase()) ||
+      (c.modelo?.toLowerCase().includes(termoBusca.toLowerCase())) ||
       (c.id && c.id.toString().includes(termoBusca))
   );
 
   const RightSideContent = (
     <div style={{ width: "100%", height: "100%", position: "relative" }}>
-      {/* Feedback Overlay */}
       {feedback.msg && (
         <div
           style={{
@@ -219,15 +208,14 @@ function PageGerenCaminhao() {
         </div>
       )}
 
-      <MapaADM 
-        pontos={listaCaminhoes} 
-        onMapClick={handleMapClick} 
+      <MapaADM
+        pontos={listaCaminhoes}
+        onMapClick={handleMapClick}
         mode="CAMINHAO"
         containerHeight="100%"
         containerWidth="100%"
       />
 
-      {/* Mostrar coordenadas selecionadas */}
       {formEditar.latitude && formEditar.longitude && (
         <div
           style={{
@@ -240,14 +228,10 @@ function PageGerenCaminhao() {
             borderRadius: "5px",
             fontSize: "0.8rem",
             boxShadow: "0 2px 5px rgba(0,0,0,0.2)",
-            border: formEditar.id ? "2px solid #007bff" : "1px solid #4CAF50"
+            border: formEditar.id ? "2px solid #007bff" : "1px solid #4CAF50",
           }}
         >
-          <div style={{ 
-            fontWeight: "bold", 
-            color: formEditar.id ? "#0056b3" : "#0A3B1A", 
-            marginBottom: "3px" 
-          }}>
+          <div style={{ fontWeight: "bold", color: formEditar.id ? "#0056b3" : "#0A3B1A", marginBottom: "3px" }}>
             🗺️ Localização {formEditar.id ? "do Caminhão" : "selecionada"}
           </div>
           <div style={{ fontFamily: "monospace" }}>
@@ -256,19 +240,13 @@ function PageGerenCaminhao() {
             Long: {parseFloat(formEditar.longitude).toFixed(6)}
           </div>
           {formEditar.placa && (
-            <div style={{ 
-              marginTop: "5px", 
-              fontSize: "0.75rem", 
-              color: "#333",
-              fontStyle: "italic"
-            }}>
+            <div style={{ marginTop: "5px", fontSize: "0.75rem", color: "#333", fontStyle: "italic" }}>
               Placa: {formEditar.placa}
             </div>
           )}
         </div>
       )}
 
-      {/* Instrução sobre o clique no mapa */}
       {formEditar.id && (
         <div
           style={{
@@ -296,9 +274,6 @@ function PageGerenCaminhao() {
       title="Gerenciamento de Caminhões"
       rightContent={RightSideContent}
     >
-      {/* --- LADO ESQUERDO --- */}
-
-      {/* 1. Barra de Busca */}
       <div className="barra-busca-clean">
         <input
           type="text"
@@ -312,7 +287,6 @@ function PageGerenCaminhao() {
         </button>
       </div>
 
-      {/* 2. Tabela de Caminhões */}
       <div className="card-edit-form" style={{ marginBottom: "20px" }}>
         <h3>Lista de Caminhões</h3>
         <div className="table-wrapper-scroll" style={{ maxHeight: "300px" }}>
@@ -339,14 +313,14 @@ function PageGerenCaminhao() {
                   </td>
                 </tr>
               ) : (
-                caminhoesFiltrados.map((cam, idx) => (
+                caminhoesFiltrados.map((cam) => (
                   <tr
-                    key={idx}
+                    key={cam.id}
                     onClick={() => selecionarCaminhao(cam)}
-                    style={{ 
+                    style={{
                       cursor: "pointer",
-                      backgroundColor: formEditar.id === (cam.id || cam._id) ? "#e8f4ff" : "transparent",
-                      borderLeft: formEditar.id === (cam.id || cam._id) ? "3px solid #007bff" : "none"
+                      backgroundColor: formEditar.id === cam.id ? "#e8f4ff" : "transparent",
+                      borderLeft: formEditar.id === cam.id ? "3px solid #007bff" : "none",
                     }}
                   >
                     <td>{cam.placa}</td>
@@ -368,16 +342,8 @@ function PageGerenCaminhao() {
                     </td>
                     <td>
                       <button
-                        style={{ 
-                          border: "none", 
-                          background: "transparent",
-                          cursor: "pointer",
-                          fontSize: "1.2rem"
-                        }}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          selecionarCaminhao(cam);
-                        }}
+                        style={{ border: "none", background: "transparent", cursor: "pointer", fontSize: "1.2rem" }}
+                        onClick={(e) => { e.stopPropagation(); selecionarCaminhao(cam); }}
                         title="Editar caminhão"
                       >
                         ✏️
@@ -391,50 +357,24 @@ function PageGerenCaminhao() {
         </div>
       </div>
 
-      {/* 3. Formulário de Edição */}
       {formEditar.id ? (
         <div className="card-edit-form">
           <h3>Editando: {formEditar.placa}</h3>
 
           <label>Placa</label>
-          <input
-            name="placa"
-            value={formEditar.placa}
-            onChange={handleFormChange}
-            placeholder="ABC-1234"
-            required
-          />
+          <input name="placa" value={formEditar.placa} onChange={handleFormChange} placeholder="ABC-1234" required />
 
           <label>Modelo</label>
-          <input
-            name="modelo"
-            value={formEditar.modelo}
-            onChange={handleFormChange}
-            placeholder="Ex: Scania R450"
-          />
+          <input name="modelo" value={formEditar.modelo} onChange={handleFormChange} placeholder="Ex: Scania R450" />
 
           <label>Latitude</label>
-          <input
-            name="latitude"
-            value={formEditar.latitude}
-            onChange={handleFormChange}
-            placeholder="-23.5505"
-          />
+          <input name="latitude" value={formEditar.latitude} onChange={handleFormChange} placeholder="-23.5505" />
 
           <label>Longitude</label>
-          <input
-            name="longitude"
-            value={formEditar.longitude}
-            onChange={handleFormChange}
-            placeholder="-46.6333"
-          />
+          <input name="longitude" value={formEditar.longitude} onChange={handleFormChange} placeholder="-46.6333" />
 
           <label>Status</label>
-          <select
-            name="statusCaminhao"
-            value={formEditar.statusCaminhao}
-            onChange={handleFormChange}
-          >
+          <select name="statusCaminhao" value={formEditar.statusCaminhao} onChange={handleFormChange}>
             <option value="ATIVO">ATIVO</option>
             <option value="INATIVO">INATIVO</option>
             <option value="EM_MANUTENCAO">EM MANUTENÇÃO</option>
@@ -442,26 +382,13 @@ function PageGerenCaminhao() {
           </select>
 
           <div className="button-group">
-            <button 
-              className="btn-action btn-save" 
-              onClick={salvarEdicao}
-              disabled={loading || !formEditar.placa}
-            >
+            <button className="btn-action btn-save" onClick={salvarEdicao} disabled={loading || !formEditar.placa}>
               {loading ? "Salvando..." : "Salvar"}
             </button>
-            <button 
-              className="btn-action btn-delete" 
-              onClick={excluirCaminhao}
-              disabled={loading}
-            >
+            <button className="btn-action btn-delete" onClick={excluirCaminhao} disabled={loading}>
               Deletar
             </button>
-            <button 
-              className="btn-action" 
-              onClick={limparForm}
-              disabled={loading}
-              style={{ background: "#6c757d" }}
-            >
+            <button className="btn-action" onClick={limparForm} disabled={loading} style={{ background: "#6c757d" }}>
               Limpar
             </button>
           </div>
@@ -469,12 +396,7 @@ function PageGerenCaminhao() {
       ) : (
         <div className="card-edit-form">
           <h3>Instruções</h3>
-          <div style={{ 
-            padding: "15px", 
-            backgroundColor: "#f8f9fa", 
-            borderRadius: "5px",
-            fontSize: "0.9rem"
-          }}>
+          <div style={{ padding: "15px", backgroundColor: "#f8f9fa", borderRadius: "5px", fontSize: "0.9rem" }}>
             <p><strong>Para editar um caminhão:</strong></p>
             <ol style={{ margin: "10px 0 10px 20px", padding: 0 }}>
               <li>Selecione um caminhão na tabela acima</li>

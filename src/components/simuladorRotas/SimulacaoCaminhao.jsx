@@ -1,12 +1,11 @@
-
 import React, { useState, useRef, useEffect } from "react";
 import MapaSimulacao from "../mapas/MapaSimulacao";
 import API_BASE_URL from "../../config/api";
 import ScreenLayout from "../ScreenLayout/ScreenLayout";
 import "./SimulacaoCaminhao.css";
+import { GoogleMap, Marker } from "@react-google-maps/api";
 
 function SimulacaoCaminhao() {
-  // Estados iniciais corrigidos (evitando strings vazias para números)
   const [pontoA, setPontoA] = useState({ lat: null, lng: null });
   const [pontoB, setPontoB] = useState({ lat: null, lng: null });
   const [velocidade, setVelocidade] = useState(1000);
@@ -15,16 +14,32 @@ function SimulacaoCaminhao() {
   const [caminhaoId, setCaminhaoId] = useState("1");
   const [posicaoCaminhao, setPosicaoCaminhao] = useState(null);
   const [apiLoaded, setApiLoaded] = useState(false);
-  
+  const [pontosDeColeta, setPontosDeColeta] = useState([]);
+
   const intervaloRef = useRef(null);
   const pontosCalculadosRef = useRef([]);
   const indiceAtualRef = useRef(0);
 
+  // Carrega os pontos de coleta da API
+  async function carregarPontosDeColeta() {
+    try {
+      const res = await fetch(`${API_BASE_URL}/pontos-de-coleta`);
+      if (!res.ok) throw new Error("Erro ao carregar pontos de coleta");
+      const data = await res.json();
+      setPontosDeColeta(data);
+    } catch (error) {
+      console.error("Erro:", error);
+    }
+  }
+
+  useEffect(() => {
+    carregarPontosDeColeta();
+  }, []);
+
   // Verificação da API do Google Maps
   useEffect(() => {
-    if (window.google) {
-      setApiLoaded(true);
-    } else {
+    if (window.google) setApiLoaded(true);
+    else {
       const checkApi = setInterval(() => {
         if (window.google) {
           setApiLoaded(true);
@@ -36,17 +51,15 @@ function SimulacaoCaminhao() {
   }, []);
 
   const calcularRota = async () => {
-    // Validação melhorada
     if (!pontoA.lat || !pontoA.lng || !pontoB.lat || !pontoB.lng) {
       alert("Preencha ambos os pontos A e B");
       return;
     }
-    
     if (!apiLoaded) {
       alert("Aguarde a API do Google Maps carregar");
       return;
     }
-    
+
     try {
       const directionsService = new window.google.maps.DirectionsService();
       const result = await new Promise((resolve, reject) => {
@@ -68,13 +81,13 @@ function SimulacaoCaminhao() {
           }
         );
       });
-      
+
       const path = result.routes[0].overview_path;
       const pontos = path.map((point) => ({
         lat: point.lat(),
         lng: point.lng(),
       }));
-      
+
       pontosCalculadosRef.current = pontos;
       setPontosIntermediarios(pontos);
       alert(`✅ Rota calculada com ${pontos.length} pontos`);
@@ -109,7 +122,7 @@ function SimulacaoCaminhao() {
       alert("Calcule a rota primeiro");
       return;
     }
-    
+
     setSimulando(true);
     indiceAtualRef.current = 0;
     const primeiraPosicao = pontosCalculadosRef.current[0];
@@ -165,7 +178,6 @@ function SimulacaoCaminhao() {
     alert("🧹 Rota limpa!");
   };
 
-  // Conteúdo da Direita: Mapa + Status
   const RightSideContent = (
     <div className="map-container-full">
       <div className="status-overlay-container">
@@ -177,8 +189,7 @@ function SimulacaoCaminhao() {
         )}
         {pontosIntermediarios.length > 0 && !simulando && (
           <div className="status-box status-ready">
-            <strong>📊 Rota calculada:</strong> {pontosIntermediarios.length}{" "}
-            pontos - Pronto para simular!
+            <strong>📊 Rota calculada:</strong> {pontosIntermediarios.length} pontos - Pronto para simular!
           </div>
         )}
       </div>
@@ -189,6 +200,7 @@ function SimulacaoCaminhao() {
         pontoB={pontoB}
         pontosRota={pontosIntermediarios}
         posicaoCaminhao={posicaoCaminhao}
+        pontosDeColeta={pontosDeColeta} // ✅ adicionado
       />
     </div>
   );
@@ -221,7 +233,6 @@ function SimulacaoCaminhao() {
       {/* Coordenadas */}
       <div className="card-control-sim">
         <h4>Coordenadas</h4>
-
         <div className="coord-group">
           <label className="sub-label">Ponto A (Origem)</label>
           <input
@@ -266,9 +277,7 @@ function SimulacaoCaminhao() {
           />
         </div>
 
-        <p className="hint-click">
-          💡 Dica: Clique no mapa para definir A e B.
-        </p>
+        <p className="hint-click">💡 Dica: Clique no mapa para definir A e B.</p>
       </div>
 
       {/* Botões */}
@@ -280,7 +289,6 @@ function SimulacaoCaminhao() {
         >
           🗺️ Calcular
         </button>
-
         <button
           className="btn-sim btn-start"
           onClick={iniciarSimulacao}
@@ -288,7 +296,6 @@ function SimulacaoCaminhao() {
         >
           ▶️ Iniciar
         </button>
-
         <button
           className="btn-sim btn-stop"
           onClick={pararSimulacao}
@@ -296,7 +303,6 @@ function SimulacaoCaminhao() {
         >
           ⏹️ Parar
         </button>
-
         <button className="btn-sim btn-clear" onClick={limparRota}>
           🗑️ Limpar
         </button>

@@ -78,21 +78,22 @@ const MapaSimulacao = ({
 
         if (isNaN(lat) || isNaN(lng)) return null;
 
-        return (
-          <Marker
-            key={ponto.id}
-            position={{ lat, lng }}
-            icon={{
-              path: window.google.maps.SymbolPath.CIRCLE,
-              fillColor: "#FF6B6B",
-              fillOpacity: 1,
-              strokeWeight: 1,
-              strokeColor: "#FFFFFF",
-              scale: 7,
-            }}
-            title={`${ponto.nome}`}
-          />
-        );
+     return (
+  <Marker
+    key={ponto.id}
+    position={{ lat, lng }}
+    icon={{
+      path: window.google.maps.SymbolPath.CIRCLE, // círculo simples
+      fillColor: "#4CAF50", // verde, lembra lixeira/ponto de coleta
+      fillOpacity: 0.9,      // quase sólido
+      strokeWeight: 2,       // borda
+      strokeColor: "#ffffff", // borda branca
+      scale: 8,               // tamanho do ponto
+    }}
+    title={ponto.nome}       // tooltip
+  />
+);
+
       })}
 
       {/* Marcador do CAMINHÃO em movimento */}
