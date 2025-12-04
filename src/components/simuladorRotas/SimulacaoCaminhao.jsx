@@ -1,37 +1,45 @@
 import React, { useState, useRef, useEffect } from "react";
-import MapaSimulacao from "../mapas/MapaSimulacao"; // Mantenha seu caminho correto
-import API_BASE_URL from "../../config/api"; // Mantenha seu caminho correto
-import ScreenLayout from "../ScreenLayout/ScreenLayout"; // Import do Layout Padrão
-import "./SimulacaoCaminhao.css"; // Novo CSS
+import MapaSimulacao from "../mapas/MapaSimulacao";
+import API_BASE_URL from "../../config/api";
+import ScreenLayout from "../ScreenLayout/ScreenLayout";
+import "./SimulacaoCaminhao.css";
+import { GoogleMap, Marker } from "@react-google-maps/api";
 
 function SimulacaoCaminhao() {
-  // ---------------------------------------------------------
-  // LÓGICA EXISTENTE (INTOCADA)
-  // ---------------------------------------------------------
-  const [pontoA, setPontoA] = useState({ lat: "", lng: "" });
-  const [pontoB, setPontoB] = useState({ lat: "", lng: "" });
+  const [pontoA, setPontoA] = useState({ lat: null, lng: null });
+  const [pontoB, setPontoB] = useState({ lat: null, lng: null });
   const [velocidade, setVelocidade] = useState(1000);
   const [simulando, setSimulando] = useState(false);
   const [pontosIntermediarios, setPontosIntermediarios] = useState([]);
   const [caminhaoId, setCaminhaoId] = useState("1");
   const [posicaoCaminhao, setPosicaoCaminhao] = useState(null);
+  const [apiLoaded, setApiLoaded] = useState(false);
+  const [pontosDeColeta, setPontosDeColeta] = useState([]);
+
   const intervaloRef = useRef(null);
   const pontosCalculadosRef = useRef([]);
   const indiceAtualRef = useRef(0);
-  const [apiLoaded, setApiLoaded] = useState(false);
+
+  // Carrega os pontos de coleta da API
+  async function carregarPontosDeColeta() {
+    try {
+      const res = await fetch(`${API_BASE_URL}/pontos-de-coleta`);
+      if (!res.ok) throw new Error("Erro ao carregar pontos de coleta");
+      const data = await res.json();
+      setPontosDeColeta(data);
+    } catch (error) {
+      console.error("Erro:", error);
+    }
+  }
 
   useEffect(() => {
-    console.log("🔍 Debug - API Google Maps:", {
-      apiLoaded,
-      google: !!window.google,
-      googleMaps: window.google?.maps,
-    });
-  }, [apiLoaded]);
+    carregarPontosDeColeta();
+  }, []);
 
+  // Verificação da API do Google Maps
   useEffect(() => {
-    if (window.google) {
-      setApiLoaded(true);
-    } else {
+    if (window.google) setApiLoaded(true);
+    else {
       const checkApi = setInterval(() => {
         if (window.google) {
           setApiLoaded(true);
@@ -51,6 +59,7 @@ function SimulacaoCaminhao() {
       alert("Aguarde a API do Google Maps carregar");
       return;
     }
+
     try {
       const directionsService = new window.google.maps.DirectionsService();
       const result = await new Promise((resolve, reject) => {
@@ -72,17 +81,19 @@ function SimulacaoCaminhao() {
           }
         );
       });
+
       const path = result.routes[0].overview_path;
       const pontos = path.map((point) => ({
         lat: point.lat(),
         lng: point.lng(),
       }));
+
       pontosCalculadosRef.current = pontos;
       setPontosIntermediarios(pontos);
-      alert(`Rota calculada com ${pontos.length} pontos`);
+      alert(`✅ Rota calculada com ${pontos.length} pontos`);
     } catch (error) {
       console.error("Erro ao calcular rota:", error);
-      alert("Erro ao calcular rota: " + error.message);
+      alert("❌ Erro ao calcular rota: " + error.message);
     }
   };
 
@@ -111,6 +122,7 @@ function SimulacaoCaminhao() {
       alert("Calcule a rota primeiro");
       return;
     }
+
     setSimulando(true);
     indiceAtualRef.current = 0;
     const primeiraPosicao = pontosCalculadosRef.current[0];
@@ -120,8 +132,7 @@ function SimulacaoCaminhao() {
     intervaloRef.current = setInterval(() => {
       if (indiceAtualRef.current < pontosCalculadosRef.current.length - 1) {
         indiceAtualRef.current++;
-        const posicaoAtual =
-          pontosCalculadosRef.current[indiceAtualRef.current];
+        const posicaoAtual = pontosCalculadosRef.current[indiceAtualRef.current];
         setPosicaoCaminhao(posicaoAtual);
         enviarPosicao(posicaoAtual);
       } else {
@@ -149,7 +160,7 @@ function SimulacaoCaminhao() {
       alert('✅ Ponto B definido! Clique em "Calcular Rota"');
     } else {
       setPontoA(coordenadas);
-      setPontoB({ lat: "", lng: "" });
+      setPontoB({ lat: null, lng: null });
       setPontosIntermediarios([]);
       pontosCalculadosRef.current = [];
       setPosicaoCaminhao(null);
@@ -158,8 +169,8 @@ function SimulacaoCaminhao() {
   };
 
   const limparRota = () => {
-    setPontoA({ lat: "", lng: "" });
-    setPontoB({ lat: "", lng: "" });
+    setPontoA({ lat: null, lng: null });
+    setPontoB({ lat: null, lng: null });
     setPontosIntermediarios([]);
     pontosCalculadosRef.current = [];
     setPosicaoCaminhao(null);
@@ -167,14 +178,8 @@ function SimulacaoCaminhao() {
     alert("🧹 Rota limpa!");
   };
 
-  // ---------------------------------------------------------
-  // NOVA VISUALIZAÇÃO (SCREEN LAYOUT)
-  // ---------------------------------------------------------
-
-  // Conteúdo da Direita: Mapa + Status Flutuante
   const RightSideContent = (
     <div className="map-container-full">
-      {/* Mensagens de Status Overlay (Aparecem sobre o mapa no topo) */}
       <div className="status-overlay-container">
         {simulando && (
           <div className="status-box status-active">
@@ -184,8 +189,7 @@ function SimulacaoCaminhao() {
         )}
         {pontosIntermediarios.length > 0 && !simulando && (
           <div className="status-box status-ready">
-            <strong>📊 Rota calculada:</strong> {pontosIntermediarios.length}{" "}
-            pontos - Pronto para simular!
+            <strong>📊 Rota calculada:</strong> {pontosIntermediarios.length} pontos - Pronto para simular!
           </div>
         )}
       </div>
@@ -196,15 +200,14 @@ function SimulacaoCaminhao() {
         pontoB={pontoB}
         pontosRota={pontosIntermediarios}
         posicaoCaminhao={posicaoCaminhao}
+        pontosDeColeta={pontosDeColeta} // ✅ adicionado
       />
     </div>
   );
 
   return (
     <ScreenLayout title="Simulador de Rotas" rightContent={RightSideContent}>
-      {/* --- LADO ESQUERDO: CONTROLES --- */}
-
-      {/* 1. Configuração Principal */}
+      {/* Controles */}
       <div className="card-control-sim">
         <label>ID do Caminhão</label>
         <input
@@ -212,6 +215,7 @@ function SimulacaoCaminhao() {
           value={caminhaoId}
           onChange={(e) => setCaminhaoId(e.target.value)}
           placeholder="ID"
+          min="1"
         />
 
         <label>Velocidade: {velocidade}ms</label>
@@ -226,16 +230,15 @@ function SimulacaoCaminhao() {
         <small className="hint-text">Menor valor = Mais rápido</small>
       </div>
 
-      {/* 2. Pontos (Origem/Destino) */}
+      {/* Coordenadas */}
       <div className="card-control-sim">
         <h4>Coordenadas</h4>
-
         <div className="coord-group">
           <label className="sub-label">Ponto A (Origem)</label>
           <input
             type="number"
             step="any"
-            value={pontoA.lat}
+            value={pontoA.lat || ""}
             placeholder="Lat A"
             onChange={(e) =>
               setPontoA((prev) => ({ ...prev, lat: e.target.value }))
@@ -244,7 +247,7 @@ function SimulacaoCaminhao() {
           <input
             type="number"
             step="any"
-            value={pontoA.lng}
+            value={pontoA.lng || ""}
             placeholder="Lng A"
             onChange={(e) =>
               setPontoA((prev) => ({ ...prev, lng: e.target.value }))
@@ -257,7 +260,7 @@ function SimulacaoCaminhao() {
           <input
             type="number"
             step="any"
-            value={pontoB.lat}
+            value={pontoB.lat || ""}
             placeholder="Lat B"
             onChange={(e) =>
               setPontoB((prev) => ({ ...prev, lat: e.target.value }))
@@ -266,7 +269,7 @@ function SimulacaoCaminhao() {
           <input
             type="number"
             step="any"
-            value={pontoB.lng}
+            value={pontoB.lng || ""}
             placeholder="Lng B"
             onChange={(e) =>
               setPontoB((prev) => ({ ...prev, lng: e.target.value }))
@@ -274,12 +277,10 @@ function SimulacaoCaminhao() {
           />
         </div>
 
-        <p className="hint-click">
-          💡 Dica: Clique no mapa para definir A e B.
-        </p>
+        <p className="hint-click">💡 Dica: Clique no mapa para definir A e B.</p>
       </div>
 
-      {/* 3. Botões de Ação */}
+      {/* Botões */}
       <div className="sim-buttons-grid">
         <button
           className="btn-sim btn-calc"
@@ -288,7 +289,6 @@ function SimulacaoCaminhao() {
         >
           🗺️ Calcular
         </button>
-
         <button
           className="btn-sim btn-start"
           onClick={iniciarSimulacao}
@@ -296,7 +296,6 @@ function SimulacaoCaminhao() {
         >
           ▶️ Iniciar
         </button>
-
         <button
           className="btn-sim btn-stop"
           onClick={pararSimulacao}
@@ -304,7 +303,6 @@ function SimulacaoCaminhao() {
         >
           ⏹️ Parar
         </button>
-
         <button className="btn-sim btn-clear" onClick={limparRota}>
           🗑️ Limpar
         </button>

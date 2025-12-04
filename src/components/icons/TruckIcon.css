@@ -1,0 +1,81 @@
+/* src/components/icons/TruckIcon.css */
+.truck-icon {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  border: 2px solid white;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  user-select: none;
+}
+
+.truck-icon:hover {
+  transform: scale(1.1);
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+
+.truck-icon-sm {
+  width: 24px;
+  height: 24px;
+  font-size: 11px;
+}
+
+.truck-icon-md {
+  width: 32px;
+  height: 32px;
+  font-size: 14px;
+}
+
+.truck-icon-lg {
+  width: 40px;
+  height: 40px;
+  font-size: 18px;
+}
+
+/* Cores de status */
+.status-active {
+  background-color: #28a745;
+}
+
+.status-maintenance {
+  background-color: #ffc107;
+}
+
+.status-inactive {
+  background-color: #dc3545;
+}
+
+.status-traveling {
+  background-color: #17a2b8;
+}
+
+/* Indicador de status */
+.status-indicator {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 1px solid white;
+}
+
+.status-indicator-active {
+  background-color: #155724;
+}
+
+.status-indicator-maintenance {
+  background-color: #856404;
+}
+
+.status-indicator-inactive {
+  background-color: #721c24;
+}
+
+.status-indicator-traveling {
+  background-color: #0c5460;
+}

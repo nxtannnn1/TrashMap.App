@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-// Removemos o import do @vis.gl
 import ScreenLayout from "../../ScreenLayout/ScreenLayout";
 import MapaADM from "../../mapas/MapaADM";
 import { API_BASE_URL } from "../../../config/api";
@@ -105,7 +104,6 @@ function PageGerenColeta() {
   };
 
   // --- MAPA CLICK ---
-  // O MapaADM agora manda um objeto simples { lat: 123, lng: 456 }
   async function handleMapClick({ lat, lng }) {
     if (!lat || !lng) return;
 
@@ -156,30 +154,52 @@ function PageGerenColeta() {
               </tr>
             </thead>
             <tbody>
-              {pontosFiltrados.map((p, i) => (
-                <tr
-                  key={i}
-                  onClick={() => selecionarPonto(p)}
-                  style={{ cursor: "pointer" }}
-                >
-                  <td>{p.nome}</td>
-                  <td style={{ fontSize: "0.85rem" }}>
-                    {p.coordenadas?.latitude?.toFixed(4)},{" "}
-                    {p.coordenadas?.longitude?.toFixed(4)}
-                  </td>
-                  <td>
-                    <span className="status ativo">Ativo</span>
+              {loading ? (
+                <tr>
+                  <td colSpan="3" style={{ textAlign: "center", padding: "20px" }}>
+                    Carregando...
                   </td>
                 </tr>
-              ))}
+              ) : pontosFiltrados.length === 0 ? (
+                <tr>
+                  <td colSpan="3" style={{ textAlign: "center", padding: "20px", color: "#666" }}>
+                    Nenhum ponto de coleta cadastrado
+                  </td>
+                </tr>
+              ) : (
+                pontosFiltrados.map((p, i) => (
+                  <tr
+                    key={i}
+                    onClick={() => selecionarPonto(p)}
+                    style={{ 
+                      cursor: "pointer",
+                      backgroundColor: formEditar.id === (p.id || p._id) ? "#e8f4ff" : "transparent"
+                    }}
+                  >
+                    <td>{p.nome}</td>
+                    <td style={{ fontSize: "0.85rem" }}>
+                      {p.coordenadas?.latitude?.toFixed(4)},{" "}
+                      {p.coordenadas?.longitude?.toFixed(4)}
+                    </td>
+                    <td>
+                      <span className="status ativo">Ativo</span>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
       </div>
 
       <div className="bottom-section-map" style={{ position: "relative" }}>
-        <div style={{ width: "100%", height: "100%" }}>
-          <MapaADM pontos={listaPontos} onMapClick={handleMapClick} />
+        <div style={{ width: "100%", height: "100%", minHeight: "300px" }}>
+          <MapaADM 
+            pontos={listaPontos} 
+            onMapClick={handleMapClick} 
+            containerHeight="100%"
+            containerWidth="100%"
+          />
         </div>
       </div>
     </div>
@@ -206,13 +226,19 @@ function PageGerenColeta() {
         </h3>
 
         <label>Nome</label>
-        <input name="nome" value={formEditar.nome} onChange={handleChange} />
+        <input 
+          name="nome" 
+          value={formEditar.nome} 
+          onChange={handleChange}
+          placeholder="Nome do ponto de coleta"
+        />
 
         <label>Latitude</label>
         <input
           name="latitude"
           value={formEditar.latitude}
           onChange={handleChange}
+          placeholder="-12.9326"
         />
 
         <label>Longitude</label>
@@ -220,6 +246,7 @@ function PageGerenColeta() {
           name="longitude"
           value={formEditar.longitude}
           onChange={handleChange}
+          placeholder="-38.5067"
         />
 
         <div className="button-group">
@@ -237,6 +264,22 @@ function PageGerenColeta() {
             Limpar
           </button>
         </div>
+        
+        {formEditar.latitude && formEditar.longitude && (
+          <div style={{ 
+            marginTop: "15px", 
+            padding: "10px", 
+            backgroundColor: "#e8f4ff", 
+            borderRadius: "5px",
+            fontSize: "0.85rem"
+          }}>
+            📍 Localização selecionada: 
+            <br />
+            <strong>Lat:</strong> {formEditar.latitude}
+            <br />
+            <strong>Long:</strong> {formEditar.longitude}
+          </div>
+        )}
       </div>
     </ScreenLayout>
   );

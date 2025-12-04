@@ -1,14 +1,15 @@
+
 import React, { useState, useEffect } from "react";
 import ScreenLayout from "../../ScreenLayout/ScreenLayout";
-import MapaSimulacao from "../../mapas/MapaSimulacao"; // Importando o mapa
+import MapaSimulacao from "../../mapas/MapaSimulacao";
 import { API_BASE_URL } from "../../../config/api";
 import "./CadastroRotas.css";
 
 function CadastroRotas() {
-  // --- LÓGICA ---
+  // --- STATES ---
   const [pontos, setPontos] = useState([]);
   const [nomeRota, setNomeRota] = useState("");
-  const [descricao, setDescricao] = useState("");
+  const [pontoDeColetaId, setPontoDeColetaId] = useState("1"); // ID padrão ou selecionável
 
   const [pontoInicial, setPontoInicial] = useState({
     nome: "",
@@ -21,6 +22,7 @@ function CadastroRotas() {
   const [erro, setErro] = useState("");
   const [sucesso, setSucesso] = useState("");
 
+  // --- EFEITOS ---
   useEffect(() => {
     const fetchPontos = async () => {
       try {
@@ -28,7 +30,13 @@ function CadastroRotas() {
         if (!res.ok) throw new Error("Erro ao carregar pontos");
         const data = await res.json();
         setPontos(Array.isArray(data) ? data : []);
+        
+        // Se houver pontos, seleciona o primeiro por padrão
+        if (data.length > 0 && !pontoDeColetaId) {
+          setPontoDeColetaId(data[0].id.toString());
+        }
       } catch (err) {
+        console.error("Erro ao carregar pontos:", err);
         setErro("Não foi possível carregar a lista de pontos.");
       } finally {
         setLoading(false);
@@ -37,20 +45,33 @@ function CadastroRotas() {
     fetchPontos();
   }, []);
 
+  // --- HANDLERS ---
   const handleSubmit = async (e) => {
     if (e) e.preventDefault();
     setErro("");
     setSucesso("");
 
-    if (!nomeRota || !pontoInicial.lat || !pontoFinal.lat) {
-      setErro("Preencha o nome da rota e as coordenadas dos pontos.");
+    // Validações
+    if (!nomeRota) {
+      setErro("Preencha o nome da rota.");
+      return;
+    }
+    
+    if (!pontoInicial.lat || !pontoInicial.lng || !pontoFinal.lat || !pontoFinal.lng) {
+      setErro("Preencha as coordenadas dos pontos inicial e final.");
+      return;
+    }
+    
+    if (!pontoDeColetaId) {
+      setErro("Selecione um ponto de coleta.");
       return;
     }
 
     try {
+      // ⚠️ **PAYLOAD CORRETO:** O back-end espera nome, pontoDeColetaId e coordenadas
       const payload = {
         nome: nomeRota,
-        descricao: descricao,
+        pontoDeColetaId: parseInt(pontoDeColetaId), // ⚠️ OBRIGATÓRIO para o back-end
         coordenadas: [
           {
             latitude: parseFloat(pontoInicial.lat),
@@ -63,56 +84,69 @@ function CadastroRotas() {
         ],
       };
 
+      console.log("📤 Enviando payload:", payload);
+
       const res = await fetch(`${API_BASE_URL}/rotas`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
 
-      if (!res.ok) throw new Error("Erro ao cadastrar rota.");
+      console.log("📥 Status da resposta:", res.status);
+      
+      if (!res.ok) {
+        const errorText = await res.text();
+        console.error("❌ Erro da API:", errorText);
+        throw new Error(`Erro ${res.status}: ${errorText}`);
+      }
 
-      setSucesso("Rota cadastrada com sucesso!");
+      const data = await res.json();
+      console.log("✅ Rota cadastrada:", data);
+
+      setSucesso(`Rota "${data.nome}" cadastrada com sucesso! ID: ${data.id}`);
+      
+      // Limpa o formulário (mantém pontoDeColetaId selecionado)
       setNomeRota("");
-      setDescricao("");
       setPontoInicial({ nome: "", lat: "", lng: "" });
       setPontoFinal({ nome: "", lat: "", lng: "" });
+      
     } catch (err) {
-      console.error(err);
-      setErro(err.message || "Erro inesperado.");
+      console.error("Erro completo:", err);
+      setErro(err.message || "Erro inesperado ao cadastrar rota.");
     }
   };
 
   // --- LÓGICA DO MAPA ---
-
-  // Converte os estados do form para o formato que o MapaSimulacao entende
   const visualPontoA =
     pontoInicial.lat && pontoInicial.lng
       ? { lat: parseFloat(pontoInicial.lat), lng: parseFloat(pontoInicial.lng) }
-      : { lat: "", lng: "" };
+      : null;
 
   const visualPontoB =
     pontoFinal.lat && pontoFinal.lng
       ? { lat: parseFloat(pontoFinal.lat), lng: parseFloat(pontoFinal.lng) }
-      : { lat: "", lng: "" };
+      : null;
 
-  // Ao clicar no mapa: Preenche Origem primeiro, depois Destino
   const handleMapClick = (latLng) => {
     if (!pontoInicial.lat) {
       setPontoInicial((prev) => ({
         ...prev,
-        lat: latLng.lat,
-        lng: latLng.lng,
+        lat: latLng.lat.toString(),
+        lng: latLng.lng.toString(),
       }));
     } else {
-      setPontoFinal((prev) => ({ ...prev, lat: latLng.lat, lng: latLng.lng }));
+      setPontoFinal((prev) => ({ 
+        ...prev, 
+        lat: latLng.lat.toString(), 
+        lng: latLng.lng.toString() 
+      }));
     }
   };
 
-  // --- CONTEÚDO VISUAL ---
-
+  // --- RENDER ---
   const RightSideContent = (
     <div style={{ width: "100%", height: "100%", position: "relative" }}>
-      {/* Mensagens de Feedback (Overlay sobre o mapa) */}
+      {/* Feedback Overlay */}
       {(erro || sucesso) && (
         <div
           style={{
@@ -123,23 +157,23 @@ function CadastroRotas() {
             zIndex: 10,
             padding: "15px",
             borderRadius: "8px",
-            backgroundColor: "white",
-            boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
+            backgroundColor: erro ? "#f8d7da" : "#d4edda",
             border: erro ? "1px solid #dc3545" : "1px solid #28a745",
             color: erro ? "#721c24" : "#155724",
             fontWeight: "bold",
+            maxWidth: "80%",
+            textAlign: "center",
           }}
         >
-          {erro || sucesso}
+          {erro ? "❌ " + erro : "✅ " + sucesso}
         </div>
       )}
 
-      {/* O Mapa Real */}
       <MapaSimulacao
         pontoA={visualPontoA}
         pontoB={visualPontoB}
         onMapClick={handleMapClick}
-        pontosRota={[]} // Passamos array vazio pois aqui é só cadastro, não simulação
+        pontosRota={[]}
         posicaoCaminhao={null}
       />
     </div>
@@ -147,29 +181,54 @@ function CadastroRotas() {
 
   return (
     <ScreenLayout title="Cadastro de Rotas" rightContent={RightSideContent}>
-      {/* LADO ESQUERDO: FORMULÁRIO */}
+      {/* FORMULÁRIO ESQUERDO */}
       <div className="cardInfoRota">
-        <label>Nome da Rota</label>
+        <label>Nome da Rota *</label>
         <input
           type="text"
-          placeholder="Digite o nome da rota"
+          placeholder="Ex: Rota Centro-Norte"
           value={nomeRota}
           onChange={(e) => setNomeRota(e.target.value)}
+          required
         />
 
-        <label>Descrição</label>
-        <input
-          type="text"
-          placeholder="Digite a descrição da rota"
-          value={descricao}
-          onChange={(e) => setDescricao(e.target.value)}
-        />
+        <label>Ponto de Coleta Associado *</label>
+        <select
+          value={pontoDeColetaId}
+          onChange={(e) => setPontoDeColetaId(e.target.value)}
+          style={{
+            width: "100%",
+            padding: "10px",
+            marginBottom: "15px",
+            borderRadius: "4px",
+            border: "1px solid #ccc",
+          }}
+        >
+          {loading ? (
+            <option>Carregando pontos...</option>
+          ) : pontos.length === 0 ? (
+            <option value="">Nenhum ponto disponível</option>
+          ) : (
+            <>
+              <option value="">Selecione um ponto de coleta</option>
+              {pontos.map((ponto) => (
+                <option key={ponto.id} value={ponto.id}>
+                  {ponto.nome} (ID: {ponto.id})
+                </option>
+              ))}
+            </>
+          )}
+        </select>
+        
+        <small style={{ color: "#666", fontSize: "0.8rem" }}>
+          * Campo obrigatório para o back-end
+        </small>
       </div>
 
       <div className="row-cards">
         {/* Ponto Inicial */}
         <div className="card-small">
-          <h4>Ponto Inicial</h4>
+          <h4>Ponto Inicial *</h4>
           <input
             type="text"
             placeholder="Nome (Opcional)"
@@ -178,29 +237,33 @@ function CadastroRotas() {
               setPontoInicial({ ...pontoInicial, nome: e.target.value })
             }
           />
-          <label>Latitude</label>
+          <label>Latitude *</label>
           <input
             type="number"
+            step="any"
             placeholder="-12.97"
             value={pontoInicial.lat}
             onChange={(e) =>
               setPontoInicial({ ...pontoInicial, lat: e.target.value })
             }
+            required
           />
-          <label>Longitude</label>
+          <label>Longitude *</label>
           <input
             type="number"
+            step="any"
             placeholder="-38.51"
             value={pontoInicial.lng}
             onChange={(e) =>
               setPontoInicial({ ...pontoInicial, lng: e.target.value })
             }
+            required
           />
         </div>
 
         {/* Ponto Final */}
         <div className="card-small">
-          <h4>Ponto Final</h4>
+          <h4>Ponto Final *</h4>
           <input
             type="text"
             placeholder="Nome (Opcional)"
@@ -209,42 +272,59 @@ function CadastroRotas() {
               setPontoFinal({ ...pontoFinal, nome: e.target.value })
             }
           />
-          <label>Latitude</label>
+          <label>Latitude *</label>
           <input
             type="number"
+            step="any"
             placeholder="-12.98"
             value={pontoFinal.lat}
             onChange={(e) =>
               setPontoFinal({ ...pontoFinal, lat: e.target.value })
             }
+            required
           />
-          <label>Longitude</label>
+          <label>Longitude *</label>
           <input
             type="number"
+            step="any"
             placeholder="-38.50"
             value={pontoFinal.lng}
             onChange={(e) =>
               setPontoFinal({ ...pontoFinal, lng: e.target.value })
             }
+            required
           />
         </div>
       </div>
 
-      <button className="btn-success" onClick={handleSubmit} disabled={loading}>
+      <button 
+        className="btn-success" 
+        onClick={handleSubmit} 
+        disabled={loading || !pontoDeColetaId}
+      >
         {loading ? "Carregando..." : "Cadastrar Rota"}
       </button>
 
-      {/* Dica para o usuário */}
-      <p
-        style={{
-          textAlign: "center",
-          fontSize: "0.8rem",
-          color: "#666",
-          marginTop: "10px",
-        }}
-      >
-        💡 Dica: Clique no mapa para preencher as coordenadas automaticamente.
-      </p>
+      {/* Instruções */}
+      <div style={{ 
+        marginTop: "15px", 
+        padding: "10px", 
+        backgroundColor: "#f8f9fa", 
+        borderRadius: "8px",
+        fontSize: "0.85rem",
+        color: "#666"
+      }}>
+        <p><strong>💡 Instruções:</strong></p>
+        <ol style={{ margin: "5px 0 0 15px", padding: 0 }}>
+          <li>Preencha o nome da rota</li>
+          <li>Selecione um ponto de coleta (obrigatório para o back-end)</li>
+          <li>Digite ou clique no mapa para definir os pontos A e B</li>
+          <li>Clique em "Cadastrar Rota"</li>
+        </ol>
+        <p style={{ marginTop: "8px", fontStyle: "italic" }}>
+          <small>Obs.: O campo "descrição" foi removido pois não existe no back-end.</small>
+        </p>
+      </div>
     </ScreenLayout>
   );
 }

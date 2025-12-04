@@ -1,3 +1,4 @@
+
 .layout-container {
   display: flex;
   justify-content: center;
@@ -7,13 +8,14 @@
   gap: 20px;
   padding: 10px;
   box-sizing: border-box;
-  background-color: #f0f0f0; /* Cor de fundo geral caso sobre espaço */
+  background-color: #f0f0f0;
 }
 
 /* Lado Esquerdo (Verde) */
 .layout-sidebar {
-  width: 35%; /* Ocupa aprox 35% da tela */
+  width: 100%;
   max-width: 500px;
+  min-width: 300px;
   height: 95vh;
   display: flex;
   flex-direction: column;
@@ -23,10 +25,12 @@
   padding: 20px;
   position: relative;
   box-shadow: 4px 4px 10px rgba(0,0,0,0.1);
+  flex: 0 0 auto;
 }
 
 .layout-logo {
-  width: 200px; /* Ajustei para ficar proporcional */
+  width: 180px;
+  max-width: 80%;
   margin-bottom: 10px;
 }
 
@@ -35,6 +39,8 @@
   margin-bottom: 20px;
   text-align: center;
   font-size: 24px;
+  font-weight: 600;
+  padding: 0 10px;
 }
 
 .layout-sidebar-content {
@@ -43,11 +49,12 @@
   flex-direction: column;
   align-items: center;
   gap: 15px;
-  overflow-y: auto; /* Permite rolar se o form for muito grande */
+  overflow-y: auto;
   padding-bottom: 20px;
+  flex: 1;
 }
 
-/* Scrollbar personalizada para o form verde */
+/* Scrollbar personalizada */
 .layout-sidebar-content::-webkit-scrollbar {
   width: 6px;
 }
@@ -55,16 +62,99 @@
   background-color: rgba(255,255,255,0.3);
   border-radius: 4px;
 }
+.layout-sidebar-content::-webkit-scrollbar-track {
+  background-color: rgba(0,0,0,0.1);
+}
 
 /* Lado Direito (Branco/Mapa) */
 .layout-content-area {
-  flex: 1; /* Ocupa todo o espaço restante */
+  flex: 1;
+  min-width: 300px;
   height: 95vh;
   border: 2px solid #ccc;
   border-radius: 40px;
-  background-color: #f9f9f9; /* Fundo padrão */
+  background-color: #f9f9f9;
   display: flex;
   justify-content: center;
   align-items: center;
-  overflow: hidden; /* Garante que o mapa não vaze as bordas redondas */
+  overflow: hidden;
+}
+
+/* RESPONSIVIDADE */
+@media (max-width: 1200px) {
+  .layout-container {
+    gap: 15px;
+  }
+  
+  .layout-sidebar {
+    max-width: 450px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .layout-container {
+    flex-direction: column;
+    height: auto;
+    min-height: 100vh;
+    padding: 15px;
+    gap: 15px;
+  }
+  
+  .layout-sidebar,
+  .layout-content-area {
+    width: 100%;
+    max-width: 100%;
+    height: 50vh;
+    min-height: 400px;
+  }
+  
+  .layout-sidebar {
+    border-radius: 20px;
+  }
+  
+  .layout-content-area {
+    border-radius: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .layout-container {
+    padding: 10px;
+    gap: 10px;
+  }
+  
+  .layout-sidebar,
+  .layout-content-area {
+    height: 45vh;
+    min-height: 350px;
+  }
+  
+  .layout-title {
+    font-size: 20px;
+    margin-bottom: 15px;
+  }
+  
+  .layout-logo {
+    width: 150px;
+  }
+}
+
+@media (max-width: 480px) {
+  .layout-sidebar,
+  .layout-content-area {
+    height: 40vh;
+    min-height: 300px;
+  }
+  
+  .layout-sidebar {
+    padding: 15px;
+  }
+  
+  .layout-title {
+    font-size: 18px;
+  }
+  
+  .layout-logo {
+    width: 120px;
+  }
 }

@@ -89,16 +89,27 @@ function PaginaInicio() {
         </button>
 
         <button
-          className="painel-button gerenciar"
-          onClick={() => navigate("/simulador")}
-        >
-          <div className="icon-wrapper">
-            <LiaRouteSolid size={50} className="button-icon" />
-            <MdEdit size={30} className="button-icon" />
-          </div>
-          <span>SIMULADOR</span>
-        </button>
+  className="painel-button gerenciar"
+  onClick={() => navigate("/simulador")}
+>
+  <div className="icon-wrapper">
+    <LiaRouteSolid size={50} className="button-icon" />
+    <MdEdit size={30} className="button-icon" />
+  </div>
+  <span>SIMULADOR</span>
+</button>
 
+
+<button
+  className="painel-button gerenciar"
+  onClick={() => navigate("/simulacao-multi")}
+>
+  <div className="icon-wrapper">
+    <MdLocalShipping size={40} className="button-icon" />
+    <span style={{ fontSize: "30px", marginLeft: "5px" }}>×10</span>
+  </div>
+  <span>SIMULAÇÃO MULTI-CAMINHÕES</span>
+</button>
         <button
           className="painel-button gerenciar"
           onClick={() => navigate("/gerenciamento-usuario")}
