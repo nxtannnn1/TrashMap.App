@@ -15,15 +15,11 @@ class Caminhao(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
-    //Tag única, Identificador do caminhão
-    // Primary Key no Banco de Dados
 
     @Enumerated(EnumType.STRING)
     @NotNull(message = "Status deve ser preenchido!")
     @Column(name = "status_caminhao", nullable = false)
     var statusCaminhao: StatusCaminhao,
-    //Indica o estado do caminhão desejado
-    // Teremos: Ativo, Inativo e Em Manutenção
 
     @NotBlank(message = "Placa não pode ser vazia!")
     @Column(name = "placa", nullable = false, unique = true)
@@ -32,19 +28,26 @@ class Caminhao(
         message = "Placa inválida. Formatos aceitos: ABC-1234 ou ABC1D23"
     )
     var placa: String,
-    //Placa do caminhão coletor
-    //Modelo Placa: "AAA-0123"
-    //Única para evitar duplicidade
+
+    // --- NOVOS CAMPOS ADICIONADOS ---
+
+    @NotBlank(message = "O modelo é obrigatório")
+    @Column(name = "modelo", nullable = false)
+    var modelo: String,
+
+    @Column(name = "capacidade")
+    var capacidade: Double? = 0.0,
+
+    @Column(name = "motorista_id")
+    var motoristaId: Long? = null,
+
+    // --------------------------------
 
     @Embedded
-    @NotNull(message = "Coordenadas devem ser informada")
+    @NotNull(message = "Coordenadas devem ser informadas")
     var coordenadas: Geopoint,
-    //Coordenadas geográficas
-    //Utilizada para rastreamento em tempo real
 
     @UpdateTimestamp
     @Column(name = "ultima_atualizacao", nullable = false)
     var ultimaAtualizacao: LocalDateTime = LocalDateTime.now()
-    // Armazena a data e hora da última vez que a posição do caminhão foi atualizada.
-    // Atualizado automaticamente pelo Hibernate sempre que o registro for modificado.
 )
