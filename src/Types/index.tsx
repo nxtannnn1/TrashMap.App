@@ -1,38 +1,45 @@
-// Este arquivo centraliza as definições de tipo do seu app.
+// src/Types.ts
 
+// 1. Definição de Geopoint (compatível com o Embeddable do Java)
+export type Geopoint = {
+  latitude: number;
+  longitude: number;
+};
+
+// 2. Rota atualizada para bater com o Backend Kotlin
 export type Rota = {
-  id: string; // Ex: "rota1"
-  nome: string; // Ex: "Rota Calçada - Ribeira"
-  descricao: string; // Ex: "Rota para coleta de recicláveis na região da Ribeira"
-  cor: string; // Ex: "#34A853"
-  largura: number; // Ex: 4
-  pontosInicial: number; // Ex: Geopoint index1
-  pontosFinal: number; // Ex: Geopoint index2
+  id: string;
+  nome: string;
+  // O backend pode ou não mandar descrição, deixamos opcional
+  descricao?: string;
+  pontoDeColetaId: number;
+  // AQUI ESTÁ O SEGREDO: Uma lista de coordenadas vinda do @ElementCollection
+  coordenadas: Geopoint[];
 };
 
-// export type MapMarker = {
-//   id: string; // Ex: "marker1"
-//   latitude: number; // Ex: -23.55052
-//   longitude: number; // Ex: -46.633308
-//   titulo: string; // Ex: "Ponto de Coleta Caminho de Areia"
-//   descricao?: string; // Ex: "Ponto de coleta de recicláveis"
-// };
-
-export type Usuario = {
-  id: string; // Ex: "BR17BOZ0VSLUL413BR4Z1N0"
-  nome: string; // Ex: "Leticia Silva Falcão"
-  email: string; // Ex: "letsilva@gmail.com"
-  senha: string; // Ex: "sunfoYFGSO$as#AMFAOl"
-};
-
-// Define a estrutura de uma notificação vinda da API
-export interface NotificationType {
-  id: number;
+// 3. MapMarker para os pontos fixos (Lixeiras/Ecopontos)
+export type MapMarker = {
+  id: string;
+  latitude: number;
+  longitude: number;
   titulo: string;
-  mensagem: string;
-  tempo: string;
-  iconName: string; // Se você quiser ser mais estrito, pode usar os tipos do Ionicons
-  iconColor: string;
-  iconBg: string;
-  lido: boolean;
-}
+  descricao?: string;
+};
+
+// 4. Usuário (mantido do seu código)
+export type Usuario = {
+  id: string;
+  nome: string;
+  email: string;
+  isAdmin: boolean;
+};
+
+// 5. Definições de Navegação (mantidas)
+export type RootStackParamList = {
+  Home: undefined;
+  Usuario: undefined;
+  EditUsuario: undefined;
+  Notification: undefined;
+  Login: undefined;
+  Cadastro: undefined;
+};

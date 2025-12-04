@@ -1,22 +1,29 @@
-// babel.config.js - Versão CORRIGIDA
-
 module.exports = function (api) {
   api.cache(true);
   return {
     presets: ["babel-preset-expo"],
     plugins: [
-      // 1. Plugins normais, como o de alias
+      // 1. Module Resolver (Seus aliases)
       [
-        "module-resolver", // NOTA: Este plugin precisa de configuração (root/alias) para funcionar!
+        "module-resolver",
         {
           alias: {
-            "@components": "./src/components", // Exemplo de alias
-            // ... adicione seus próprios aliases aqui
+            "@": "./", // Garante que imports como @/src funcionem
+            "@components": "./src/components",
           },
         },
       ],
 
-      // 2. O plugin do Reanimated DEVE ser o ÚLTIMO
+      // 2. Dotenv (Configuração para ler o arquivo .env)
+      [
+        "module:react-native-dotenv",
+        {
+          moduleName: "@env",
+          path: ".env",
+        },
+      ],
+
+      // 3. Reanimated (OBRIGATÓRIO SER O ÚLTIMO DA LISTA)
       "react-native-reanimated/plugin",
     ],
   };
